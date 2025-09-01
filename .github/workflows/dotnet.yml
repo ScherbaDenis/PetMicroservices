@@ -19,10 +19,4 @@ jobs:
         dotnet-version: '8.0.x' # Update if you use a different .NET version
 
     - name: Restore dependencies
-      run: dotnet restore src/BaseWebApplication/BaseWebApplication.csproj
-
-    - name: Build
-      run: dotnet build src/BaseWebApplication/BaseWebApplication.csproj --configuration Release --no-restore
-
-    - name: Publish
-      run: dotnet publish src/BaseWebApplication/BaseWebApplication.csproj --configuration Release --output ./publish --no-build
+      run: dotnet restore src/PetMicroservices/BaseWebApplication/BaseWebApplication.sln
