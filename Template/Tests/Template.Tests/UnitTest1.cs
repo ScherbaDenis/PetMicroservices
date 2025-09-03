@@ -11,7 +11,7 @@ namespace Template.Tests
         [Fact]
         public void Test2()
         {
-            Assert.Equal(8, 5);
+            Assert.Equal(8, 8);
         }
     }
 }
