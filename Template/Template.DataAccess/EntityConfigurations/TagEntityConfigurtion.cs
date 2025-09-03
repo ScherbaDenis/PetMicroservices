@@ -1,0 +1,18 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Template.DataAccess.MsSql.Repository;
+using Template.Domain.Model;
+
+namespace Template.DataAccess.MsSql.EntityConfigurations
+{
+    class UserEntityConfigurtion : IEntityTypeConfiguration<User>
+    {
+        public void Configure(EntityTypeBuilder<User> builder)
+        {
+            builder.HasKey(x => x.Id);
+            builder.ToTable("users", TamplateDbContext.DEFAULT_SCHEMA);
+            builder.HasIndex(x => x.Id);
+            builder.HasIndex(x => x.Name);
+        }
+    }
+}
