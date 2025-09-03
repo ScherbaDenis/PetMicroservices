@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build --no-restore BaseWebApplication/BaseWebApplication.sln
     - name: Test
-      run: dotnet test --no-build --verbosity normal BaseWebApplication\Template.Tests\Template.Tests.csproj
+      run: dotnet test --no-build --verbosity normal Template\Tests\Template.Tests\Template.Tests.csproj
