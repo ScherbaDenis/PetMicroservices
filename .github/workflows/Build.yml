@@ -1,8 +1,8 @@
 name: BaseWebApplication
 
 on:
-  pull_request:
-    branches: [ "main" ]
+  push:
+    branches: [ "*" ]
 
 jobs:
   build:
