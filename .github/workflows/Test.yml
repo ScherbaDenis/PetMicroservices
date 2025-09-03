@@ -1,4 +1,4 @@
-name: BaseWebApplication
+name: BaseWebApplication Test
 
 on:
   push:
@@ -21,5 +21,5 @@ jobs:
       run: dotnet restore BaseWebApplication/BaseWebApplication.sln
     - name: Build
       run: dotnet build --no-restore BaseWebApplication/BaseWebApplication.sln
-     #- name: Test
-     # run: dotnet test --no-build --verbosity normal
+    - name: Test
+      run: dotnet test --no-build --verbosity normal Template/Tests/Template.Tests/Template.Tests.csproj
