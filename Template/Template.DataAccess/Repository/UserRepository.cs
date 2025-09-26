@@ -21,7 +21,7 @@ namespace Template.DataAccess.MsSql.Repository
             }
         }
 
-        public async void CreateAsync(User item, CancellationToken cancellationToken = default)
+        public async void AddAsync(User item, CancellationToken cancellationToken = default)
         {
             await _context.Users.AddAsync(item, cancellationToken);
         }

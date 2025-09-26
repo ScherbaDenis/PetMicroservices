@@ -1,16 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Template.Domain.Model;
 using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repository
 {
-    public class TagRepository : ITagRepository
+    public class TagRepository //: ITagRepository
     {
         private readonly TamplateDbContext _context;
+        private readonly ILogger<TopicRepository> _logger;
 
-        public TagRepository(TamplateDbContext context)
+        public TagRepository(TamplateDbContext context, ILogger<TopicRepository> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _logger = logger ?? throw new ArgumentNullException(nameof(context));
         }
 
         public IUnitOfWork UnitOfWork
@@ -20,42 +23,53 @@ namespace Template.DataAccess.MsSql.Repository
                 return _context;
             }
         }
-
-        public async void CreateAsync(Tag item, CancellationToken cancellationToken = default)
+        public async Task AddAsync(Topic item, CancellationToken cancellationToken = default)
         {
-            await _context.Tags.AddAsync(item, cancellationToken);
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
+            _logger.LogInformation("Adding a new topic: {Topic}", item);
+            await _context.Topics.AddAsync(item, cancellationToken);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(Topic item, CancellationToken cancellationToken = default)
         {
-            var item = _context.Tags.FirstOrDefault(x => x.Id == id);
-            if (item != null)
-                _context.Remove(item);
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
+            _logger.LogInformation("Deleting topic: {Topic}", item);
+            _context.Topics.Remove(item);
+            await Task.CompletedTask; // keep async signature
         }
 
-        public IEnumerable<Tag> Find(Func<Tag, bool> predicate)
+        public async Task<Topic?> FindAsync(CancellationToken cancellationToken = default)
         {
-            return _context.Tags.Where(predicate);
+            _logger.LogInformation("Async Finding a topic...");
+            return await _context.Topics.FirstOrDefaultAsync(cancellationToken);
         }
 
-        public IEnumerable<Tag> GetAll()
+        public IEnumerable<Topic> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return _context.Tags;
+            _logger.LogInformation("Retrieving all topics...");
+            return _context.Topics.ToList();
         }
 
-        public async Task<Tag?> FindAsync(int id, CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(Topic item, CancellationToken cancellationToken = default)
         {
-            return await _context.Tags.FindAsync(id, cancellationToken);
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
+            _logger.LogInformation("Updating topic: {Topic}", item);
+            _context.Topics.Update(item);
+            await Task.CompletedTask;
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            _logger.LogInformation("Saving changes to database...");
             return await _context.SaveChangesAsync(cancellationToken);
         }
-
-        public void Update(Tag item)
+        public IEnumerable<Tag> Find(Func<Tag, bool> predicate)
         {
-            _context.Entry(item).State = EntityState.Modified;
+            _logger.LogInformation("Finding a topic...");
+            return _context.Tags.Where(predicate);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Template.DataAccess.MsSql.Repository
             }
         }
 
-        public async void CreateAsync(Tamplate item, CancellationToken cancellationToken = default)
+        public async void AddAsync(Tamplate item, CancellationToken cancellationToken = default)
         {
             await _context.Tamplates.AddAsync(item, cancellationToken);
         }
