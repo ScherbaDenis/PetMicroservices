@@ -19,7 +19,7 @@ namespace Template.DataAccess.MsSql.Repository
         }
         public async Task AddAsync(User item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Adding a new User: {User}", item);
             await _context.Users.AddAsync(item, cancellationToken);
@@ -27,7 +27,7 @@ namespace Template.DataAccess.MsSql.Repository
 
         public async Task DeleteAsync(User item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Deleting User: {User}", item);
             _context.Users.Remove(item);
@@ -48,7 +48,7 @@ namespace Template.DataAccess.MsSql.Repository
 
         public async Task UpdateAsync(User item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Updating User: {User}", item);
             _context.Users.Update(item);

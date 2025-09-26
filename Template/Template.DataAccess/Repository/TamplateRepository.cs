@@ -19,7 +19,7 @@ namespace Template.DataAccess.MsSql.Repository
         }
         public async Task AddAsync(Tamplate item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Adding a new Tamplate: {Tamplate}", item);
             await _context.Tamplates.AddAsync(item, cancellationToken);
@@ -27,7 +27,7 @@ namespace Template.DataAccess.MsSql.Repository
 
         public async Task DeleteAsync(Tamplate item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Deleting Tamplate: {Tamplate}", item);
             _context.Tamplates.Remove(item);
@@ -48,7 +48,7 @@ namespace Template.DataAccess.MsSql.Repository
 
         public async Task UpdateAsync(Tamplate item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Updating Tamplate: {Tamplate}", item);
             _context.Tamplates.Update(item);
