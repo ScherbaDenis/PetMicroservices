@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Template.DataAccess.MsSql.Repository;
+using Template.DataAccess.MsSql.Repositories;
 using Template.Domain.Model;
 
 namespace Template.DataAccess.MsSql.EntityConfigurations

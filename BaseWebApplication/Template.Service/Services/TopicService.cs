@@ -12,7 +12,7 @@ namespace Template.Service.Services
 
         public async Task CreateAsync(Topic item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Creating topic: {Topic}", item);
 
@@ -24,7 +24,7 @@ namespace Template.Service.Services
 
         public async Task DeleteAsync(Topic item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Deleting topic: {Topic}", item);
 
@@ -68,7 +68,7 @@ namespace Template.Service.Services
 
         public async Task UpdateAsync(Topic item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Updating topic: {Topic}", item);
 

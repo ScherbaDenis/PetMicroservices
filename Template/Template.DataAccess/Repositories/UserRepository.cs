@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Template.Domain.Model;
 using Template.Domain.Repository;
 
-namespace Template.DataAccess.MsSql.Repository
+namespace Template.DataAccess.MsSql.Repositories
 {
     public class UserRepository(TamplateDbContext context, ILogger<UserRepository> logger) : IUserRepository
     {

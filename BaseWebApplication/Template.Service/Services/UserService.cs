@@ -12,7 +12,7 @@ namespace Template.Service.Services
 
         public async Task CreateAsync(User item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Creating user: {User}", item);
 
@@ -24,7 +24,7 @@ namespace Template.Service.Services
 
         public async Task DeleteAsync(User item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Deleting user: {User}", item);
 
@@ -68,7 +68,7 @@ namespace Template.Service.Services
 
         public async Task UpdateAsync(User item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Updating user: {User}", item);
 
