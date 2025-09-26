@@ -6,15 +6,15 @@ namespace Template.Domain.Repository
     {
         IUnitOfWork UnitOfWork { get; }
 
-        Task AddAsync(Topic item, CancellationToken cancellationToken = default);
+        Task AddAsync(Item item, CancellationToken cancellationToken = default);
 
-        Task DeleteAsync(Topic item, CancellationToken cancellationToken = default);
+        Task DeleteAsync(Item item, CancellationToken cancellationToken = default);
 
-        Task<Topic?> FindAsync(CancellationToken cancellationToken = default);
+        Task<Item?> FindAsync(CancellationToken cancellationToken = default);
 
-        IEnumerable<Topic> GetAllAsync(CancellationToken cancellationToken = default);
+        IEnumerable<Item> GetAllAsync(CancellationToken cancellationToken = default);
 
-        Task UpdateAsync(Topic item, CancellationToken cancellationToken = default);
+        Task UpdateAsync(Item item, CancellationToken cancellationToken = default);
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 

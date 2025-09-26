@@ -1,17 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Template.Domain.Model;
 using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repository
 {
-    public class TamplateRepository : ITamplateRepository
+    public class TamplateRepository(TamplateDbContext context, ILogger<TamplateRepository> logger) : ITamplateRepository
     {
-        private readonly TamplateDbContext _context;
-
-        public TamplateRepository(TamplateDbContext context)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-        }
+        private readonly TamplateDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly ILogger<TamplateRepository> _logger = logger ?? throw new ArgumentNullException(nameof(context));
 
         public IUnitOfWork UnitOfWork
         {
@@ -20,42 +17,53 @@ namespace Template.DataAccess.MsSql.Repository
                 return _context;
             }
         }
-
-        public async void AddAsync(Tamplate item, CancellationToken cancellationToken = default)
+        public async Task AddAsync(Tamplate item, CancellationToken cancellationToken = default)
         {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
+            _logger.LogInformation("Adding a new Tamplate: {Tamplate}", item);
             await _context.Tamplates.AddAsync(item, cancellationToken);
         }
 
-        public void Delete(Guid id)
+        public async Task DeleteAsync(Tamplate item, CancellationToken cancellationToken = default)
         {
-            var item = _context.Tamplates.FirstOrDefault(x => x.Id == id);
-            if (item != null)
-                _context.Remove(item);
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
+            _logger.LogInformation("Deleting Tamplate: {Tamplate}", item);
+            _context.Tamplates.Remove(item);
+            await Task.CompletedTask; // keep async signature
         }
 
-        public IEnumerable<Tamplate> Find(Func<Tamplate, bool> predicate)
+        public async Task<Tamplate?> FindAsync(CancellationToken cancellationToken = default)
         {
-            return _context.Tamplates.Where(predicate);
+            _logger.LogInformation("Async Finding a Tamplate...");
+            return await _context.Tamplates.FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<Tamplate?> FindAsync(Guid id, CancellationToken cancellationToken = default)
+        public IEnumerable<Tamplate> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.Tamplates.FindAsync(id, cancellationToken);
+            _logger.LogInformation("Retrieving all Tamplates...");
+            return _context.Tamplates.ToList();
         }
 
-        public IEnumerable<Tamplate> GetAll()
+        public async Task UpdateAsync(Tamplate item, CancellationToken cancellationToken = default)
         {
-            return _context.Tamplates;
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
+            _logger.LogInformation("Updating Tamplate: {Tamplate}", item);
+            _context.Tamplates.Update(item);
+            await Task.CompletedTask;
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            _logger.LogInformation("Saving changes to database...");
             return await _context.SaveChangesAsync(cancellationToken);
         }
-
-        public void Update(Tamplate item)
+        public IEnumerable<Tamplate> Find(Func<Tamplate, bool> predicate)
         {
-            _context.Entry(item).State = EntityState.Modified;
+            _logger.LogInformation("Finding a Tamplate...");
+            return _context.Tamplates.Where(predicate);
         }
     }
 }
