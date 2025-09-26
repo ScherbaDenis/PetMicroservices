@@ -6,31 +6,39 @@ namespace Template.Service.Services
 {
     public class TopicService(ITopicRepository topicRepository) : ITopicService
     {
-        private readonly ITopicRepository topicRepository = topicRepository;
+        private readonly ITopicRepository _topicRepository = topicRepository;
 
-        public void CreateAsync(Topic item, CancellationToken cancellationToken = default)
+        public async Task CreateAsync(Topic item, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(item);
+
+            _topicRepository.AddAsync(item, cancellationToken);
+            await _topicRepository.SaveChangesAsync(cancellationToken);
         }
 
-        public void DeleteAsync(Topic item, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(Topic item, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(item);
+
+            _topicRepository.Delete(item.Id);
+            await _topicRepository.SaveChangesAsync(cancellationToken);
         }
 
         public Task<Topic?> FindAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return _topicRepository.FindAsync(cancellationToken);
         }
 
         public IEnumerable<Topic> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return _topicRepository.GetAllAsync(cancellationToken);
         }
 
-        public void UpdateAsync(Topic item, CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(Topic item, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(item);
+
+            await _topicRepository.UpdateAsync(item, cancellationToken);
+            await _topicRepository.SaveChangesAsync(cancellationToken);
         }
     }
-}
