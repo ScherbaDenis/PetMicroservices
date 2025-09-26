@@ -10,7 +10,7 @@ namespace Template.Domain.Repository
 
         Task DeleteAsync(Item item, CancellationToken cancellationToken = default);
 
-        Task<Item?> FindAsync(CancellationToken cancellationToken = default);
+        Task<Item?> FindAsync(ID id, CancellationToken cancellationToken = default);
 
         IEnumerable<Item> GetAllAsync(CancellationToken cancellationToken = default);
 

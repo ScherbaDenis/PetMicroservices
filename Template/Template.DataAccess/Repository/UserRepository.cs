@@ -34,10 +34,10 @@ namespace Template.DataAccess.MsSql.Repository
             await Task.CompletedTask; // keep async signature
         }
 
-        public async Task<User?> FindAsync(CancellationToken cancellationToken = default)
+        public async Task<User?> FindAsync(Guid id, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Async Finding a User...");
-            return await _context.Users.FirstOrDefaultAsync(cancellationToken);
+            return await _context.Users.FindAsync(id, cancellationToken);
         }
 
         public IEnumerable<User> GetAllAsync(CancellationToken cancellationToken = default)

@@ -2,7 +2,7 @@
 
 namespace Template.Domain.Services
 {
-    public interface ITagService : IService<Tag>
+    public interface ITagService : IService<Tag, int>
     {
         
     }

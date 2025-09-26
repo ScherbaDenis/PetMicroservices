@@ -34,16 +34,16 @@ namespace Template.DataAccess.MsSql.Repository
             await Task.CompletedTask; // keep async signature
         }
 
-        public async Task<Tag?> FindAsync(CancellationToken cancellationToken = default)
+        public async Task<Tag?> FindAsync(int id, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Async Finding a Tag...");
-            return await _context.Tags.FirstOrDefaultAsync(cancellationToken);
+            return await _context.Tags.FindAsync(id, cancellationToken);
         }
 
         public IEnumerable<Tag> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all Tags...");
-            return _context.Tags.ToList();
+            return [.. _context.Tags];
         }
 
         public async Task UpdateAsync(Tag item, CancellationToken cancellationToken = default)

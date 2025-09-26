@@ -2,7 +2,7 @@
 
 namespace Template.Domain.Services
 {
-    public interface ITamplateService : IService<Tamplate>
+    public interface ITamplateService : IService<Tamplate, Guid>
     {
     }
 }
