@@ -19,7 +19,7 @@ namespace Template.DataAccess.MsSql.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new TagEntityConfigurtion());
+            modelBuilder.ApplyConfiguration(new TagTamplateEntityConfigurtion());
             modelBuilder.ApplyConfiguration(new UserEntityConfigurtion());
             modelBuilder.ApplyConfiguration(new TopicEntityConfigurtion());
             modelBuilder.ApplyConfiguration(new TamplateEntityConfigurtion());

@@ -6,4 +6,30 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="Views\Tamplates\Create.cshtml" />
+    <Content Remove="Views\Tamplates\Delete.cshtml" />
+    <Content Remove="Views\Tamplates\Details.cshtml" />
+    <Content Remove="Views\Tamplates\Edit.cshtml" />
+    <Content Remove="Views\Tamplates\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Views\Tamplates\Delete.cshtml" />
+    <Compile Include="Views\Tamplates\Edit.cshtml" />
+    <Compile Include="Views\Tamplates\Create.cshtml" />
+    <Compile Include="Views\Tamplates\Details.cshtml" />
+    <Compile Include="Views\Tamplates\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Template\Template.DataAccess\Template.DataAccess.MsSql.csproj" />
+    <ProjectReference Include="..\..\Template\Template.Domain\Template.Domain.csproj" />
+    <ProjectReference Include="..\Template.Service\Template.Service.csproj" />
+  </ItemGroup>
+
 </Project>
