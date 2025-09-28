@@ -3,13 +3,11 @@ using Template.DataAccess.MsSql.EntityConfigurations;
 using Template.Domain.Model;
 using Template.Domain.Repository;
 
-namespace Template.DataAccess.MsSql.Repository
+namespace Template.DataAccess.MsSql.Repositories
 {
-    public class TamplateDbContext : DbContext, IUnitOfWork
+    public class TamplateDbContext(DbContextOptions<TamplateDbContext> options) : DbContext(options), IUnitOfWork
     {
-        public TamplateDbContext(DbContextOptions<TamplateDbContext> options) : base(options) { }
-
-        public const string DEFAULT_SCHEMA = "ordering";
+        public const string DEFAULT_SCHEMA = "ordering"; //todo templates
 
         public DbSet<Tag> Tags { get; set; }
 

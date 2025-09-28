@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Template.DataAccess.MsSql.Repository;
+using Template.DataAccess.MsSql.Repositories;
 using Template.Domain.Model;
 
 namespace Template.DataAccess.MsSql.EntityConfigurations
@@ -10,9 +10,8 @@ namespace Template.DataAccess.MsSql.EntityConfigurations
         public void Configure(EntityTypeBuilder<Tamplate> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.ToTable("users", TamplateDbContext.DEFAULT_SCHEMA);
+            builder.ToTable("tamplates", TamplateDbContext.DEFAULT_SCHEMA);
             builder.HasIndex(x => x.Id);
-            builder.HasIndex(x => x.Tags);
             builder.HasIndex(x => x.Title);
         }
     }

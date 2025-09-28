@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Template.Tests", "..\Templa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Template.DataAccess.MsSql", "..\Template\Template.DataAccess\Template.DataAccess.MsSql.csproj", "{20A3B313-80FE-C364-C5AB-E942F2DB2F7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Template.Service", "Template.Service\Template.Service.csproj", "{7696DF41-8492-4223-B6F5-E8CCF38085B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{20A3B313-80FE-C364-C5AB-E942F2DB2F7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20A3B313-80FE-C364-C5AB-E942F2DB2F7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20A3B313-80FE-C364-C5AB-E942F2DB2F7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7696DF41-8492-4223-B6F5-E8CCF38085B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7696DF41-8492-4223-B6F5-E8CCF38085B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7696DF41-8492-4223-B6F5-E8CCF38085B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7696DF41-8492-4223-B6F5-E8CCF38085B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{527F34E0-05F5-313D-1D12-DB1DC4C58311} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{9895A957-DC56-7FF4-A237-D0E8693D59C2} = {1CF38244-3FD5-4011-98DC-C662CEA56D96}
 		{20A3B313-80FE-C364-C5AB-E942F2DB2F7E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{7696DF41-8492-4223-B6F5-E8CCF38085B7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E02E019E-5FAA-4BD9-B991-729CA23BCC1F}
