@@ -24,6 +24,12 @@ namespace Template.DataAccess.MsSql.Repositories
             modelBuilder.ApplyConfiguration(new TopicEntityConfigurtion());
             modelBuilder.ApplyConfiguration(new TamplateEntityConfigurtion());
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
 
+            Database.EnsureDeleted();
+            Database.EnsureCreated();
+        }
     }
 }
