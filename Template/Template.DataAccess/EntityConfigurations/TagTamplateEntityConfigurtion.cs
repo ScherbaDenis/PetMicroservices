@@ -5,7 +5,7 @@ using Template.Domain.Model;
 
 namespace Template.DataAccess.MsSql.EntityConfigurations
 {
-    class TagEntityConfigurtion : IEntityTypeConfiguration<Tag>
+    class TagTamplateEntityConfigurtion : IEntityTypeConfiguration<Tag>
     {
         public void Configure(EntityTypeBuilder<Tag> builder)
         {

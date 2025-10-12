@@ -1,0 +1,9 @@
+﻿@using Template.Domain.Model
+@model Tamplate
+<h1>Delete Tamplate</h1>
+<p>Are you sure you want to delete <strong>@Model.Title</strong>?</p>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit">Delete</button>
+    <a asp-action="Index">Cancel</a>
+</form>

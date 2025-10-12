@@ -5,9 +5,14 @@ using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repositories
 {
-    public class TamplateDbContext(DbContextOptions<TamplateDbContext> options) : DbContext(options), IUnitOfWork
+    public class TamplateDbContext : DbContext, IUnitOfWork
     {
-        public const string DEFAULT_SCHEMA = "ordering"; //todo templates
+        public TamplateDbContext(DbContextOptions<TamplateDbContext> options) : base(options)
+        {
+            Database.EnsureCreated();
+        }
+
+        public const string DEFAULT_SCHEMA = "template";
 
         public DbSet<Tag> Tags { get; set; }
 
@@ -19,11 +24,10 @@ namespace Template.DataAccess.MsSql.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new TagEntityConfigurtion());
+            modelBuilder.ApplyConfiguration(new TagTamplateEntityConfigurtion());
             modelBuilder.ApplyConfiguration(new UserEntityConfigurtion());
             modelBuilder.ApplyConfiguration(new TopicEntityConfigurtion());
             modelBuilder.ApplyConfiguration(new TamplateEntityConfigurtion());
         }
-
     }
 }
