@@ -2,9 +2,9 @@
 using Template.Domain.Model;
 using Template.Domain.Services;
 
-namespace BaseWebApplication.Controllers
+namespace WebApp.Controllers
 {
-    public class TagsController(ITagService service) : Controller
+    public class TagController(ITagService service) : Controller
     {
         private readonly ITagService _service = service;
 
@@ -15,7 +15,7 @@ namespace BaseWebApplication.Controllers
             return View(tags);
         }
 
-        // GET: /Tags/Details/5
+        //GET: /Tags/Details/5
         public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
         {
             var tag = await _service.FindAsync(id, cancellationToken);

@@ -2,7 +2,7 @@
 using Template.Domain.Model;
 using Template.Domain.Services;
 
-namespace BaseWebApplication.Controllers
+namespace WebApp.Controllers
 {
     public class UsersController(IUserService service) : Controller
     {

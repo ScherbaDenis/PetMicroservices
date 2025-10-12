@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Tamplate>
+﻿@using Template.Domain.Model
+@model IEnumerable<Tamplate>
 @{
     ViewData["Title"] = "Tamplates";
 }
@@ -23,9 +24,9 @@
                 <td>@item.Owner?.Name</td>
                 <td>@item.Topic?.Name</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>
         }

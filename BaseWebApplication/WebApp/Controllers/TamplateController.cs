@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Template.Domain.Model;
 using Template.Domain.Services;
 
-namespace BaseWebApplication.Controllers
+namespace WebApp.Controllers
 {
     public class TamplatesController(ITamplateService service, IUserService userService, ITagService tagService, ITopicService topicService) : Controller
     {
