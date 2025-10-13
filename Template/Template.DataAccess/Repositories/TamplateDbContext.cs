@@ -5,11 +5,11 @@ using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repositories
 {
-    public class TamplateDbContext : DbContext, IUnitOfWork
+    public class TamplateDbContext : DbContext
     {
         public TamplateDbContext(DbContextOptions<TamplateDbContext> options) : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
         public const string DEFAULT_SCHEMA = "template";
