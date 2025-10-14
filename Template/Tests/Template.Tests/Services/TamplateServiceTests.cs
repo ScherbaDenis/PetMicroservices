@@ -8,15 +8,19 @@ namespace Template.Tests.Services
 {
     public class TamplateServiceTests
     {
+        private readonly Mock<IUnitOfWork> _unitOfWork;
         private readonly Mock<ITamplateRepository> _mockRepo;
         private readonly Mock<ILogger<TamplateService>> _mockLogger;
         private readonly TamplateService _service;
 
         public TamplateServiceTests()
         {
+            _unitOfWork = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<ITamplateRepository>();
             _mockLogger = new Mock<ILogger<TamplateService>>();
-            _service = new TamplateService(_mockRepo.Object, _mockLogger.Object);
+            _unitOfWork.Setup(uow => uow.TamplateRepository).Returns(_mockRepo.Object);
+
+            _service = new TamplateService(_unitOfWork.Object, _mockLogger.Object);
         }
 
         [Fact]

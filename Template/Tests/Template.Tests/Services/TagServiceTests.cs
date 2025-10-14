@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
+using Template.DataAccess.MsSql.Repositories;
 using Template.Domain.Model;
 using Template.Domain.Repository;
 using Template.Service.Services;
@@ -8,15 +9,19 @@ namespace Template.Tests.Services
 {
     public class TagServiceTests
     {
+        private readonly Mock<IUnitOfWork> _unitOfWork;
         private readonly Mock<ITagRepository> _mockRepo;
         private readonly Mock<ILogger<TagService>> _mockLogger;
         private readonly TagService _service;
 
         public TagServiceTests()
         {
+            _unitOfWork = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<ITagRepository>();
             _mockLogger = new Mock<ILogger<TagService>>();
-            _service = new TagService(_mockRepo.Object, _mockLogger.Object);
+            _unitOfWork.Setup(uow => uow.TagRepository).Returns(_mockRepo.Object);
+
+            _service = new TagService(_unitOfWork.Object, _mockLogger.Object);
         }
 
         [Fact]

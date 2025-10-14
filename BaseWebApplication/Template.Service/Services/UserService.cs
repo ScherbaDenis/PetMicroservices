@@ -5,10 +5,11 @@ using Template.Domain.Services;
 
 namespace Template.Service.Services
 {
-    public class UserService(IUserRepository userRepository, ILogger<UserService> logger) : IUserService
+    public class UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger) : IUserService
     {
-        private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         private readonly ILogger<UserService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly IUserRepository _userRepository = unitOfWork.UserRepository;
 
         public async Task CreateAsync(User item, CancellationToken cancellationToken = default)
         {
