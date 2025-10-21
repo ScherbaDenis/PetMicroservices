@@ -1,19 +1,26 @@
-﻿using Template.Domain.Repository;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Template.Domain.Services
 {
-    public interface IService<Item, ID> where Item : Entity<ID>
+    /// <summary>
+    /// Service contract using DTOs between service and controller layers.
+    /// Implementations should map DTOs to domain entities before calling repositories.
+    /// </summary>
+    public interface IService<TDto, TId>
     {
-        IEnumerable<Item> GetAllAsync(CancellationToken cancellationToken = default);
+        IEnumerable<TDto> GetAllAsync(CancellationToken cancellationToken = default);
 
-        Task<Item?> FindAsync(ID id, CancellationToken cancellationToken = default);
+        Task<TDto?> FindAsync(TId id, CancellationToken cancellationToken = default);
 
-        Task CreateAsync(Item item, CancellationToken cancellationToken = default);
+        Task CreateAsync(TDto item, CancellationToken cancellationToken = default);
 
-        Task UpdateAsync(Item item, CancellationToken cancellationToken = default);
+        Task UpdateAsync(TDto item, CancellationToken cancellationToken = default);
 
-        Task DeleteAsync(Item item, CancellationToken cancellationToken = default);
+        Task DeleteAsync(TDto item, CancellationToken cancellationToken = default);
 
-        IEnumerable<Item> Find(Func<Item, Boolean> predicate);
+        IEnumerable<TDto> Find(Func<TDto, bool> predicate);
     }
 }

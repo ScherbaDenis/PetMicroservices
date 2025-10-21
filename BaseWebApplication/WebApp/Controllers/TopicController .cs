@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Template.Domain.Model;
+using Template.Domain.DTOs;
 using Template.Domain.Services;
 
 namespace WebApp.Controllers
@@ -29,7 +29,7 @@ namespace WebApp.Controllers
         // POST: /Topics/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Topic topic, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(TopicDto topic, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return View(topic);
             await _service.CreateAsync(topic, cancellationToken);
@@ -47,7 +47,7 @@ namespace WebApp.Controllers
         // POST: /Topics/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Topic topic, CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(int id, TopicDto topic, CancellationToken cancellationToken)
         {
             if (id != topic.Id) return BadRequest();
             if (!ModelState.IsValid) return View(topic);

@@ -1,8 +1,8 @@
-﻿using Template.Domain.Model;
+﻿using Template.Domain.DTOs;
 
 namespace Template.Domain.Services
 {
-    public interface ITagService : IService<Tag, int>
+    public interface ITagService : IService<TagDto, int>
     {
         
     }

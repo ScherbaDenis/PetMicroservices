@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Template.Domain.Model;
+using Template.Domain.DTOs;
 using Template.Domain.Services;
 
 namespace WebApp.Controllers
 {
-    public class TagController(ITagService service) : Controller
+    public class TagsController(ITagService service) : Controller
     {
         private readonly ITagService _service = service;
 
@@ -29,7 +29,7 @@ namespace WebApp.Controllers
         // POST: /Tags/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Tag tag, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(TagDto tag, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return View(tag);
             await _service.CreateAsync(tag, cancellationToken);
@@ -47,7 +47,7 @@ namespace WebApp.Controllers
         // POST: /Tags/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Tag tag, CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(int id, TagDto tag, CancellationToken cancellationToken)
         {
             if (id != tag.Id) return BadRequest();
             if (!ModelState.IsValid) return View(tag);
