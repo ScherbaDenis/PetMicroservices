@@ -12,7 +12,7 @@ namespace Template.Service.Services
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         private readonly ILogger<TopicService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    private readonly ITopicRepository _topicRepository = unitOfWork.TopicRepository;
+        private readonly ITopicRepository _topicRepository = unitOfWork.TopicRepository;
 
     // use centralized TopicMapper
 
