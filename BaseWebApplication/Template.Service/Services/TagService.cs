@@ -6,10 +6,12 @@ using Template.Domain.Services;
 namespace Template.Service.Services
 {
 
-    public class TagService(ITagRepository tagRepository, ILogger<TagService> logger) : ITagService
+    public class TagService(IUnitOfWork unitOfWork, ILogger<TagService> logger) : ITagService
     {
-        private readonly ITagRepository _tagRepository = tagRepository ?? throw new ArgumentNullException(nameof(tagRepository));
+        private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         private readonly ILogger<TagService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+        private readonly ITagRepository _tagRepository = unitOfWork.TagRepository;
 
         public async Task CreateAsync(Tag item, CancellationToken cancellationToken = default)
         {

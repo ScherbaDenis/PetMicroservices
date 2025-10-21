@@ -4,8 +4,6 @@ namespace Template.Domain.Repository
 {
     public interface IRepository<Item, ID> where Item : Entity<ID>
     {
-        IUnitOfWork UnitOfWork { get; }
-
         Task AddAsync(Item item, CancellationToken cancellationToken = default);
 
         Task DeleteAsync(Item item, CancellationToken cancellationToken = default);

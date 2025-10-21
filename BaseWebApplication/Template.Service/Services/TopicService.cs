@@ -5,10 +5,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Template.Service.Services
 {
-    public class TopicService(ITopicRepository topicRepository, ILogger<TopicService> logger) : ITopicService
+    public class TopicService(IUnitOfWork unitOfWork, ILogger<TopicService> logger) : ITopicService
     {
-        private readonly ITopicRepository _topicRepository = topicRepository ?? throw new ArgumentNullException(nameof(topicRepository));
+        private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         private readonly ILogger<TopicService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly ITopicRepository _topicRepository = unitOfWork.TopicRepository;
 
         public async Task CreateAsync(Topic item, CancellationToken cancellationToken = default)
         {

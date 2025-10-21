@@ -9,13 +9,6 @@ namespace Template.DataAccess.MsSql.Repositories
         private readonly TamplateDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
         private readonly ILogger<TamplateRepository> _logger = logger ?? throw new ArgumentNullException(nameof(context));
 
-        public IUnitOfWork UnitOfWork
-        {
-            get
-            {
-                return _context;
-            }
-        }
         public async Task AddAsync(Tamplate item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
