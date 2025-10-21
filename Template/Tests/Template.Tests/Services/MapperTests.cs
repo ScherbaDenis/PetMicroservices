@@ -14,12 +14,12 @@ namespace Template.Tests.Services
         public void UserMapper_Roundtrip_PreservesFields()
         {
             var entity = new User { Id = Guid.NewGuid(), Name = "Alice" };
-            var dto = UserMapper.ToDto(entity);
+            var dto = entity.ToDto();
 
             Assert.Equal(entity.Id, dto.Id);
             Assert.Equal(entity.Name, dto.Name);
 
-            var back = UserMapper.ToEntity(dto);
+            var back = dto.ToEntity();
             Assert.Equal(dto.Id, back.Id);
             Assert.Equal(dto.Name, back.Name);
         }
@@ -28,12 +28,12 @@ namespace Template.Tests.Services
         public void TagMapper_Roundtrip_PreservesFields()
         {
             var entity = new Tag { Id = 7, Name = "tag-7" };
-            var dto = TagMapper.ToDto(entity);
+            var dto = entity.ToDto();
 
             Assert.Equal(entity.Id, dto.Id);
             Assert.Equal(entity.Name, dto.Name);
 
-            var back = TagMapper.ToEntity(dto);
+            var back = dto.ToEntity();
             Assert.Equal(dto.Id, back.Id);
             Assert.Equal(dto.Name, back.Name);
         }
@@ -42,12 +42,12 @@ namespace Template.Tests.Services
         public void TopicMapper_Roundtrip_PreservesFields()
         {
             var entity = new Topic { Id = 3, Name = "topic-3" };
-            var dto = TopicMapper.ToDto(entity);
+            var dto = entity.ToDto();
 
             Assert.Equal(entity.Id, dto.Id);
             Assert.Equal(entity.Name, dto.Name);
 
-            var back = TopicMapper.ToEntity(dto);
+            var back = dto.ToEntity();
             Assert.Equal(dto.Id, back.Id);
             Assert.Equal(dto.Name, back.Name);
         }
@@ -69,7 +69,7 @@ namespace Template.Tests.Services
                 Tags = tags
             };
 
-            var dto = TamplateMapper.ToDto(entity);
+            var dto = entity.ToDto();
 
             Assert.Equal(entity.Id, dto.Id);
             Assert.Equal(entity.Title, dto.Title);
@@ -80,7 +80,7 @@ namespace Template.Tests.Services
             Assert.Equal(entity.Topic.Name, dto.Topic!.Name);
             Assert.Equal(entity.Tags!.ToList().Count, dto.Tags!.ToList().Count);
 
-            var back = TamplateMapper.ToEntity(dto);
+            var back = dto.ToEntity();
 
             Assert.Equal(dto.Id, back.Id);
             Assert.Equal(dto.Title, back.Title);

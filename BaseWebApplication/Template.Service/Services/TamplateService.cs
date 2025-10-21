@@ -21,7 +21,7 @@ namespace Template.Service.Services
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Creating tamplate: {Tamplate}", item);
 
-            var entity = TamplateMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _tamplateRepository.AddAsync(entity, cancellationToken);
             await _tamplateRepository.SaveChangesAsync(cancellationToken);
 
@@ -33,7 +33,7 @@ namespace Template.Service.Services
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Deleting tamplate: {Tamplate}", item);
 
-            var entity = TamplateMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _tamplateRepository.DeleteAsync(entity, cancellationToken);
             await _tamplateRepository.SaveChangesAsync(cancellationToken);
 
@@ -43,8 +43,8 @@ namespace Template.Service.Services
         public IEnumerable<TamplateDto> Find(Func<TamplateDto, bool> predicate)
         {
             _logger.LogInformation("Finding tamplate...");
-            var entities = _tamplateRepository.Find(t => predicate(TamplateMapper.ToDto(t)));
-            return entities.Select(TamplateMapper.ToDto);
+            var entities = _tamplateRepository.Find(t => predicate(t.ToDto()));
+            return entities.Select(t => t.ToDto());
         }
 
         public async Task<TamplateDto?> FindAsync(Guid id, CancellationToken cancellationToken = default)
@@ -59,7 +59,7 @@ namespace Template.Service.Services
             }
 
             _logger.LogInformation("Tamplate found: {Tamplate}", tamplate);
-            return TamplateMapper.ToDto(tamplate);
+            return tamplate.ToDto();
         }
 
         public IEnumerable<TamplateDto> GetAllAsync(CancellationToken cancellationToken = default)
@@ -69,7 +69,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Retrieved {Count} tamplates", tamplates is ICollection<Tamplate> col ? col.Count : -1);
 
-            return tamplates.Select(TamplateMapper.ToDto);
+            return tamplates.Select(t => t.ToDto());
         }
 
         public async Task UpdateAsync(TamplateDto item, CancellationToken cancellationToken = default)
@@ -77,7 +77,7 @@ namespace Template.Service.Services
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Updating tamplate: {Tamplate}", item);
 
-            var entity = TamplateMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _tamplateRepository.UpdateAsync(entity, cancellationToken);
             await _tamplateRepository.SaveChangesAsync(cancellationToken);
 

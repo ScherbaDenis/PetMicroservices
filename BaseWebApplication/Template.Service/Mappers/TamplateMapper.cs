@@ -6,7 +6,7 @@ namespace Template.Service.Mappers
 {
     public static class TamplateMapper
     {
-        public static TamplateDto ToDto(Tamplate e)
+        public static TamplateDto ToDto(this Tamplate e)
         {
             if (e == null) return null!;
             return new TamplateDto
@@ -14,13 +14,13 @@ namespace Template.Service.Mappers
                 Id = e.Id,
                 Title = e.Title,
                 Description = e.Description,
-                Owner = e.Owner == null ? null : UserMapper.ToDto(e.Owner),
-                Topic = e.Topic == null ? null : TopicMapper.ToDto(e.Topic),
-                Tags = e.Tags?.Select(TagMapper.ToDto).ToList() ?? new System.Collections.Generic.List<TagDto>()
+                Owner = e.Owner == null ? null : e.Owner.ToDto(),
+                Topic = e.Topic == null ? null : e.Topic.ToDto(),
+                Tags = e.Tags?.Select(t => t.ToDto()).ToList() ?? new System.Collections.Generic.List<TagDto>()
             };
         }
 
-        public static Tamplate ToEntity(TamplateDto d)
+        public static Tamplate ToEntity(this TamplateDto d)
         {
             if (d == null) return null!;
             return new Tamplate
@@ -28,9 +28,9 @@ namespace Template.Service.Mappers
                 Id = d.Id,
                 Title = d.Title,
                 Description = d.Description,
-                Owner = d.Owner == null ? null : UserMapper.ToEntity(d.Owner),
-                Topic = d.Topic == null ? null : TopicMapper.ToEntity(d.Topic),
-                Tags = d.Tags?.Select(TagMapper.ToEntity).ToList() ?? new System.Collections.Generic.List<Tag>()
+                Owner = d.Owner == null ? null : d.Owner.ToEntity(),
+                Topic = d.Topic == null ? null : d.Topic.ToEntity(),
+                Tags = d.Tags?.Select(t => t.ToEntity()).ToList() ?? new System.Collections.Generic.List<Tag>()
             };
         }
     }

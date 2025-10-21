@@ -22,7 +22,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Creating topic: {Topic}", item);
 
-            var entity = TopicMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _topicRepository.AddAsync(entity, cancellationToken);
             await _topicRepository.SaveChangesAsync(cancellationToken);
 
@@ -35,7 +35,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Deleting topic: {Topic}", item);
 
-            var entity = TopicMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _topicRepository.DeleteAsync(entity, cancellationToken);
             await _topicRepository.SaveChangesAsync(cancellationToken);
 
@@ -45,8 +45,8 @@ namespace Template.Service.Services
         public IEnumerable<TopicDto> Find(Func<TopicDto, bool> predicate)
         {
             _logger.LogInformation("Finding topic...");
-            var entities = _topicRepository.Find(t => predicate(TopicMapper.ToDto(t)));
-            return entities.Select(TopicMapper.ToDto);
+            var entities = _topicRepository.Find(t => predicate(t.ToDto()));
+            return entities.Select(t => t.ToDto());
         }
 
         public async Task<TopicDto?> FindAsync(int id, CancellationToken cancellationToken = default)
@@ -61,7 +61,7 @@ namespace Template.Service.Services
             }
 
             _logger.LogInformation("Topic found: {Topic}", topic);
-            return TopicMapper.ToDto(topic);
+            return topic.ToDto();
         }
 
         public IEnumerable<TopicDto> GetAllAsync(CancellationToken cancellationToken = default)
@@ -72,7 +72,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Retrieved {Count} topics", topics is ICollection<Topic> col ? col.Count : -1);
 
-            return topics.Select(TopicMapper.ToDto);
+            return topics.Select(t => t.ToDto());
         }
 
         public async Task UpdateAsync(TopicDto item, CancellationToken cancellationToken = default)
@@ -81,7 +81,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Updating topic: {Topic}", item);
 
-            var entity = TopicMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _topicRepository.UpdateAsync(entity, cancellationToken);
             await _topicRepository.SaveChangesAsync(cancellationToken);
 

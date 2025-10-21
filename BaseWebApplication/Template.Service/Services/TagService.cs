@@ -23,7 +23,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Creating tag: {Tag}", item);
 
-            var entity = TagMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _tagRepository.AddAsync(entity, cancellationToken);
             await _tagRepository.SaveChangesAsync(cancellationToken);
 
@@ -36,7 +36,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Deleting tag: {Tag}", item);
 
-            var entity = TagMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _tagRepository.DeleteAsync(entity, cancellationToken);
             await _tagRepository.SaveChangesAsync(cancellationToken);
 
@@ -48,8 +48,8 @@ namespace Template.Service.Services
             _logger.LogInformation("Finding tag...");
 
             // perform find on entities then map to DTOs
-            var entities = _tagRepository.Find(t => predicate(TagMapper.ToDto(t)));
-            return entities.Select(TagMapper.ToDto);
+            var entities = _tagRepository.Find(t => predicate(t.ToDto()));
+            return entities.Select(t => t.ToDto());
         }
 
         public async Task<TagDto?> FindAsync(int id, CancellationToken cancellationToken = default)
@@ -65,7 +65,7 @@ namespace Template.Service.Services
             }
 
             _logger.LogInformation("Tag found: {Tag}", tag);
-            return TagMapper.ToDto(tag);
+            return tag.ToDto();
         }
 
         public IEnumerable<TagDto> GetAllAsync(CancellationToken cancellationToken = default)
@@ -76,7 +76,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Retrieved {Count} tags", tags is ICollection<Tag> col ? col.Count : -1);
 
-            return tags.Select(TagMapper.ToDto);
+            return tags.Select(t => t.ToDto());
         }
 
         public async Task UpdateAsync(TagDto item, CancellationToken cancellationToken = default)
@@ -85,7 +85,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Updating tag: {Tag}", item);
 
-            var entity = TagMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _tagRepository.UpdateAsync(entity, cancellationToken);
             await _tagRepository.SaveChangesAsync(cancellationToken);
 

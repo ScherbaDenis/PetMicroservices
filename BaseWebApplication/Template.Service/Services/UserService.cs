@@ -23,7 +23,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Creating user: {User}", item);
 
-            var entity = UserMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _userRepository.AddAsync(entity, cancellationToken);
             await _userRepository.SaveChangesAsync(cancellationToken);
 
@@ -36,7 +36,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Deleting user: {User}", item);
 
-            var entity = UserMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _userRepository.DeleteAsync(entity, cancellationToken);
             await _userRepository.SaveChangesAsync(cancellationToken);
 
@@ -47,8 +47,8 @@ namespace Template.Service.Services
         {
             _logger.LogInformation("Finding user...");
 
-            var entities = _userRepository.Find(u => predicate(UserMapper.ToDto(u)));
-            return entities.Select(UserMapper.ToDto);
+            var entities = _userRepository.Find(u => predicate(u.ToDto()));
+            return entities.Select(u => u.ToDto());
         }
 
         public async Task<UserDto?> FindAsync(Guid id, CancellationToken cancellationToken = default)
@@ -64,7 +64,7 @@ namespace Template.Service.Services
             }
 
             _logger.LogInformation("User found: {User}", user);
-            return UserMapper.ToDto(user);
+            return user.ToDto();
         }
 
         public IEnumerable<UserDto> GetAllAsync(CancellationToken cancellationToken = default)
@@ -75,7 +75,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Retrieved {Count} users", users is ICollection<User> col ? col.Count : -1);
 
-            return users.Select(UserMapper.ToDto);
+            return users.Select(u => u.ToDto());
         }
 
         public async Task UpdateAsync(UserDto item, CancellationToken cancellationToken = default)
@@ -84,7 +84,7 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Updating user: {User}", item);
 
-            var entity = UserMapper.ToEntity(item);
+            var entity = item.ToEntity();
             await _userRepository.UpdateAsync(entity, cancellationToken);
             await _userRepository.SaveChangesAsync(cancellationToken);
 
