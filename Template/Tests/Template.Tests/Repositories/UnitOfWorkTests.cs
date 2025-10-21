@@ -12,7 +12,7 @@ namespace Template.Tests.Repositories
 {
     public class UnitOfWorkTests
     {
-        private TamplateDbContext _mockContext;
+    private TamplateDbContext? _mockContext;
         private readonly Mock<ILogger<UnitOfWork>> _mockLogger = new();
         private readonly Mock<ILoggerFactory> _mockLoggerFactory = new();
 
@@ -40,21 +40,21 @@ namespace Template.Tests.Repositories
         public void Constructor_ShouldThrow_WhenContextIsNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                new UnitOfWork(null, _mockLogger.Object, _mockLoggerFactory.Object));
+                new UnitOfWork(null!, _mockLogger.Object, _mockLoggerFactory.Object));
         }
 
         [Fact]
         public void Constructor_ShouldThrow_WhenLoggerIsNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                new UnitOfWork(_mockContext, null, _mockLoggerFactory.Object));
+                new UnitOfWork(CreateTestDbContext(), null!, _mockLoggerFactory.Object));
         }
 
         [Fact]
         public void Constructor_ShouldThrow_WhenLoggerFactoryIsNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                new UnitOfWork(_mockContext, _mockLogger.Object, null));
+                new UnitOfWork(CreateTestDbContext(), _mockLogger.Object, null!));
         }
 
         [Fact]

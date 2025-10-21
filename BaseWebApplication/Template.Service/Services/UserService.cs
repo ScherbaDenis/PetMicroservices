@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Linq;
+using Template.Domain.DTOs;
+using Microsoft.Extensions.Logging;
 using Template.Domain.Model;
+using Template.Service.Mappers;
 using Template.Domain.Repository;
 using Template.Domain.Services;
 
@@ -9,54 +12,62 @@ namespace Template.Service.Services
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         private readonly ILogger<UserService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        private readonly IUserRepository _userRepository = unitOfWork.UserRepository;
+    private readonly IUserRepository _userRepository = unitOfWork.UserRepository;
 
-        public async Task CreateAsync(User item, CancellationToken cancellationToken = default)
+    // Use centralized mappers
+    
+
+        public async Task CreateAsync(UserDto item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Creating user: {User}", item);
 
-            await _userRepository.AddAsync(item, cancellationToken);
+            var entity = UserMapper.ToEntity(item);
+            await _userRepository.AddAsync(entity, cancellationToken);
             await _userRepository.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("User created successfully: {User}", item);
+            _logger.LogInformation("User created successfully: {User}", entity);
         }
 
-        public async Task DeleteAsync(User item, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(UserDto item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Deleting user: {User}", item);
 
-            await _userRepository.DeleteAsync(item, cancellationToken);
+            var entity = UserMapper.ToEntity(item);
+            await _userRepository.DeleteAsync(entity, cancellationToken);
             await _userRepository.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("User deleted successfully: {User}", item);
+            _logger.LogInformation("User deleted successfully: {User}", entity);
         }
 
-        public IEnumerable<User> Find(Func<User, bool> predicate)
+        public IEnumerable<UserDto> Find(Func<UserDto, bool> predicate)
         {
             _logger.LogInformation("Finding user...");
 
-            return _userRepository.Find(predicate);
+            var entities = _userRepository.Find(u => predicate(UserMapper.ToDto(u)));
+            return entities.Select(UserMapper.ToDto);
         }
 
-        public async Task<User?> FindAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<UserDto?> FindAsync(Guid id, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Finding user...");
 
             var user = await _userRepository.FindAsync(id, cancellationToken);
 
             if (user == null)
+            {
                 _logger.LogWarning("No user found");
-            else
-                _logger.LogInformation("User found: {User}", user);
+                return null;
+            }
 
-            return user;
+            _logger.LogInformation("User found: {User}", user);
+            return UserMapper.ToDto(user);
         }
 
-        public IEnumerable<User> GetAllAsync(CancellationToken cancellationToken = default)
+        public IEnumerable<UserDto> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all users...");
 
@@ -64,19 +75,20 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Retrieved {Count} users", users is ICollection<User> col ? col.Count : -1);
 
-            return users;
+            return users.Select(UserMapper.ToDto);
         }
 
-        public async Task UpdateAsync(User item, CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(UserDto item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
 
             _logger.LogInformation("Updating user: {User}", item);
 
-            await _userRepository.UpdateAsync(item, cancellationToken);
+            var entity = UserMapper.ToEntity(item);
+            await _userRepository.UpdateAsync(entity, cancellationToken);
             await _userRepository.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("User updated successfully: {User}", item);
+            _logger.LogInformation("User updated successfully: {User}", entity);
         }
     }
 }
