@@ -1,0 +1,6 @@
+@WebApiComment_HostAddress = http://localhost:5234
+
+GET {{WebApiComment_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

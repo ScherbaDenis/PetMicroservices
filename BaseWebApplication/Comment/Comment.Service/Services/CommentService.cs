@@ -68,6 +68,16 @@ namespace Comment.Service.Services
             return comments.Select(t => t.ToDto());
         }
 
+        public IEnumerable<CommentDto> GetByTamplateAsync(Guid tamplateId, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving Tamplate all comments...");
+            var comments = _commentRepository.GetAllAsync(cancellationToken).Where(comment => comment.Tamplate.Id == tamplateId);
+
+            _logger.LogInformation("Retrieved Tamplate {Count} comments", comments is ICollection<Domain.Models.Comment> col ? col.Count : -1);
+
+            return comments.Select(t => t.ToDto());
+        }
+
         public async Task UpdateAsync(CommentDto item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
