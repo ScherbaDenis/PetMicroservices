@@ -13,7 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Template\Template.DataAccess\Template.DataAccess.MsSql.csproj" />
     <ProjectReference Include="..\..\Template\Template.Domain\Template.Domain.csproj" />
-    <ProjectReference Include="..\Template.Service\Template.Service.csproj" />
+    <ProjectReference Include="..\..\Template\Template.Service\Template.Service.csproj" />
   </ItemGroup>
 
 </Project>
