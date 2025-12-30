@@ -16,7 +16,8 @@ namespace Template.Service.Mappers
                 Description = e.Description,
                 Owner = e.Owner == null ? null : e.Owner.ToDto(),
                 Topic = e.Topic == null ? null : e.Topic.ToDto(),
-                Tags = e.Tags?.Select(t => t.ToDto()).ToList() ?? new System.Collections.Generic.List<TagDto>()
+                Tags = e.Tags?.Select(t => t.ToDto()).ToList() ?? new System.Collections.Generic.List<TagDto>(),
+                Questions = e.Questions?.Select(q => q.ToDto()).ToList() ?? new System.Collections.Generic.List<QuestionDto>()
             };
         }
 
@@ -30,7 +31,8 @@ namespace Template.Service.Mappers
                 Description = d.Description,
                 Owner = d.Owner == null ? null : d.Owner.ToEntity(),
                 Topic = d.Topic == null ? null : d.Topic.ToEntity(),
-                Tags = d.Tags?.Select(t => t.ToEntity()).ToList() ?? new System.Collections.Generic.List<Tag>()
+                Tags = d.Tags?.Select(t => t.ToEntity()).ToList() ?? new System.Collections.Generic.List<Tag>(),
+                Questions = d.Questions?.Select(q => q.ToEntity()).ToList() ?? new System.Collections.Generic.List<Question>()
             };
         }
     }

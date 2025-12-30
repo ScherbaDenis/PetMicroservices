@@ -11,5 +11,6 @@ namespace Template.Domain.DTOs
         public UserDto? Owner { get; init; }
         public TopicDto? Topic { get; init; }
         public IEnumerable<TagDto>? Tags { get; init; }
+        public IEnumerable<QuestionDto>? Questions { get; init; }
     }
 }
