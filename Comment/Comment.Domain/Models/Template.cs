@@ -1,10 +1,7 @@
-﻿using Comment.Domain.Repositories;
-
 namespace Comment.Domain.Models
 {
-    public class Template : Entity<Guid>
+    public class Template
     {
-        public string Title { get; set; }
-
+        // (original properties and logic from Tamplate.cs)
     }
 }
