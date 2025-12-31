@@ -11,17 +11,17 @@ builder.Services.AddControllersWithViews();
 
 // DbContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<TamplateDbContext>(options =>
+builder.Services.AddDbContext<TemplateDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // Repos and services
-builder.Services.AddScoped<ITamplateRepository, TamplateRepository>();
+builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 
 
-builder.Services.AddScoped<ITamplateService, TamplateService>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITagService, TagService>();

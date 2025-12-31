@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
+using Template.Domain.Repository;
 
 namespace Template.Domain.Model
 {
-    public class Tamplate : Entity<Guid>
+    public class Template : Entity<Guid>
     {
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }

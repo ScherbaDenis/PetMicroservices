@@ -6,27 +6,27 @@ using Template.Domain.Model;
 
 namespace Template.Tests.Repositories
 {
-    public class TamplateRepositoryTests
+    public class TemplateRepositoryTests
     {
-        private readonly TamplateDbContext _context;
-        private readonly Mock<ILogger<TamplateRepository>> _mockLogger;
-        private readonly TamplateRepository _repository;
+        private readonly TemplateDbContext _context;
+        private readonly Mock<ILogger<TemplateRepository>> _mockLogger;
+        private readonly TemplateRepository _repository;
 
-        public TamplateRepositoryTests()
+        public TemplateRepositoryTests()
         {
-            var options = new DbContextOptionsBuilder<TamplateDbContext>()
+            var options = new DbContextOptionsBuilder<TemplateDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // unique DB per test
                 .Options;
 
-            _context = new TamplateDbContext(options);
-            _mockLogger = new Mock<ILogger<TamplateRepository>>();
-            _repository = new TamplateRepository(_context, _mockLogger.Object);
+            _context = new TemplateDbContext(options);
+            _mockLogger = new Mock<ILogger<TemplateRepository>>();
+            _repository = new TemplateRepository(_context, _mockLogger.Object);
         }
 
         [Fact]
         public async Task AddAsync_ShouldAddTamplate()
         {
-            var tamplate = new Tamplate { Id = Guid.NewGuid(), Title = "Test Tamplate" };
+            var tamplate = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Test Tamplate" };
 
             await _repository.AddAsync(tamplate);
             await _repository.SaveChangesAsync();
@@ -39,7 +39,7 @@ namespace Template.Tests.Repositories
         [Fact]
         public async Task DeleteAsync_ShouldRemoveTamplate()
         {
-            var tamplate = new Tamplate { Id = Guid.NewGuid(), Title  = "ToDelete" };
+            var tamplate = new Domain.Model.Template { Id = Guid.NewGuid(), Title  = "ToDelete" };
             _context.Tamplates.Add(tamplate);
             await _context.SaveChangesAsync();
 
@@ -53,7 +53,7 @@ namespace Template.Tests.Repositories
         public async Task FindAsync_ShouldReturnTamplate_WhenExists()
         {
             var guid = Guid.NewGuid();
-            var tamplate = new Tamplate { Id = guid, Title = "FindMe" };
+            var tamplate = new Domain.Model.Template { Id = guid, Title = "FindMe" };
             _context.Tamplates.Add(tamplate);
             await _context.SaveChangesAsync();
 
@@ -74,8 +74,8 @@ namespace Template.Tests.Repositories
         public void GetAllAsync_ShouldReturnAllTamplates()
         {
             _context.Tamplates.AddRange(
-                new Tamplate { Id = Guid.NewGuid(), Title = "T1" },
-                new Tamplate { Id = Guid.NewGuid(), Title = "T2" }
+                new Template { Id = Guid.NewGuid(), Title = "T1" },
+                new Template { Id = Guid.NewGuid(), Title = "T2" }
             );
             _context.SaveChanges();
 
@@ -88,7 +88,7 @@ namespace Template.Tests.Repositories
         public async Task UpdateAsync_ShouldModifyTamplate()
         {
             var guid = Guid.NewGuid();
-            var tamplate = new Tamplate { Id = guid, Title = "OldName" };
+            var tamplate = new Domain.Model.Template { Id = guid, Title = "OldName" };
             _context.Tamplates.Add(tamplate);
             await _context.SaveChangesAsync();
 
@@ -104,8 +104,8 @@ namespace Template.Tests.Repositories
         public void Find_WithPredicate_ShouldReturnMatchingTamplates()
         {
             _context.Tamplates.AddRange(
-                new Tamplate { Id = Guid.NewGuid(), Title = "Match" },
-                new Tamplate { Id = Guid.NewGuid(), Title = "Skip" }
+                new Template { Id = Guid.NewGuid(), Title = "Match" },
+                new Template { Id = Guid.NewGuid(), Title = "Skip" }
             );
             _context.SaveChanges();
 

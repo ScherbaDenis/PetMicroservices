@@ -4,12 +4,12 @@ using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repositories
 {
-    public class TamplateRepository(TamplateDbContext context, ILogger<TamplateRepository> logger) : ITamplateRepository
+    public class TemplateRepository(TemplateDbContext context, ILogger<TemplateRepository> logger) : ITemplateRepository
     {
-        private readonly TamplateDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
-        private readonly ILogger<TamplateRepository> _logger = logger ?? throw new ArgumentNullException(nameof(context));
+        private readonly TemplateDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly ILogger<TemplateRepository> _logger = logger ?? throw new ArgumentNullException(nameof(context));
 
-        public async Task AddAsync(Tamplate item, CancellationToken cancellationToken = default)
+        public async Task AddAsync(Domain.Model.Template item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -17,7 +17,7 @@ namespace Template.DataAccess.MsSql.Repositories
             await _context.Tamplates.AddAsync(item, cancellationToken);
         }
 
-        public async Task DeleteAsync(Tamplate item, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(Domain.Model.Template item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -26,19 +26,19 @@ namespace Template.DataAccess.MsSql.Repositories
             await Task.CompletedTask; // keep async signature
         }
 
-        public async Task<Tamplate?> FindAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Domain.Model.Template?> FindAsync(Guid id, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Async Finding a Tamplate...");
             return await _context.Tamplates.FindAsync(id, cancellationToken);
         }
 
-        public IEnumerable<Tamplate> GetAllAsync(CancellationToken cancellationToken = default)
+        public IEnumerable<Domain.Model.Template> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all Tamplates...");
             return _context.Tamplates.ToList();
         }
 
-        public async Task UpdateAsync(Tamplate item, CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(Domain.Model.Template item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -52,7 +52,7 @@ namespace Template.DataAccess.MsSql.Repositories
             _logger.LogInformation("Saving changes to database...");
             return await _context.SaveChangesAsync(cancellationToken);
         }
-        public IEnumerable<Tamplate> Find(Func<Tamplate, bool> predicate)
+        public IEnumerable<Domain.Model.Template> Find(Func<Domain.Model.Template, bool> predicate)
         {
             _logger.LogInformation("Finding a Tamplate...");
             return _context.Tamplates.Where(predicate);

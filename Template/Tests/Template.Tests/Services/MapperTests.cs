@@ -59,7 +59,7 @@ namespace Template.Tests.Services
             var topic = new Topic { Id = 5, Name = "Topic 5" };
             var tags = new List<Tag> { new Tag { Id = 1, Name = "t1" }, new Tag { Id = 2, Name = "t2" } };
 
-            var entity = new Tamplate
+            var entity = new Domain.Model.Template
             {
                 Id = Guid.NewGuid(),
                 Title = "Title",

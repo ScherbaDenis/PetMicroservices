@@ -2,7 +2,7 @@
 {
     public interface IUnitOfWork : IDisposable
     {
-        ITamplateRepository TamplateRepository { get; }
+        ITemplateRepository TamplateRepository { get; }
         ITopicRepository TopicRepository { get; }
         IUserRepository UserRepository { get; }
         ITagRepository TagRepository { get; }

@@ -8,11 +8,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Template.Service.Services
 {
-    public class TamplateService(IUnitOfWork unitOfWork, ILogger<TamplateService> logger) : ITamplateService
+    public class TemplateService(IUnitOfWork unitOfWork, ILogger<TemplateService> logger) : ITemplateService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        private readonly ILogger<TamplateService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        private readonly ITamplateRepository _tamplateRepository = unitOfWork.TamplateRepository;
+        private readonly ILogger<TemplateService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly ITemplateRepository _tamplateRepository = unitOfWork.TamplateRepository;
 
         // use centralized TamplateMapper
 
@@ -67,7 +67,7 @@ namespace Template.Service.Services
             _logger.LogInformation("Retrieving all tamplates...");
             var tamplates = _tamplateRepository.GetAllAsync(cancellationToken);
 
-            _logger.LogInformation("Retrieved {Count} tamplates", tamplates is ICollection<Tamplate> col ? col.Count : -1);
+            _logger.LogInformation("Retrieved {Count} tamplates", tamplates is ICollection<Domain.Model.Template> col ? col.Count : -1);
 
             return tamplates.Select(t => t.ToDto());
         }

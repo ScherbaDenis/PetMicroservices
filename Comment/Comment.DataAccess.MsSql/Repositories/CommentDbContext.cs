@@ -15,12 +15,12 @@ namespace Comment.DataAccess.MsSql.Repositories
 
         public DbSet<Domain.Models.Comment> Comments { get; set; }
 
-        public DbSet<Tamplate> Tamplates { get; set; }
+        public DbSet<Template> Templates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new CommentEntityConfigurtion());
-            modelBuilder.ApplyConfiguration(new TamplateEntityConfigurtion());
+            modelBuilder.ApplyConfiguration(new TemplateEntityConfigurtion());
         }
     }
 }

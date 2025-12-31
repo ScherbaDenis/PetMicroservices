@@ -1,13 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Template.Domain.Model;
+using Template.Domain.Repository;
+
 namespace Template.DataAccess.MsSql.Repositories
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Template.Domain.Model;
-    using Template.Domain.Repository;
+   
 
     public class QuestionRepository : IQuestionRepository
     {

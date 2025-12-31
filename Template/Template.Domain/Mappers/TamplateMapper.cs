@@ -6,7 +6,7 @@ namespace Template.Service.Mappers
 {
     public static class TamplateMapper
     {
-        public static TamplateDto ToDto(this Tamplate e)
+        public static TamplateDto ToDto(this Domain.Model.Template e)
         {
             if (e == null) return null!;
             return new TamplateDto
@@ -21,10 +21,10 @@ namespace Template.Service.Mappers
             };
         }
 
-        public static Tamplate ToEntity(this TamplateDto d)
+        public static Domain.Model.Template ToEntity(this TamplateDto d)
         {
             if (d == null) return null!;
-            return new Tamplate
+            return new Domain.Model.Template
             {
                 Id = d.Id,
                 Title = d.Title,

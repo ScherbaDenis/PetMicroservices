@@ -5,9 +5,9 @@ using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repositories
 {
-    public class TamplateDbContext : DbContext
+    public class TemplateDbContext : DbContext
     {
-        public TamplateDbContext(DbContextOptions<TamplateDbContext> options) : base(options)
+        public TemplateDbContext(DbContextOptions<TemplateDbContext> options) : base(options)
         {
             //Database.EnsureCreated();
         }
@@ -20,7 +20,7 @@ namespace Template.DataAccess.MsSql.Repositories
 
         public DbSet<Topic> Topics { get; set; }
 
-        public DbSet<Tamplate> Tamplates { get; set; }
+        public DbSet<Domain.Model.Template> Tamplates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

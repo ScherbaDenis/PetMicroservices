@@ -2,7 +2,7 @@
 
 namespace Comment.Domain.Models
 {
-    public class Tamplate : Entity<Guid>
+    public class Template : Entity<Guid>
     {
         public string Title { get; set; }
 

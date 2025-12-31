@@ -12,7 +12,7 @@ namespace Template.Tests.Repositories
 {
     public class UnitOfWorkTests
     {
-    private TamplateDbContext? _mockContext;
+    private TemplateDbContext? _mockContext;
         private readonly Mock<ILogger<UnitOfWork>> _mockLogger = new();
         private readonly Mock<ILoggerFactory> _mockLoggerFactory = new();
 
@@ -27,13 +27,13 @@ namespace Template.Tests.Repositories
             return new UnitOfWork(_mockContext, _mockLogger.Object, _mockLoggerFactory.Object);
         }
 
-        private TamplateDbContext CreateTestDbContext()
+        private TemplateDbContext CreateTestDbContext()
         {
-            var options = new DbContextOptionsBuilder<TamplateDbContext>()
+            var options = new DbContextOptionsBuilder<TemplateDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()) // Unique DB per test
                 .Options;
 
-            return new TamplateDbContext(options);
+            return new TemplateDbContext(options);
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace Template.Tests.Repositories
             var repo = uow.TamplateRepository;
 
             Assert.NotNull(repo);
-            Assert.IsAssignableFrom<ITamplateRepository>(repo);
+            Assert.IsAssignableFrom<ITemplateRepository>(repo);
             Assert.Same(repo, uow.TamplateRepository); // cached
         }
 

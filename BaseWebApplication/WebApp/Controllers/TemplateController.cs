@@ -4,18 +4,18 @@ using Template.Domain.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class TamplatesController(ITamplateService service) : Controller
+    public class TemplatesController(ITemplateService service) : Controller
     {
-        private readonly ITamplateService _service = service;
+        private readonly ITemplateService _service = service;
 
-        // GET: /Tamplates
+        // GET: /Templates
         public IActionResult Index()
         {
             var items = _service.GetAllAsync();
             return View(items);
         }
 
-        // GET: /Tamplates/Details/{id}
+        // GET: /Templates/Details/{id}
         public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
         {
             var item = await _service.FindAsync(id, cancellationToken);
@@ -23,20 +23,20 @@ namespace WebApp.Controllers
             return View(item);
         }
 
-        // GET: /Tamplates/Create
+        // GET: /Templates/Create
         public IActionResult Create() => View();
 
-        // POST: /Tamplates/Create
+        // POST: /Templates/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TamplateDto dto, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(TemplateDto dto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return View(dto);
             await _service.CreateAsync(dto, cancellationToken);
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Tamplates/Edit/{id}
+        // GET: /Templates/Edit/{id}
         public async Task<IActionResult> Edit(Guid id, CancellationToken cancellationToken)
         {
             var item = await _service.FindAsync(id, cancellationToken);
@@ -44,10 +44,10 @@ namespace WebApp.Controllers
             return View(item);
         }
 
-        // POST: /Tamplates/Edit/{id}
+        // POST: /Templates/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, TamplateDto dto, CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(Guid id, TemplateDto dto, CancellationToken cancellationToken)
         {
             if (id != dto.Id) return BadRequest();
             if (!ModelState.IsValid) return View(dto);
@@ -56,7 +56,7 @@ namespace WebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Tamplates/Delete/{id}
+        // GET: /Templates/Delete/{id}
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
             var item = await _service.FindAsync(id, cancellationToken);
@@ -64,7 +64,7 @@ namespace WebApp.Controllers
             return View(item);
         }
 
-        // POST: /Tamplates/Delete/{id}
+        // POST: /Templates/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id, CancellationToken cancellationToken)

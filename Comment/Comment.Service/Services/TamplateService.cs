@@ -65,7 +65,7 @@ namespace Comment.Service.Services
             _logger.LogInformation("Retrieving all tamplates...");
             var tamplates = _tamplateRepository.GetAllAsync(cancellationToken);
 
-            _logger.LogInformation("Retrieved {Count} tamplates", tamplates is ICollection<Domain.Models.Tamplate> col ? col.Count : -1);
+            _logger.LogInformation("Retrieved {Count} tamplates", tamplates is ICollection<Domain.Models.Template> col ? col.Count : -1);
 
             return tamplates.Select(t => t.ToDto());
         }

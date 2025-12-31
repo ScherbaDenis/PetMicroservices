@@ -4,9 +4,9 @@ using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repositories
 {
-    public class UserRepository(TamplateDbContext context, ILogger<UserRepository> logger) : IUserRepository
+    public class UserRepository(TemplateDbContext context, ILogger<UserRepository> logger) : IUserRepository
     {
-        private readonly TamplateDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly TemplateDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
         private readonly ILogger<UserRepository> _logger = logger ?? throw new ArgumentNullException(nameof(context));
 
         public async Task AddAsync(User item, CancellationToken cancellationToken = default)

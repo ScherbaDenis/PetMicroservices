@@ -71,7 +71,7 @@ namespace Comment.Service.Services
         public IEnumerable<CommentDto> GetByTamplateAsync(Guid tamplateId, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving Tamplate all comments...");
-            var comments = _commentRepository.GetAllAsync(cancellationToken).Where(comment => comment.Tamplate.Id == tamplateId);
+            var comments = _commentRepository.GetAllAsync(cancellationToken).Where(comment => comment.Template.Id == tamplateId);
 
             _logger.LogInformation("Retrieved Tamplate {Count} comments", comments is ICollection<Domain.Models.Comment> col ? col.Count : -1);
 
