@@ -24,37 +24,37 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public async Task AddAsync_ShouldAddTamplate()
+        public async Task AddAsync_ShouldAddTemplate()
         {
-            var tamplate = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Test Tamplate" };
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Test Template" };
 
-            await _repository.AddAsync(tamplate);
+            await _repository.AddAsync(template);
             await _repository.SaveChangesAsync();
 
-            var saved = _context.Tamplates.FirstOrDefault();
+            var saved = _context.Templates.FirstOrDefault();
             Assert.NotNull(saved);
-            Assert.Equal("Test Tamplate", saved!.Title);
+            Assert.Equal("Test Template", saved!.Title);
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveTamplate()
+        public async Task DeleteAsync_ShouldRemoveTemplate()
         {
-            var tamplate = new Domain.Model.Template { Id = Guid.NewGuid(), Title  = "ToDelete" };
-            _context.Tamplates.Add(tamplate);
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title  = "ToDelete" };
+            _context.Templates.Add(template);
             await _context.SaveChangesAsync();
 
-            await _repository.DeleteAsync(tamplate);
+            await _repository.DeleteAsync(template);
             await _repository.SaveChangesAsync();
 
-            Assert.Empty(_context.Tamplates);
+            Assert.Empty(_context.Templates);
         }
 
         [Fact]
-        public async Task FindAsync_ShouldReturnTamplate_WhenExists()
+        public async Task FindAsync_ShouldReturnTemplate_WhenExists()
         {
             var guid = Guid.NewGuid();
-            var tamplate = new Domain.Model.Template { Id = guid, Title = "FindMe" };
-            _context.Tamplates.Add(tamplate);
+            var template = new Domain.Model.Template { Id = guid, Title = "FindMe" };
+            _context.Templates.Add(template);
             await _context.SaveChangesAsync();
 
             var result = await _repository.FindAsync(guid);
@@ -71,11 +71,11 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public void GetAllAsync_ShouldReturnAllTamplates()
+        public void GetAllAsync_ShouldReturnAllTemplates()
         {
-            _context.Tamplates.AddRange(
-                new Template { Id = Guid.NewGuid(), Title = "T1" },
-                new Template { Id = Guid.NewGuid(), Title = "T2" }
+            _context.Templates.AddRange(
+                new Domain.Model.Template { Id = Guid.NewGuid(), Title = "T1" },
+                new Domain.Model.Template { Id = Guid.NewGuid(), Title = "T2" }
             );
             _context.SaveChanges();
 
@@ -85,27 +85,27 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public async Task UpdateAsync_ShouldModifyTamplate()
+        public async Task UpdateAsync_ShouldModifyTemplate()
         {
             var guid = Guid.NewGuid();
-            var tamplate = new Domain.Model.Template { Id = guid, Title = "OldName" };
-            _context.Tamplates.Add(tamplate);
+            var template = new Domain.Model.Template { Id = guid, Title = "OldName" };
+            _context.Templates.Add(template);
             await _context.SaveChangesAsync();
 
-            tamplate.Title = "NewName";
-            await _repository.UpdateAsync(tamplate);
+            template.Title = "NewName";
+            await _repository.UpdateAsync(template);
             await _repository.SaveChangesAsync();
 
-            var updated = _context.Tamplates.First(t => t.Id == guid);
+            var updated = _context.Templates.First(t => t.Id == guid);
             Assert.Equal("NewName", updated.Title);
         }
 
         [Fact]
-        public void Find_WithPredicate_ShouldReturnMatchingTamplates()
+        public void Find_WithPredicate_ShouldReturnMatchingTemplates()
         {
-            _context.Tamplates.AddRange(
-                new Template { Id = Guid.NewGuid(), Title = "Match" },
-                new Template { Id = Guid.NewGuid(), Title = "Skip" }
+            _context.Templates.AddRange(
+                new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Match" },
+                new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Skip" }
             );
             _context.SaveChanges();
 

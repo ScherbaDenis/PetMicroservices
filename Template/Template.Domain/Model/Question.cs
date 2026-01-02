@@ -1,4 +1,4 @@
-using System;
+using Template.Domain.Repository;
 
 namespace Template.Domain.Model
 {

@@ -4,16 +4,16 @@ using Comment.Domain.Repositories;
 
 namespace Comment.DataAccess.MsSql.Repositories
 {
-    public class TamplateRepository(CommentDbContext context, ILogger<TamplateRepository> logger) : ITamplateRepository
+    public class TemplateRepository(CommentDbContext context, ILogger<TemplateRepository> logger) : ITemplateRepository
     {
         private readonly CommentDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
-        private readonly ILogger<TamplateRepository> _logger = logger ?? throw new ArgumentNullException(nameof(context));
+        private readonly ILogger<TemplateRepository> _logger = logger ?? throw new ArgumentNullException(nameof(context));
 
         public async Task AddAsync(Template item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            _logger.LogInformation("Adding a new Tamplate: {Tamplate}", item);
+            _logger.LogInformation("Adding a new Template: {Template}", item);
             await _context.Templates.AddAsync(item, cancellationToken);
         }
 
@@ -21,20 +21,20 @@ namespace Comment.DataAccess.MsSql.Repositories
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            _logger.LogInformation("Deleting Tamplate: {Tamplate}", item);
+            _logger.LogInformation("Deleting Template: {Template}", item);
             _context.Templates.Remove(item);
             await Task.CompletedTask; // keep async signature
         }
 
         public async Task<Template?> FindAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Async Finding a Tamplate...");
+            _logger.LogInformation("Async Finding a Template...");
             return await _context.Templates.FindAsync(id, cancellationToken);
         }
 
         public IEnumerable<Template> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Retrieving all Tamplates...");
+            _logger.LogInformation("Retrieving all Templates...");
             return _context.Templates.ToList();
         }
 
@@ -42,7 +42,7 @@ namespace Comment.DataAccess.MsSql.Repositories
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            _logger.LogInformation("Updating Tamplate: {Tamplate}", item);
+            _logger.LogInformation("Updating Template: {Template}", item);
             _context.Templates.Update(item);
             await Task.CompletedTask;
         }
@@ -54,7 +54,7 @@ namespace Comment.DataAccess.MsSql.Repositories
         }
         public IEnumerable<Template> Find(Func<Template, bool> predicate)
         {
-            _logger.LogInformation("Finding a Tamplate...");
+            _logger.LogInformation("Finding a Template...");
             return _context.Templates.Where(predicate);
         }
     }

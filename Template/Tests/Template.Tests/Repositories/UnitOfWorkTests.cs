@@ -58,14 +58,14 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public void TamplateRepository_ShouldReturn_Instance()
+        public void TemplateRepository_ShouldReturn_Instance()
         {
             var uow = CreateUnitOfWork();
-            var repo = uow.TamplateRepository;
+            var repo = uow.TemplateRepository;
 
             Assert.NotNull(repo);
             Assert.IsAssignableFrom<ITemplateRepository>(repo);
-            Assert.Same(repo, uow.TamplateRepository); // cached
+            Assert.Same(repo, uow.TemplateRepository); // cached
         }
 
         [Fact]

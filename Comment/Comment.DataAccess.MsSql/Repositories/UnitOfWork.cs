@@ -12,15 +12,15 @@ namespace Comment.DataAccess.MsSql.Repositories
         private readonly ILogger<UnitOfWork> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         private readonly ILoggerFactory _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
 
-        private ITamplateRepository _tamplateRepository;
+        private ITemplateRepository _templateRepository;
         private ICommentRepository _commentRepository;
 
         private bool _disposed;
 
-        public ITamplateRepository TamplateRepository =>
-            _tamplateRepository ??= new TamplateRepository(
+        public ITemplateRepository TemplateRepository =>
+            _templateRepository ??= new TemplateRepository(
                 _context,
-                _loggerFactory.CreateLogger<TamplateRepository>());
+                _loggerFactory.CreateLogger<TemplateRepository>());
 
         public ICommentRepository CommentRepository =>
             _commentRepository ??= new CommentRepository(

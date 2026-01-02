@@ -11,7 +11,7 @@ namespace Comment.Domain.Mappers
             : new CommentDto { 
                 Id = e.Id,  
                 Text = e.Text, 
-                TamplateDto = e.Template?.ToDto()
+                TemplateDto = e.Template?.ToDto()
                 };
 
         public static Models.Comment ToEntity(this CommentDto d) => 
@@ -20,7 +20,7 @@ namespace Comment.Domain.Mappers
             : new Models.Comment { 
                 Id = d.Id, 
                 Text = d.Text,
-                Template = d.TamplateDto?.ToEntity()
+                Template = d.TemplateDto?.ToEntity()
             };
     }
 }

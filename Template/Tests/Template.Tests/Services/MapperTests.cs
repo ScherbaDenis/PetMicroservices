@@ -53,7 +53,7 @@ namespace Template.Tests.Services
         }
 
         [Fact]
-        public void TamplateMapper_Roundtrip_PreservesFields()
+        public void TemplateMapper_Roundtrip_PreservesFields()
         {
             var owner = new User { Id = Guid.NewGuid(), Name = "Owner" };
             var topic = new Topic { Id = 5, Name = "Topic 5" };

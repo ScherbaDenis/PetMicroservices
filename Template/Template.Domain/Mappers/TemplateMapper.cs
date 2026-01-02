@@ -4,12 +4,12 @@ using Template.Domain.Model;
 
 namespace Template.Service.Mappers
 {
-    public static class TamplateMapper
+    public static class TemplateMapper
     {
-        public static TamplateDto ToDto(this Domain.Model.Template e)
+        public static TemplateDto ToDto(this Domain.Model.Template e)
         {
             if (e == null) return null!;
-            return new TamplateDto
+            return new TemplateDto
             {
                 Id = e.Id,
                 Title = e.Title,
@@ -21,7 +21,7 @@ namespace Template.Service.Mappers
             };
         }
 
-        public static Domain.Model.Template ToEntity(this TamplateDto d)
+        public static Domain.Model.Template ToEntity(this TemplateDto d)
         {
             if (d == null) return null!;
             return new Domain.Model.Template

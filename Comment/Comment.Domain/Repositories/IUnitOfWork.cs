@@ -2,7 +2,7 @@
 {
     public interface IUnitOfWork : IDisposable
     {
-        ITamplateRepository TamplateRepository { get; }
+        ITemplateRepository TemplateRepository { get; }
         ICommentRepository  CommentRepository { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

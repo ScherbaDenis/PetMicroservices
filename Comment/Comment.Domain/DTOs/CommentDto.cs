@@ -4,7 +4,7 @@ namespace Comment.Domain.DTOs
     {
         public Guid Id { get; init; }
 
-        public TamplateDto TamplateDto { get; init; }
+        public TemplateDto TemplateDto { get; init; }
 
         public string Text { get; init; }
     }

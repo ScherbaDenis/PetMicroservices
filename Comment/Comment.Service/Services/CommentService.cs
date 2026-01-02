@@ -68,12 +68,12 @@ namespace Comment.Service.Services
             return comments.Select(t => t.ToDto());
         }
 
-        public IEnumerable<CommentDto> GetByTamplateAsync(Guid tamplateId, CancellationToken cancellationToken = default)
+        public IEnumerable<CommentDto> GetByTemplateAsync(Guid templateId, CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Retrieving Tamplate all comments...");
-            var comments = _commentRepository.GetAllAsync(cancellationToken).Where(comment => comment.Template.Id == tamplateId);
+            _logger.LogInformation("Retrieving Template all comments...");
+            var comments = _commentRepository.GetAllAsync(cancellationToken).Where(comment => comment.Template.Id == templateId);
 
-            _logger.LogInformation("Retrieved Tamplate {Count} comments", comments is ICollection<Domain.Models.Comment> col ? col.Count : -1);
+            _logger.LogInformation("Retrieved Template {Count} comments", comments is ICollection<Domain.Models.Comment> col ? col.Count : -1);
 
             return comments.Select(t => t.ToDto());
         }

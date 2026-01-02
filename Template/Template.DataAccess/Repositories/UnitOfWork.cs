@@ -12,7 +12,7 @@ namespace Template.DataAccess.MsSql.Repositories
         private readonly ILogger<UnitOfWork> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         private readonly ILoggerFactory _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
 
-        private ITemplateRepository _tamplateRepository;
+        private ITemplateRepository _templateRepository;
         private ITopicRepository _topicRepository;
         private IQuestionRepository _questionRepository;
         private IUserRepository _userRepository;
@@ -20,16 +20,23 @@ namespace Template.DataAccess.MsSql.Repositories
 
         private bool _disposed;
 
-        public ITemplateRepository TamplateRepository =>
-            _tamplateRepository ??= new TemplateRepository(
+        public ITemplateRepository TemplateRepository =>
+            _templateRepository ??= new TemplateRepository(
                 _context,
                 _loggerFactory.CreateLogger<TemplateRepository>());
 
         public IQuestionRepository QuestionRepository =>
           _questionRepository ??= new QuestionRepository(
-              _context,
-              _loggerFactory.CreateLogger<QuestionRepository>()
+              _context
+              //,
+              //_loggerFactory.CreateLogger<QuestionRepository>()
           );
+
+        public ITagRepository TagRepository =>
+        _tagRepository ??= new TagRepository(
+            _context,
+            _loggerFactory.CreateLogger<TagRepository>()
+        );
 
         public ITopicRepository TopicRepository =>
             _topicRepository ??= new TopicRepository(

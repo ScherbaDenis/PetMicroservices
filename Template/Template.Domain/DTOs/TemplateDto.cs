@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Template.Domain.DTOs
 {
-    public record TamplateDto
+    public record TemplateDto
     {
         public Guid Id { get; init; }
         public string Title { get; init; } = string.Empty;

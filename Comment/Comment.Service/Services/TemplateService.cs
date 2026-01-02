@@ -1,20 +1,16 @@
-﻿using System.Linq;
-using Template.Domain.DTOs;
-using Template.Domain.Model;
-using Template.Service.Mappers;
-using Template.Domain.Repository;
-using Template.Domain.Services;
+﻿using Comment.Domain.DTOs;
+using Comment.Domain.Mappers;
+using Comment.Domain.Services;
 using Microsoft.Extensions.Logging;
+using Comment.Domain.Repositories;
 
-namespace Template.Service.Services
+namespace Comment.Service.Services
 {
     public class TemplateService(IUnitOfWork unitOfWork, ILogger<TemplateService> logger) : ITemplateService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         private readonly ILogger<TemplateService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         private readonly ITemplateRepository _templateRepository = unitOfWork.TemplateRepository;
-
-        // use centralized TemplateMapper
 
         public async Task CreateAsync(TemplateDto item, CancellationToken cancellationToken = default)
         {
@@ -67,7 +63,7 @@ namespace Template.Service.Services
             _logger.LogInformation("Retrieving all templates...");
             var templates = _templateRepository.GetAllAsync(cancellationToken);
 
-            _logger.LogInformation("Retrieved {Count} templates", templates is ICollection<Domain.Model.Template> col ? col.Count : -1);
+            _logger.LogInformation("Retrieved {Count} templates", templates is ICollection<Domain.Models.Template> col ? col.Count : -1);
 
             return templates.Select(t => t.ToDto());
         }

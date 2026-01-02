@@ -5,14 +5,14 @@ using Template.Domain.Model;
 
 namespace Template.DataAccess.MsSql.EntityConfigurations
 {
-    class TamplateEntityConfigurtion : IEntityTypeConfiguration<Domain.Model.Template>
+    class TagEntityConfigurtion : IEntityTypeConfiguration<Tag>
     {
-        public void Configure(EntityTypeBuilder<Domain.Model.Template> builder)
+        public void Configure(EntityTypeBuilder<Tag> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.ToTable("tamplates", TemplateDbContext.DEFAULT_SCHEMA);
+            builder.ToTable("tags", TemplateDbContext.DEFAULT_SCHEMA);
             builder.HasIndex(x => x.Id);
-            builder.HasIndex(x => x.Title);
+            builder.HasIndex(x => x.Name);
         }
     }
 }

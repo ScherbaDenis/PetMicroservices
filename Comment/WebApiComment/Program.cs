@@ -9,11 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<ITamplateRepository, TamplateRepository>();
+builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
 
-builder.Services.AddScoped<ITamplateService, TamplateService>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

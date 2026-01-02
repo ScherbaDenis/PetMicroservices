@@ -8,7 +8,8 @@ namespace Template.Domain.Model
         public string? Description { get; set; }
         public User? Owner { get; set; }
         public Topic? Topic { get; set; }
-        public ICollection<Tag>? Tags { get; set; }
-        public ICollection<Question>? Questions { get; set; }
+        public IEnumerable<Tag>? Tags { get; set; }
+        public IEnumerable<User> UsersAccess { get; set; }
+        public IEnumerable<Question>? Questions { get; set; }
     }
 }

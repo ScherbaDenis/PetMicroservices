@@ -2,7 +2,7 @@
 
 namespace Comment.Domain.Services
 {
-    public interface ITamplateService : IService<TamplateDto, Guid>
+    public interface ITemplateService : IService<TemplateDto, Guid>
     {
     }
 }
