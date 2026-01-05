@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using Comment.Domain.DTOs;
+using Comment.Domain.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiComment.Controllers
 {
@@ -8,36 +8,93 @@ namespace WebApiComment.Controllers
     [ApiController]
     public class CommentController : ControllerBase
     {
-        // GET: api/<CommentController>
+        private readonly ICommentService _commentService;
+
+        public CommentController(ICommentService commentService)
+        {
+            _commentService = commentService ?? throw new ArgumentNullException(nameof(commentService));
+        }
+
+        // GET: api/comment
         [HttpGet]
-        public IEnumerable<string> Get()
+        public ActionResult<IEnumerable<CommentDto>> GetAll(CancellationToken cancellationToken = default)
         {
-            return new string[] { "value1", "value2" };
+            var comments = _commentService.GetAllAsync(cancellationToken);
+            return Ok(comments);
         }
 
-        // GET api/<CommentController>/5
+        // GET: api/comment/{id}
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<CommentDto>> GetById(Guid id, CancellationToken cancellationToken = default)
         {
-            return "value";
+            var comment = await _commentService.FindAsync(id, cancellationToken);
+            
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(comment);
         }
 
-        // POST api/<CommentController>
+        // GET: api/comment/template/{templateId}
+        [HttpGet("template/{templateId}")]
+        public ActionResult<IEnumerable<CommentDto>> GetByTemplateId(Guid templateId, CancellationToken cancellationToken = default)
+        {
+            var comments = _commentService.GetByTemplateAsync(templateId, cancellationToken);
+            return Ok(comments);
+        }
+
+        // POST: api/comment
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<CommentDto>> Create([FromBody] CommentDto commentDto, CancellationToken cancellationToken = default)
         {
+            if (commentDto == null)
+            {
+                return BadRequest("Comment cannot be null");
+            }
+
+            await _commentService.CreateAsync(commentDto, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = commentDto.Id }, commentDto);
         }
 
-        // PUT api/<CommentController>/5
+        // PUT: api/comment/{id}
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<ActionResult> Update(Guid id, [FromBody] CommentDto commentDto, CancellationToken cancellationToken = default)
         {
+            if (commentDto == null)
+            {
+                return BadRequest("Comment cannot be null");
+            }
+
+            if (id != commentDto.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+
+            var existingComment = await _commentService.FindAsync(id, cancellationToken);
+            if (existingComment == null)
+            {
+                return NotFound();
+            }
+
+            await _commentService.UpdateAsync(commentDto, cancellationToken);
+            return NoContent();
         }
 
-        // DELETE api/<CommentController>/5
+        // DELETE: api/comment/{id}
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
         {
+            var comment = await _commentService.FindAsync(id, cancellationToken);
+            
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            await _commentService.DeleteAsync(comment, cancellationToken);
+            return NoContent();
         }
     }
 }
