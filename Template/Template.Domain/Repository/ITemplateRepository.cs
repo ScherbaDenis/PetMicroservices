@@ -2,7 +2,7 @@
 
 namespace Template.Domain.Repository
 {
-    public interface ITamplateRepository : IRepository<Tamplate, Guid>
+    public interface ITemplateRepository : IRepository<Model.Template, Guid>
     {
     }
 }

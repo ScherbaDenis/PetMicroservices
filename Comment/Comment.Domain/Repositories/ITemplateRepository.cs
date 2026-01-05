@@ -2,7 +2,7 @@
 
 namespace Comment.Domain.Repositories
 {
-    public interface ITamplateRepository : IRepository<Tamplate, Guid>
+    public interface ITemplateRepository : IRepository<Template, Guid>
     {
     }
 }

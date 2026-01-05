@@ -8,17 +8,17 @@ namespace Template.Tests.Repositories
 {
     public class UserRepositoryTests
     {
-        private readonly TamplateDbContext _context;
+        private readonly TemplateDbContext _context;
         private readonly Mock<ILogger<UserRepository>> _mockLogger;
         private readonly UserRepository _repository;
 
         public UserRepositoryTests()
         {
-            var options = new DbContextOptionsBuilder<TamplateDbContext>()
+            var options = new DbContextOptionsBuilder<TemplateDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // unique DB per test
                 .Options;
 
-            _context = new TamplateDbContext(options);
+            _context = new TemplateDbContext(options);
             _mockLogger = new Mock<ILogger<UserRepository>>();
             _repository = new UserRepository(_context, _mockLogger.Object);
         }

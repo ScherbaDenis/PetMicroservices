@@ -4,9 +4,9 @@ using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repositories
 {
-    public class TagRepository(TamplateDbContext context, ILogger<TagRepository> logger) : ITagRepository
+    public class TagRepository(TemplateDbContext context, ILogger<TagRepository> logger) : ITagRepository
     {
-        private readonly TamplateDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly TemplateDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
         private readonly ILogger<TagRepository> _logger = logger ?? throw new ArgumentNullException(nameof(context));
 
         public async Task AddAsync(Tag item, CancellationToken cancellationToken = default)

@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Template.DataAccess.MsSql.Configurations;
 using Template.DataAccess.MsSql.EntityConfigurations;
 using Template.Domain.Model;
 using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repositories
 {
-    public class TamplateDbContext : DbContext
+    public class TemplateDbContext : DbContext
     {
-        public TamplateDbContext(DbContextOptions<TamplateDbContext> options) : base(options)
+        public TemplateDbContext(DbContextOptions<TemplateDbContext> options) : base(options)
         {
             //Database.EnsureCreated();
         }
@@ -20,14 +21,16 @@ namespace Template.DataAccess.MsSql.Repositories
 
         public DbSet<Topic> Topics { get; set; }
 
-        public DbSet<Tamplate> Tamplates { get; set; }
+        public DbSet<Domain.Model.Template> Templates { get; set; }
+        public DbSet<Question> Questions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new TagTamplateEntityConfigurtion());
+            modelBuilder.ApplyConfiguration(new TagEntityConfigurtion());
             modelBuilder.ApplyConfiguration(new UserEntityConfigurtion());
             modelBuilder.ApplyConfiguration(new TopicEntityConfigurtion());
-            modelBuilder.ApplyConfiguration(new TamplateEntityConfigurtion());
+            modelBuilder.ApplyConfiguration(new TemplateEntityConfigurtion());
+            modelBuilder.ApplyConfiguration(new QuestionEntityConfiguration());
         }
     }
 }

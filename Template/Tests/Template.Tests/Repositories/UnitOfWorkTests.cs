@@ -12,7 +12,7 @@ namespace Template.Tests.Repositories
 {
     public class UnitOfWorkTests
     {
-    private TamplateDbContext? _mockContext;
+    private TemplateDbContext? _mockContext;
         private readonly Mock<ILogger<UnitOfWork>> _mockLogger = new();
         private readonly Mock<ILoggerFactory> _mockLoggerFactory = new();
 
@@ -27,13 +27,13 @@ namespace Template.Tests.Repositories
             return new UnitOfWork(_mockContext, _mockLogger.Object, _mockLoggerFactory.Object);
         }
 
-        private TamplateDbContext CreateTestDbContext()
+        private TemplateDbContext CreateTestDbContext()
         {
-            var options = new DbContextOptionsBuilder<TamplateDbContext>()
+            var options = new DbContextOptionsBuilder<TemplateDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()) // Unique DB per test
                 .Options;
 
-            return new TamplateDbContext(options);
+            return new TemplateDbContext(options);
         }
 
         [Fact]
@@ -58,14 +58,14 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public void TamplateRepository_ShouldReturn_Instance()
+        public void TemplateRepository_ShouldReturn_Instance()
         {
             var uow = CreateUnitOfWork();
-            var repo = uow.TamplateRepository;
+            var repo = uow.TemplateRepository;
 
             Assert.NotNull(repo);
-            Assert.IsAssignableFrom<ITamplateRepository>(repo);
-            Assert.Same(repo, uow.TamplateRepository); // cached
+            Assert.IsAssignableFrom<ITemplateRepository>(repo);
+            Assert.Same(repo, uow.TemplateRepository); // cached
         }
 
         [Fact]
@@ -99,6 +99,17 @@ namespace Template.Tests.Repositories
             Assert.NotNull(repo);
             Assert.IsAssignableFrom<ITagRepository>(repo);
             Assert.Same(repo, uow.TagRepository);
+        }
+
+        [Fact]
+        public void QuestionRepository_ShouldReturn_Instance()
+        {
+            var uow = CreateUnitOfWork();
+            var repo = uow.QuestionRepository;
+
+            Assert.NotNull(repo);
+            Assert.IsAssignableFrom<IQuestionRepository>(repo);
+            Assert.Same(repo, uow.QuestionRepository);
         }
 
         //[Fact]

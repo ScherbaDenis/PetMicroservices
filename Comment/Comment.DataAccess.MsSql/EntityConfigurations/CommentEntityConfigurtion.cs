@@ -11,7 +11,7 @@ namespace Comment.DataAccess.MsSql.EntityConfigurations
             builder.HasKey(x => x.Id);
             builder.ToTable("comments", CommentDbContext.DEFAULT_SCHEMA);
             builder.HasIndex(x => x.Id);
-            builder.HasIndex(x => x.Tamplate);
+            builder.HasIndex(x => x.Template);
         }
     }
 }

@@ -5,12 +5,12 @@ using Comment.Domain.Models;
 
 namespace Comment.DataAccess.MsSql.EntityConfigurations
 {
-    class TamplateEntityConfigurtion : IEntityTypeConfiguration<Tamplate>
+    class TemplateEntityConfigurtion : IEntityTypeConfiguration<Template>
     {
-        public void Configure(EntityTypeBuilder<Tamplate> builder)
+        public void Configure(EntityTypeBuilder<Template> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.ToTable("tamplates", CommentDbContext.DEFAULT_SCHEMA);
+            builder.ToTable("templates", CommentDbContext.DEFAULT_SCHEMA);
             builder.HasIndex(x => x.Id);
             builder.HasIndex(x => x.Title);
         }

@@ -6,7 +6,7 @@ namespace Comment.Domain.Models
     {
         public Guid Id { get; set; }
 
-        public Tamplate Tamplate { get; set; }
+        public Template Template { get; set; }
 
         public string Text { get; set; }
 
