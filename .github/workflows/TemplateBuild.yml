@@ -5,7 +5,6 @@ on:
     branches: [ "*" ]
     paths:
       - 'Template/**'          # Only run if files in Comment folder change
-      - '.github/workflows/Build.yml'  # Optional: trigger on workflow file changes
 jobs:
   build:
 
