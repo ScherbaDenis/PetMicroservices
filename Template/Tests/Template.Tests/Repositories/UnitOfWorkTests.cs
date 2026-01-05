@@ -101,6 +101,17 @@ namespace Template.Tests.Repositories
             Assert.Same(repo, uow.TagRepository);
         }
 
+        [Fact]
+        public void QuestionRepository_ShouldReturn_Instance()
+        {
+            var uow = CreateUnitOfWork();
+            var repo = uow.QuestionRepository;
+
+            Assert.NotNull(repo);
+            Assert.IsAssignableFrom<IQuestionRepository>(repo);
+            Assert.Same(repo, uow.QuestionRepository);
+        }
+
         //[Fact]
         //public async Task SaveChangesAsync_ShouldCall_DbContext()
         //{
