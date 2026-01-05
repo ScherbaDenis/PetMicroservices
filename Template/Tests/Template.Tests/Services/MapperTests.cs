@@ -53,11 +53,32 @@ namespace Template.Tests.Services
         }
 
         [Fact]
+        public void QuestionMapper_Roundtrip_PreservesFields()
+        {
+            var entity = new Question { Id = Guid.NewGuid(), Title = "Question Title", Description = "Question Description" };
+            var dto = entity.ToDto();
+
+            Assert.Equal(entity.Id, dto.Id);
+            Assert.Equal(entity.Title, dto.Title);
+            Assert.Equal(entity.Description, dto.Description);
+
+            var back = dto.ToEntity();
+            Assert.Equal(dto.Id, back.Id);
+            Assert.Equal(dto.Title, back.Title);
+            Assert.Equal(dto.Description, back.Description);
+        }
+
+        [Fact]
         public void TemplateMapper_Roundtrip_PreservesFields()
         {
             var owner = new User { Id = Guid.NewGuid(), Name = "Owner" };
             var topic = new Topic { Id = 5, Name = "Topic 5" };
             var tags = new List<Tag> { new Tag { Id = 1, Name = "t1" }, new Tag { Id = 2, Name = "t2" } };
+            var questions = new List<Question> 
+            { 
+                new Question { Id = Guid.NewGuid(), Title = "Question 1", Description = "Desc 1" },
+                new Question { Id = Guid.NewGuid(), Title = "Question 2", Description = "Desc 2" }
+            };
 
             var entity = new Domain.Model.Template
             {
@@ -66,7 +87,8 @@ namespace Template.Tests.Services
                 Description = "Desc",
                 Owner = owner,
                 Topic = topic,
-                Tags = tags
+                Tags = tags,
+                Questions = questions
             };
 
             var dto = entity.ToDto();
@@ -79,6 +101,7 @@ namespace Template.Tests.Services
             Assert.Equal(entity.Topic.Id, dto.Topic!.Id);
             Assert.Equal(entity.Topic.Name, dto.Topic!.Name);
             Assert.Equal(entity.Tags!.ToList().Count, dto.Tags!.ToList().Count);
+            Assert.Equal(entity.Questions!.ToList().Count, dto.Questions!.ToList().Count);
 
             var back = dto.ToEntity();
 
@@ -90,6 +113,7 @@ namespace Template.Tests.Services
             Assert.Equal(dto.Topic!.Id, back.Topic!.Id);
             Assert.Equal(dto.Topic!.Name, back.Topic!.Name);
             Assert.Equal(dto.Tags!.ToList().Count, back.Tags!.ToList().Count);
+            Assert.Equal(dto.Questions!.ToList().Count, back.Questions!.ToList().Count);
         }
     }
 }
