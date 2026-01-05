@@ -1,0 +1,24 @@
+name: Comment
+
+on:
+  push:
+    branches: [ "*" ]
+    paths:
+      - 'Comment/**'          # Only run if files in Comment folder change
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore BaseWebApplication/BaseWebApplication.sln
+    - name: Build
+      run: dotnet build --no-restore BaseWebApplication/BaseWebApplication.sln
+    - name: Test
+      run: dotnet test --no-build --verbosity normal Comment/Tests/Comment.Tests/Comment.Tests.csproj
