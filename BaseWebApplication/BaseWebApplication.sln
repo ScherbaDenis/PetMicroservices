@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseWebApplication", "BaseWebApplication\BaseWebApplication.csproj", "{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Template", "Template", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1CF38244-3FD5-4011-98DC-C662CEA56D96}"
@@ -43,18 +41,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Debug|x64.Build.0 = Debug|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Debug|x86.Build.0 = Debug|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Release|x64.ActiveCfg = Release|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Release|x64.Build.0 = Release|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Release|x86.ActiveCfg = Release|Any CPU
-		{9C3C92FB-666C-447F-9861-AC6CF1B82D4D}.Release|x86.Build.0 = Release|Any CPU
 		{527F34E0-05F5-313D-1D12-DB1DC4C58311}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{527F34E0-05F5-313D-1D12-DB1DC4C58311}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{527F34E0-05F5-313D-1D12-DB1DC4C58311}.Debug|x64.ActiveCfg = Debug|Any CPU
