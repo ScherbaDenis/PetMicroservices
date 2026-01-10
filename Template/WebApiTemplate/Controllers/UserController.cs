@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Template.Domain.DTOs;
 using Template.Domain.Services;
 
 namespace WebApiTemplate.Controllers
@@ -11,50 +12,81 @@ namespace WebApiTemplate.Controllers
 
         public UserController(IUserService userService)
         {
-            _userService = userService;
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         // GET: api/user
         [HttpGet]
-        public IActionResult GetAll()
+        public ActionResult<IEnumerable<UserDto>> GetAll(CancellationToken cancellationToken = default)
         {
-            // TODO: Implement GetAll logic using _userService.GetAllAsync()
-            return Ok();
+            var users = _userService.GetAllAsync(cancellationToken);
+            return Ok(users);
         }
 
         // GET: api/user/{id}
         [HttpGet("{id}")]
-        public IActionResult GetById(Guid id)
+        public async Task<ActionResult<UserDto>> GetById(Guid id, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement GetById logic using _userService.FindAsync(id)
-            return Ok();
+            var user = await _userService.FindAsync(id, cancellationToken);
+            
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
         }
 
         // POST: api/user
         [HttpPost]
-        public IActionResult Create([FromBody] object dto)
+        public async Task<ActionResult<UserDto>> Create([FromBody] UserDto userDto, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement Create logic using _userService.CreateAsync(dto)
-            // Replace 'object' with appropriate DTO type when available
-            return Ok();
+            if (userDto == null)
+            {
+                return BadRequest("User cannot be null");
+            }
+
+            await _userService.CreateAsync(userDto, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = userDto.Id }, userDto);
         }
 
         // PUT: api/user/{id}
         [HttpPut("{id}")]
-        public IActionResult Update(Guid id, [FromBody] object dto)
+        public async Task<ActionResult> Update(Guid id, [FromBody] UserDto userDto, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement Update logic using _userService.UpdateAsync(dto)
-            // Replace 'object' with appropriate DTO type when available
-            return Ok();
+            if (userDto == null)
+            {
+                return BadRequest("User cannot be null");
+            }
+
+            if (id != userDto.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+
+            var existingUser = await _userService.FindAsync(id, cancellationToken);
+            if (existingUser == null)
+            {
+                return NotFound();
+            }
+
+            await _userService.UpdateAsync(userDto, cancellationToken);
+            return NoContent();
         }
 
         // DELETE: api/user/{id}
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement Delete logic using _userService.DeleteAsync()
-            // Retrieve entity first, then delete
-            return Ok();
+            var user = await _userService.FindAsync(id, cancellationToken);
+            
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            await _userService.DeleteAsync(user, cancellationToken);
+            return NoContent();
         }
     }
 }

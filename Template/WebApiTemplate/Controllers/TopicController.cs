@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Template.Domain.DTOs;
 using Template.Domain.Services;
 
 namespace WebApiTemplate.Controllers
@@ -11,50 +12,81 @@ namespace WebApiTemplate.Controllers
 
         public TopicController(ITopicService topicService)
         {
-            _topicService = topicService;
+            _topicService = topicService ?? throw new ArgumentNullException(nameof(topicService));
         }
 
         // GET: api/topic
         [HttpGet]
-        public IActionResult GetAll()
+        public ActionResult<IEnumerable<TopicDto>> GetAll(CancellationToken cancellationToken = default)
         {
-            // TODO: Implement GetAll logic using _topicService.GetAllAsync()
-            return Ok();
+            var topics = _topicService.GetAllAsync(cancellationToken);
+            return Ok(topics);
         }
 
         // GET: api/topic/{id}
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<ActionResult<TopicDto>> GetById(int id, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement GetById logic using _topicService.FindAsync(id)
-            return Ok();
+            var topic = await _topicService.FindAsync(id, cancellationToken);
+            
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(topic);
         }
 
         // POST: api/topic
         [HttpPost]
-        public IActionResult Create([FromBody] object dto)
+        public async Task<ActionResult<TopicDto>> Create([FromBody] TopicDto topicDto, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement Create logic using _topicService.CreateAsync(dto)
-            // Replace 'object' with appropriate DTO type when available
-            return Ok();
+            if (topicDto == null)
+            {
+                return BadRequest("Topic cannot be null");
+            }
+
+            await _topicService.CreateAsync(topicDto, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = topicDto.Id }, topicDto);
         }
 
         // PUT: api/topic/{id}
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] object dto)
+        public async Task<ActionResult> Update(int id, [FromBody] TopicDto topicDto, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement Update logic using _topicService.UpdateAsync(dto)
-            // Replace 'object' with appropriate DTO type when available
-            return Ok();
+            if (topicDto == null)
+            {
+                return BadRequest("Topic cannot be null");
+            }
+
+            if (id != topicDto.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+
+            var existingTopic = await _topicService.FindAsync(id, cancellationToken);
+            if (existingTopic == null)
+            {
+                return NotFound();
+            }
+
+            await _topicService.UpdateAsync(topicDto, cancellationToken);
+            return NoContent();
         }
 
         // DELETE: api/topic/{id}
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement Delete logic using _topicService.DeleteAsync()
-            // Retrieve entity first, then delete
-            return Ok();
+            var topic = await _topicService.FindAsync(id, cancellationToken);
+            
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            await _topicService.DeleteAsync(topic, cancellationToken);
+            return NoContent();
         }
     }
 }

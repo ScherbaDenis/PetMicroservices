@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Template.Domain.DTOs;
 using Template.Domain.Services;
 
 namespace WebApiTemplate.Controllers
@@ -11,50 +12,81 @@ namespace WebApiTemplate.Controllers
 
         public TemplateController(ITemplateService templateService)
         {
-            _templateService = templateService;
+            _templateService = templateService ?? throw new ArgumentNullException(nameof(templateService));
         }
 
         // GET: api/template
         [HttpGet]
-        public IActionResult GetAll()
+        public ActionResult<IEnumerable<TemplateDto>> GetAll(CancellationToken cancellationToken = default)
         {
-            // TODO: Implement GetAll logic using _templateService.GetAllAsync()
-            return Ok();
+            var templates = _templateService.GetAllAsync(cancellationToken);
+            return Ok(templates);
         }
 
         // GET: api/template/{id}
         [HttpGet("{id}")]
-        public IActionResult GetById(Guid id)
+        public async Task<ActionResult<TemplateDto>> GetById(Guid id, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement GetById logic using _templateService.FindAsync(id)
-            return Ok();
+            var template = await _templateService.FindAsync(id, cancellationToken);
+            
+            if (template == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(template);
         }
 
         // POST: api/template
         [HttpPost]
-        public IActionResult Create([FromBody] object dto)
+        public async Task<ActionResult<TemplateDto>> Create([FromBody] TemplateDto templateDto, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement Create logic using _templateService.CreateAsync(dto)
-            // Replace 'object' with appropriate DTO type when available
-            return Ok();
+            if (templateDto == null)
+            {
+                return BadRequest("Template cannot be null");
+            }
+
+            await _templateService.CreateAsync(templateDto, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = templateDto.Id }, templateDto);
         }
 
         // PUT: api/template/{id}
         [HttpPut("{id}")]
-        public IActionResult Update(Guid id, [FromBody] object dto)
+        public async Task<ActionResult> Update(Guid id, [FromBody] TemplateDto templateDto, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement Update logic using _templateService.UpdateAsync(dto)
-            // Replace 'object' with appropriate DTO type when available
-            return Ok();
+            if (templateDto == null)
+            {
+                return BadRequest("Template cannot be null");
+            }
+
+            if (id != templateDto.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+
+            var existingTemplate = await _templateService.FindAsync(id, cancellationToken);
+            if (existingTemplate == null)
+            {
+                return NotFound();
+            }
+
+            await _templateService.UpdateAsync(templateDto, cancellationToken);
+            return NoContent();
         }
 
         // DELETE: api/template/{id}
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement Delete logic using _templateService.DeleteAsync()
-            // Retrieve entity first, then delete
-            return Ok();
+            var template = await _templateService.FindAsync(id, cancellationToken);
+            
+            if (template == null)
+            {
+                return NotFound();
+            }
+
+            await _templateService.DeleteAsync(template, cancellationToken);
+            return NoContent();
         }
     }
 }
