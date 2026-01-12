@@ -8,17 +8,17 @@ namespace Comment.DataAccess.MsSql.Repositories
     {
         public CommentDbContext(DbContextOptions<CommentDbContext> options) : base(options)
         {
+           
             //Database.EnsureCreated();
         }
 
-        public const string DEFAULT_SCHEMA = "Comment";
-
         public DbSet<Domain.Models.Comment> Comments { get; set; }
-
-        public DbSet<Template> Templates { get; set; }
+        public DbSet<Template> Templates { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema("Comment");
+
             modelBuilder.ApplyConfiguration(new CommentEntityConfigurtion());
             modelBuilder.ApplyConfiguration(new TemplateEntityConfigurtion());
         }

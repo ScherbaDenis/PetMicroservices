@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Comment.DataAccess.MsSql\Comment.DataAccess.MsSql.csproj" />
-    <ProjectReference Include="..\Comment.Domain\Comment.Domain.csproj" />
     <ProjectReference Include="..\Comment.Service\Comment.Service.csproj" />
   </ItemGroup>
 
