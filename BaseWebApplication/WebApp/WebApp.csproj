@@ -11,9 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Template\Template.DataAccess\Template.DataAccess.MsSql.csproj" />
-    <ProjectReference Include="..\..\Template\Template.Domain\Template.Domain.csproj" />
-    <ProjectReference Include="..\..\Template\Template.Service\Template.Service.csproj" />
+    <Folder Include="Infrastructure\" />
   </ItemGroup>
 
 </Project>
