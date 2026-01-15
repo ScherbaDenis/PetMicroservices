@@ -10,7 +10,7 @@ namespace Comment.DataAccess.MsSql.EntityConfigurations
         public void Configure(EntityTypeBuilder<Template> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.ToTable("templates", CommentDbContext.DEFAULT_SCHEMA);
+            builder.ToTable("templates");
             builder.HasIndex(x => x.Id);
             builder.HasIndex(x => x.Title);
         }

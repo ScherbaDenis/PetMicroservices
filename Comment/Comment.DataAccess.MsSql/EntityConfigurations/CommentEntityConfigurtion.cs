@@ -9,7 +9,7 @@ namespace Comment.DataAccess.MsSql.EntityConfigurations
         public void Configure(EntityTypeBuilder<Domain.Models.Comment> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.ToTable("comments", CommentDbContext.DEFAULT_SCHEMA);
+            builder.ToTable("comments");
             builder.HasIndex(x => x.Id);
             builder.HasIndex(x => x.Template);
         }
