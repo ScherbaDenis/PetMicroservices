@@ -1,9 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Comment.Domain.Repositories;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace Comment.DataAccess.MsSql.Repositories
 {
+    /// <summary>
+    /// Provides a base implementation of the generic repository pattern for CRUD and query operations.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type managed by the repository.</typeparam>
+    /// <typeparam name="ID">The type of the entity's identifier.</typeparam>
+
     public abstract class RepositoryBase<TEntity, ID> : IRepository<TEntity, ID>
         where TEntity : Entity<ID>
     {
@@ -11,6 +18,11 @@ namespace Comment.DataAccess.MsSql.Repositories
         protected readonly ILogger logger;
         protected readonly DbSet<TEntity> _dbSet;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RepositoryBase{TEntity, ID}"/> class.
+        /// </summary>
+        /// <param name="context">The database context.</param>
+        /// <param name="logger">The logger instance.</param>
         protected RepositoryBase(DbContext context, ILogger logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -18,44 +30,64 @@ namespace Comment.DataAccess.MsSql.Repositories
             _dbSet = _context.Set<TEntity>();
         }
 
+        /// <inheritdoc/>
         public virtual async Task AddAsync(TEntity item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
             await _dbSet.AddAsync(item, cancellationToken);
         }
 
+        /// <inheritdoc/>
         public virtual async Task DeleteAsync(TEntity item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
             _dbSet.Remove(item);
             await Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public virtual async Task<TEntity?> FindAsync(ID id, CancellationToken cancellationToken = default)
         {
             return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
         }
 
-        public virtual IEnumerable<TEntity> GetAllAsync(CancellationToken cancellationToken = default)
+        /// <inheritdoc/>
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return _dbSet.ToList();
+            return await _dbSet.ToListAsync(cancellationToken);
         }
 
+        /// <inheritdoc/>
         public virtual async Task UpdateAsync(TEntity item, CancellationToken cancellationToken = default)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
             _dbSet.Update(item);
             await Task.CompletedTask;
         }
 
-        public virtual async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        /// <inheritdoc/>
+        public virtual async Task<IEnumerable<TEntity>> FindAsync(
+            Expression<Func<TEntity, bool>> predicate,
+            CancellationToken cancellationToken = default)
         {
-            return await _context.SaveChangesAsync(cancellationToken);
+            return await _dbSet.Where(predicate).ToListAsync(cancellationToken);
         }
 
-        public virtual IEnumerable<TEntity> Find(Func<TEntity, bool> predicate)
+        /// <inheritdoc/>
+        public virtual async Task<(IEnumerable<TEntity> Items, int TotalCount)> GetPagedAsync(
+            int pageIndex,
+            int pageSize,
+            Expression<Func<TEntity, bool>>? predicate = null,
+            CancellationToken cancellationToken = default)
         {
-            return _dbSet.Where(predicate);
+            IQueryable<TEntity> query = _dbSet;
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            var totalCount = await query.CountAsync(cancellationToken);
+            var items = await query.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync(cancellationToken);
+
+            return (items, totalCount);
         }
     }
 }

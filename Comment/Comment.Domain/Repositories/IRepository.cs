@@ -1,4 +1,5 @@
 ﻿using Comment.Domain.Repositories;
+using System.Linq.Expressions;
 
 namespace Comment.Domain.Repositories
 {
@@ -10,14 +11,18 @@ namespace Comment.Domain.Repositories
 
         Task<Item?> FindAsync(ID id, CancellationToken cancellationToken = default);
 
-        IEnumerable<Item> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<Item>> GetAllAsync(CancellationToken cancellationToken = default);
 
         Task UpdateAsync(Item item, CancellationToken cancellationToken = default);
 
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<Item>> FindAsync(
+            Expression<Func<Item, bool>> predicate,
+            CancellationToken cancellationToken = default);
 
-        //Todo async add!
-        IEnumerable<Item> Find(Func<Item, Boolean> predicate);
-
+        Task<(IEnumerable<Item> Items, int TotalCount)> GetPagedAsync(
+            int pageIndex,
+            int pageSize,
+            Expression<Func<Item, bool>>? predicate = null,
+            CancellationToken cancellationToken = default);
     }
 }

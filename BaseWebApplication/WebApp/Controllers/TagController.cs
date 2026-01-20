@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Template.Domain.DTOs;
-using Template.Domain.Services;
+using WebApp.Services;
+using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
@@ -9,16 +9,16 @@ namespace WebApp.Controllers
         private readonly ITagService _service = service;
 
         // GET: /Tags
-        public IActionResult Index()
+        public IActionResult Index(CancellationToken cancellationToken)
         {
-            var tags = _service.GetAllAsync();
+            var tags = _service.GetAllAsync(cancellationToken);
             return View(tags);
         }
 
         //GET: /Tags/Details/5
         public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
         {
-            var tag = await _service.FindAsync(id, cancellationToken);
+            var tag = await _service.GetByIdAsync(id, cancellationToken);
             if (tag == null) return NotFound();
             return View(tag);
         }
@@ -39,7 +39,7 @@ namespace WebApp.Controllers
         // GET: /Tags/Edit/5
         public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var tag = await _service.FindAsync(id, cancellationToken);
+            var tag = await _service.GetByIdAsync(id, cancellationToken);
             if (tag == null) return NotFound();
             return View(tag);
         }
@@ -59,7 +59,7 @@ namespace WebApp.Controllers
         // GET: /Tags/Delete/5
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var tag = await _service.FindAsync(id, cancellationToken);
+            var tag = await _service.GetByIdAsync(id, cancellationToken);
             if (tag == null) return NotFound();
             return View(tag);
         }
@@ -69,10 +69,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id, CancellationToken cancellationToken)
         {
-            var tag = await _service.FindAsync(id, cancellationToken);
+            var tag = await _service.GetByIdAsync(id, cancellationToken);
             if (tag == null) return NotFound();
 
-            await _service.DeleteAsync(tag, cancellationToken);
+            await _service.DeleteAsync(tag.Id, cancellationToken);
             return RedirectToAction(nameof(Index));
         }
     }

@@ -35,7 +35,7 @@ namespace Comment.Tests.Services
 
             // Assert
             _mockRepo.Verify(r => r.AddAsync(It.IsAny<Domain.Models.Comment>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWork.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace Comment.Tests.Services
 
             // Assert
             _mockRepo.Verify(r => r.DeleteAsync(It.IsAny<Domain.Models.Comment>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWork.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -72,14 +72,15 @@ namespace Comment.Tests.Services
         {
             // Arrange
             var expected = new List<Domain.Models.Comment> { new Domain.Models.Comment() };
-            _mockRepo.Setup(r => r.Find(It.IsAny<Func<Domain.Models.Comment, bool>>())).Returns(expected);
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(expected.FirstOrDefault);
 
             // Act
-            var result = _service.Find(c => true);
+            var result = _service.FindAsync(c => true);
 
             // Assert
             Assert.NotNull(result);
-            _mockRepo.Verify(r => r.Find(It.IsAny<Func<Domain.Models.Comment, bool>>()), Times.Once);
+            _mockRepo.Verify(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -114,18 +115,19 @@ namespace Comment.Tests.Services
         }
 
         [Fact]
-        public void GetAllAsync_ShouldReturnAllComments()
+        public async Task GetAllAsync_ShouldReturnAllComments()
         {
             // Arrange
             var expected = new List<Domain.Models.Comment> { new Domain.Models.Comment(), new Domain.Models.Comment() };
             _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
-                     .Returns(expected);
+                     .ReturnsAsync(expected.AsEnumerable());
 
             // Act
-            var result = _service.GetAllAsync();
+            var result = await _service.GetAllAsync();
 
             // Assert
             Assert.NotNull(result);
+            Assert.Equal(expected.Count, result.Count());
         }
 
         [Fact]
@@ -140,7 +142,7 @@ namespace Comment.Tests.Services
 
             // Assert
             _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<Domain.Models.Comment>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWork.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]

@@ -9,7 +9,7 @@ namespace WebApp.Services.Imp
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+        public Task DeleteAsync(int id, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -19,7 +19,7 @@ namespace WebApp.Services.Imp
             throw new NotImplementedException();
         }
 
-        public Task<TagDto> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public Task<TagDto> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

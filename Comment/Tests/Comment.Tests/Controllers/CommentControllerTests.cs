@@ -28,7 +28,7 @@ namespace Comment.Tests.Controllers
                 new CommentDto { Id = Guid.NewGuid(), Text = "Comment 2", TemplateDto = templateDto }
             };
             _mockService.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
-                       .Returns(comments);
+                       .ReturnsAsync(comments);
 
             // Act
             var result = _controller.GetAll();
@@ -85,7 +85,7 @@ namespace Comment.Tests.Controllers
                 new CommentDto { Id = Guid.NewGuid(), Text = "Comment 2", TemplateDto = templateDto }
             };
             _mockService.Setup(s => s.GetByTemplateAsync(templateId, It.IsAny<CancellationToken>()))
-                       .Returns(comments);
+                       .ReturnsAsync(comments);
 
             // Act
             var result = _controller.GetByTemplateId(templateId);

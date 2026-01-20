@@ -27,7 +27,7 @@ namespace Comment.Tests.Controllers
                 new TemplateDto { Id = Guid.NewGuid(), Title = "Template 2" }
             };
             _mockService.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
-                       .Returns(templates);
+                       .ReturnsAsync(templates);
 
             // Act
             var result = _controller.GetAll();

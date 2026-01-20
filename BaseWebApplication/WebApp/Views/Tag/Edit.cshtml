@@ -1,5 +1,6 @@
-﻿@using Template.Domain.Model
-@model Tag
+﻿@using WebApp.Services.DTOs
+
+@model TagDto
 <h1>Edit Tag</h1>
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />

@@ -1,4 +1,6 @@
-﻿namespace Comment.Domain.Services
+﻿using System.Linq.Expressions;
+
+namespace Comment.Domain.Services
 {
     /// <summary>
     /// Service contract using DTOs between service and controller layers.
@@ -6,7 +8,7 @@
     /// </summary>
     public interface IService<TDto, TId>
     {
-        IEnumerable<TDto> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<TDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
         Task<TDto?> FindAsync(TId id, CancellationToken cancellationToken = default);
 
@@ -16,6 +18,15 @@
 
         Task DeleteAsync(TDto item, CancellationToken cancellationToken = default);
 
-        IEnumerable<TDto> Find(Func<TDto, bool> predicate);
+        Task<IEnumerable<TDto>> FindAsync(
+          Expression<Func<TDto, bool>> predicate,
+          CancellationToken cancellationToken = default);
+
+        // Optional: Pagination support
+        Task<(IEnumerable<TDto> Items, int TotalCount)> GetPagedAsync(
+            int pageIndex,
+            int pageSize,
+            Expression<Func<TDto, bool>>? predicate = null,
+            CancellationToken cancellationToken = default);
     }
 }

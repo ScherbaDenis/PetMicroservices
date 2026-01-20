@@ -3,6 +3,7 @@ using Comment.Domain.Mappers;
 using Comment.Domain.Services;
 using Microsoft.Extensions.Logging;
 using Comment.Domain.Repositories;
+using System.Linq.Expressions;
 
 namespace Comment.Service.Services
 {
@@ -19,7 +20,7 @@ namespace Comment.Service.Services
 
             var entity = item.ToEntity();
             await _templateRepository.AddAsync(entity, cancellationToken);
-            await _templateRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Template created successfully: {Template}", entity);
         }
@@ -31,7 +32,7 @@ namespace Comment.Service.Services
 
             var entity = item.ToEntity();
             await _templateRepository.DeleteAsync(entity, cancellationToken);
-            await _templateRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Template deleted successfully: {Template}", entity);
         }
@@ -39,7 +40,7 @@ namespace Comment.Service.Services
         public IEnumerable<TemplateDto> Find(Func<TemplateDto, bool> predicate)
         {
             _logger.LogInformation("Finding template...");
-            var entities = _templateRepository.Find(t => predicate(t.ToDto()));
+            var entities = _templateRepository.GetAllAsync().Result.Where(t => predicate(t.ToDto()));
             return entities.Select(t => t.ToDto());
         }
 
@@ -58,10 +59,10 @@ namespace Comment.Service.Services
             return template.ToDto();
         }
 
-        public IEnumerable<TemplateDto> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<TemplateDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all templates...");
-            var templates = _templateRepository.GetAllAsync(cancellationToken);
+            var templates = await _templateRepository.GetAllAsync(cancellationToken);
 
             _logger.LogInformation("Retrieved {Count} templates", templates is ICollection<Domain.Models.Template> col ? col.Count : -1);
 
@@ -75,9 +76,34 @@ namespace Comment.Service.Services
 
             var entity = item.ToEntity();
             await _templateRepository.UpdateAsync(entity, cancellationToken);
-            await _templateRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Template updated successfully: {Template}", entity);
+        }
+        public async Task<IEnumerable<TemplateDto>> FindAsync(Expression<Func<TemplateDto, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(predicate);
+            _logger.LogInformation("Finding templates with predicate...");
+
+            var entities = await _templateRepository.FindAsync(t => predicate.Compile()(t.ToDto()), cancellationToken);
+            return entities.Select(t => t.ToDto());
+        }
+
+        public async Task<(IEnumerable<TemplateDto> Items, int TotalCount)> GetPagedAsync(int pageIndex, int pageSize, Expression<Func<TemplateDto, bool>>? predicate = null, CancellationToken cancellationToken = default)
+        {
+            if (pageIndex < 0) throw new ArgumentOutOfRangeException(nameof(pageIndex));
+            if (pageSize <= 0) throw new ArgumentOutOfRangeException(nameof(pageSize));
+
+            _logger.LogInformation("Retrieving paged templates: PageIndex={PageIndex}, PageSize={PageSize}", pageIndex, pageSize);
+
+            var (items, totalCount) = await _templateRepository.GetPagedAsync(
+                pageIndex,
+                pageSize,
+                predicate != null ? t => predicate.Compile()(t.ToDto()) : null,
+                cancellationToken
+            );
+
+            return (items.Select(t => t.ToDto()), totalCount);
         }
     }
 }

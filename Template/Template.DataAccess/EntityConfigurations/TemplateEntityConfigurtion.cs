@@ -10,7 +10,7 @@ namespace Template.DataAccess.MsSql.EntityConfigurations
         public void Configure(EntityTypeBuilder<Domain.Model.Template> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.ToTable("templates", TemplateDbContext.DEFAULT_SCHEMA);
+            builder.ToTable("templates");
             builder.HasIndex(x => x.Id);
             builder.HasIndex(x => x.Title);
         }

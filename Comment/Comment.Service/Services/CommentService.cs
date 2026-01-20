@@ -3,6 +3,7 @@ using Comment.Domain.Repositories;
 using Comment.Domain.Services;
 using Comment.Domain.Mappers;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace Comment.Service.Services
 {
@@ -19,7 +20,7 @@ namespace Comment.Service.Services
 
             var entity = item.ToEntity();
             await _commentRepository.AddAsync(entity, cancellationToken);
-            await _commentRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Comment created successfully: {Comment}", entity);
         }
@@ -31,16 +32,20 @@ namespace Comment.Service.Services
 
             var entity = item.ToEntity();
             await _commentRepository.DeleteAsync(entity, cancellationToken);
-            await _commentRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Comment deleted successfully: {Comment}", entity);
         }
 
-        public IEnumerable<CommentDto> Find(Func<CommentDto, bool> predicate)
+        public async Task<IEnumerable<CommentDto>> FindAsync(
+            Expression<Func<CommentDto, bool>> predicate,
+            CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Finding comment...");
-            var entities = _commentRepository.Find(t => predicate(t.ToDto()));
-            return entities.Select(t => t.ToDto());
+            _logger.LogInformation("Finding comments with predicate...");
+            // Map predicate for DTO to entity if needed, or filter after mapping
+            var entities = await _commentRepository.GetAllAsync(cancellationToken);
+            var dtos = entities.Select(e => e.ToDto()).AsQueryable().Where(predicate);
+            return dtos;
         }
 
         public async Task<CommentDto?> FindAsync(Guid id, CancellationToken cancellationToken = default)
@@ -58,20 +63,21 @@ namespace Comment.Service.Services
             return comment.ToDto();
         }
 
-        public IEnumerable<CommentDto> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<CommentDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all comments...");
-            var comments = _commentRepository.GetAllAsync(cancellationToken);
+            var comments = await _commentRepository.GetAllAsync(cancellationToken);
 
             _logger.LogInformation("Retrieved {Count} comments", comments is ICollection<Domain.Models.Comment> col ? col.Count : -1);
 
             return comments.Select(t => t.ToDto());
         }
 
-        public IEnumerable<CommentDto> GetByTemplateAsync(Guid templateId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<CommentDto>> GetByTemplateAsync(Guid templateId, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving Template all comments...");
-            var comments = _commentRepository.GetAllAsync(cancellationToken).Where(comment => comment.Template.Id == templateId);
+            var comments = await _commentRepository.FindAsync(
+                c => c.Template.Id == templateId, cancellationToken);
 
             _logger.LogInformation("Retrieved Template {Count} comments", comments is ICollection<Domain.Models.Comment> col ? col.Count : -1);
 
@@ -85,9 +91,24 @@ namespace Comment.Service.Services
 
             var entity = item.ToEntity();
             await _commentRepository.UpdateAsync(entity, cancellationToken);
-            await _commentRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Comment updated successfully: {Comment}", entity);
+        }
+
+        // Optional: Pagination support
+        public async Task<(IEnumerable<CommentDto> Items, int TotalCount)> GetPagedAsync(
+            int pageIndex,
+            int pageSize,
+            Expression<Func<CommentDto, bool>>? predicate = null,
+            CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving paged comments...");
+            var entitiesPaged = await _commentRepository.GetPagedAsync(
+                pageIndex, pageSize, c => predicate == null || predicate.Compile().Invoke(c.ToDto()), cancellationToken);
+
+            var dtos = entitiesPaged.Items.Select(e => e.ToDto());
+            return (dtos, entitiesPaged.TotalCount);
         }
     }
 }
