@@ -3,6 +3,9 @@ using Comment.Domain.Repositories;
 
 namespace Comment.DataAccess.MsSql.Repositories
 {
+    /// <summary>
+    /// Implements the Unit of Work pattern for managing repositories and committing changes to the database.
+    /// </summary>
     public class UnitOfWork(
         CommentDbContext context,
         ILogger<UnitOfWork> logger,
@@ -40,12 +43,19 @@ namespace Comment.DataAccess.MsSql.Repositories
             }
         }
 
+        /// <summary>
+        /// Disposes the unit of work and releases database resources.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Disposes the context and other managed resources.
+        /// </summary>
+        /// <param name="disposing">Indicates whether the method is called from Dispose.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)

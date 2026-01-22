@@ -5,11 +5,11 @@ using System.Linq.Expressions;
 
 namespace Comment.DataAccess.MsSql.Repositories
 {
-    /// <summary>
-    /// Provides a base implementation of the generic repository pattern for CRUD and query operations.
-    /// </summary>
-    /// <typeparam name="TEntity">The entity type managed by the repository.</typeparam>
-    /// <typeparam name="ID">The type of the entity's identifier.</typeparam>
+    ///// <summary>
+    ///// Provides a base implementation of the generic repository pattern for CRUD and query operations.
+    ///// </summary>
+    ///// <typeparam name="TEntity">The entity type managed by the repository.</typeparam>
+    ///// <typeparam name="ID">The type of the entity's identifier.</typeparam>
 
     public abstract class RepositoryBase<TEntity, ID> : IRepository<TEntity, ID>
         where TEntity : Entity<ID>
@@ -19,7 +19,7 @@ namespace Comment.DataAccess.MsSql.Repositories
         protected readonly DbSet<TEntity> _dbSet;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RepositoryBase{TEntity, ID}"/> class.
+        /// Initializes a new instance of the RepositoryBase class.
         /// </summary>
         /// <param name="context">The database context.</param>
         /// <param name="logger">The logger instance.</param>
