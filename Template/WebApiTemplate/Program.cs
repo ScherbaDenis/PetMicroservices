@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Template.DataAccess.MsSql.Repositories;
 using Template.Domain.Repository;
 using Template.Domain.Services;
@@ -9,13 +10,22 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// DbContext
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<TemplateDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// Unit of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Repositories
 builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 
+// Services
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IUserService, UserService>();

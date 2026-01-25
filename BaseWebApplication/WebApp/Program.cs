@@ -12,7 +12,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ITagService, TagService>();
+
+builder.Services.AddHttpClient<ITagService, TagService>();
 
 var app = builder.Build();
 
