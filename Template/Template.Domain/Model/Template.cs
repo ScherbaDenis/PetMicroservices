@@ -9,7 +9,7 @@ namespace Template.Domain.Model
         public User? Owner { get; set; }
         public Topic? Topic { get; set; }
         public IEnumerable<Tag>? Tags { get; set; }
-        public IEnumerable<User> UsersAccess { get; set; } = new List<User>();
+        public IEnumerable<User> UsersAccess { get; set; }
         public IEnumerable<Question>? Questions { get; set; }
     }
 }

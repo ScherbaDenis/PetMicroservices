@@ -12,7 +12,7 @@ using Template.DataAccess.MsSql.Repositories;
 namespace Template.DataAccess.MsSql.Migrations
 {
     [DbContext(typeof(TemplateDbContext))]
-    [Migration("20260126164801_InitialCreate")]
+    [Migration("20260126170237_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -49,6 +49,26 @@ namespace Template.DataAccess.MsSql.Migrations
                     b.HasIndex("TemplateId");
 
                     b.ToTable("Questions", "template");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                            Description = "Please provide your full name",
+                            Title = "What is your name?"
+                        },
+                        new
+                        {
+                            Id = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"),
+                            Description = "Please provide a valid email address",
+                            Title = "What is your email?"
+                        },
+                        new
+                        {
+                            Id = new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
+                            Description = "Rate your satisfaction from 1 to 10",
+                            Title = "How satisfied are you?"
+                        });
                 });
 
             modelBuilder.Entity("Template.Domain.Model.Tag", b =>
@@ -73,6 +93,28 @@ namespace Template.DataAccess.MsSql.Migrations
                     b.HasIndex("TemplateId");
 
                     b.ToTable("tags", "template");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Programming"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Database"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Web Development"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Machine Learning"
+                        });
                 });
 
             modelBuilder.Entity("Template.Domain.Model.Template", b =>
@@ -103,6 +145,20 @@ namespace Template.DataAccess.MsSql.Migrations
                     b.HasIndex("TopicId");
 
                     b.ToTable("templates", "template");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            Description = "A template for collecting customer feedback",
+                            Title = "Customer Feedback Survey"
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                            Description = "A comprehensive onboarding checklist for new employees",
+                            Title = "Employee Onboarding Checklist"
+                        });
                 });
 
             modelBuilder.Entity("Template.Domain.Model.Topic", b =>
@@ -122,6 +178,23 @@ namespace Template.DataAccess.MsSql.Migrations
                     b.HasIndex("Name");
 
                     b.ToTable("topics", "template");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Technology"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Science"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Education"
+                        });
                 });
 
             modelBuilder.Entity("Template.Domain.Model.User", b =>
@@ -144,6 +217,18 @@ namespace Template.DataAccess.MsSql.Migrations
                     b.HasIndex("TemplateId");
 
                     b.ToTable("users", "template");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Name = "John Doe"
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Name = "Jane Smith"
+                        });
                 });
 
             modelBuilder.Entity("Template.Domain.Model.Question", b =>

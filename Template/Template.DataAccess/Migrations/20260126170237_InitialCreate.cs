@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Template.DataAccess.MsSql.Migrations
 {
     /// <inheritdoc />
@@ -98,6 +100,60 @@ namespace Template.DataAccess.MsSql.Migrations
                         principalSchema: "template",
                         principalTable: "templates",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.InsertData(
+                schema: "template",
+                table: "Questions",
+                columns: new[] { "Id", "Description", "TemplateId", "Title" },
+                values: new object[,]
+                {
+                    { new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), "Please provide your full name", null, "What is your name?" },
+                    { new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"), "Please provide a valid email address", null, "What is your email?" },
+                    { new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), "Rate your satisfaction from 1 to 10", null, "How satisfied are you?" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "template",
+                table: "tags",
+                columns: new[] { "Id", "Name", "TemplateId" },
+                values: new object[,]
+                {
+                    { 1, "Programming", null },
+                    { 2, "Database", null },
+                    { 3, "Web Development", null },
+                    { 4, "Machine Learning", null }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "template",
+                table: "templates",
+                columns: new[] { "Id", "Description", "OwnerId", "Title", "TopicId" },
+                values: new object[,]
+                {
+                    { new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "A template for collecting customer feedback", null, "Customer Feedback Survey", null },
+                    { new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "A comprehensive onboarding checklist for new employees", null, "Employee Onboarding Checklist", null }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "template",
+                table: "topics",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Technology" },
+                    { 2, "Science" },
+                    { 3, "Education" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "template",
+                table: "users",
+                columns: new[] { "Id", "Name", "TemplateId" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "John Doe", null },
+                    { new Guid("22222222-2222-2222-2222-222222222222"), "Jane Smith", null }
                 });
 
             migrationBuilder.CreateIndex(
