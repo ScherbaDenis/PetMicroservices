@@ -65,8 +65,6 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("Name");
 
                     b.HasIndex("TemplateId");
@@ -95,8 +93,6 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("OwnerId");
 
                     b.HasIndex("Title");
@@ -120,8 +116,6 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("Name");
 
                     b.ToTable("topics", "template");
@@ -141,8 +135,6 @@ namespace Template.DataAccess.MsSql.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Id");
 
                     b.HasIndex("Name");
 

@@ -107,12 +107,6 @@ namespace Template.DataAccess.MsSql.Migrations
                 column: "TemplateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tags_Id",
-                schema: "template",
-                table: "tags",
-                column: "Id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_tags_Name",
                 schema: "template",
                 table: "tags",
@@ -123,12 +117,6 @@ namespace Template.DataAccess.MsSql.Migrations
                 schema: "template",
                 table: "tags",
                 column: "TemplateId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_templates_Id",
-                schema: "template",
-                table: "templates",
-                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_templates_OwnerId",
@@ -149,22 +137,10 @@ namespace Template.DataAccess.MsSql.Migrations
                 column: "TopicId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_topics_Id",
-                schema: "template",
-                table: "topics",
-                column: "Id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_topics_Name",
                 schema: "template",
                 table: "topics",
                 column: "Name");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_users_Id",
-                schema: "template",
-                table: "users",
-                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_users_Name",

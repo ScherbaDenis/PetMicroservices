@@ -11,7 +11,6 @@ namespace Template.DataAccess.MsSql.EntityConfigurations
         {
             builder.HasKey(x => x.Id);
             builder.ToTable("tags");
-            builder.HasIndex(x => x.Id);
             builder.HasIndex(x => x.Name);
         }
     }

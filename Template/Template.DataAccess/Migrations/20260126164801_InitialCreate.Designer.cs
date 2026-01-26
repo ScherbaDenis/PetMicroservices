@@ -12,7 +12,7 @@ using Template.DataAccess.MsSql.Repositories;
 namespace Template.DataAccess.MsSql.Migrations
 {
     [DbContext(typeof(TemplateDbContext))]
-    [Migration("20260126164335_InitialCreate")]
+    [Migration("20260126164801_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -68,8 +68,6 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("Name");
 
                     b.HasIndex("TemplateId");
@@ -98,8 +96,6 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("OwnerId");
 
                     b.HasIndex("Title");
@@ -123,8 +119,6 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("Name");
 
                     b.ToTable("topics", "template");
@@ -144,8 +138,6 @@ namespace Template.DataAccess.MsSql.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Id");
 
                     b.HasIndex("Name");
 
