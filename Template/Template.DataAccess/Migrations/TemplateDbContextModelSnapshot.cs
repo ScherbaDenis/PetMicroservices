@@ -23,6 +23,21 @@ namespace Template.DataAccess.MsSql.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("TagTemplate", b =>
+                {
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TagsId", "TemplateId");
+
+                    b.HasIndex("TemplateId");
+
+                    b.ToTable("TagTemplate", "template");
+                });
+
             modelBuilder.Entity("Template.Domain.Model.Question", b =>
                 {
                     b.Property<Guid>("Id")
@@ -38,14 +53,17 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TemplateId");
 
-                    b.ToTable("Questions", "template");
+                    b.HasIndex("Title")
+                        .HasDatabaseName("IX_questions_title");
+
+                    b.ToTable("questions", "template");
 
                     b.HasData(
                         new
@@ -78,16 +96,13 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid?>("TemplateId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name");
-
-                    b.HasIndex("TemplateId");
+                    b.HasIndex("Name")
+                        .HasDatabaseName("IX_tags_name");
 
                     b.ToTable("tags", "template");
 
@@ -121,14 +136,16 @@ namespace Template.DataAccess.MsSql.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int?>("TopicId")
                         .HasColumnType("int");
@@ -168,11 +185,13 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name");
+                    b.HasIndex("Name")
+                        .HasDatabaseName("IX_topics_name");
 
                     b.ToTable("topics", "template");
 
@@ -202,16 +221,13 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid?>("TemplateId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name");
-
-                    b.HasIndex("TemplateId");
+                    b.HasIndex("Name")
+                        .HasDatabaseName("IX_users_name");
 
                     b.ToTable("users", "template");
 
@@ -228,49 +244,79 @@ namespace Template.DataAccess.MsSql.Migrations
                         });
                 });
 
+            modelBuilder.Entity("TemplateUser", b =>
+                {
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UsersAccessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TemplateId", "UsersAccessId");
+
+                    b.HasIndex("UsersAccessId");
+
+                    b.ToTable("TemplateUser", "template");
+                });
+
+            modelBuilder.Entity("TagTemplate", b =>
+                {
+                    b.HasOne("Template.Domain.Model.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Template.Domain.Model.Template", null)
+                        .WithMany()
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Template.Domain.Model.Question", b =>
                 {
                     b.HasOne("Template.Domain.Model.Template", null)
                         .WithMany("Questions")
-                        .HasForeignKey("TemplateId");
-                });
-
-            modelBuilder.Entity("Template.Domain.Model.Tag", b =>
-                {
-                    b.HasOne("Template.Domain.Model.Template", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("TemplateId");
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Template.Domain.Model.Template", b =>
                 {
                     b.HasOne("Template.Domain.Model.User", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Template.Domain.Model.Topic", "Topic")
                         .WithMany()
-                        .HasForeignKey("TopicId");
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Owner");
 
                     b.Navigation("Topic");
                 });
 
-            modelBuilder.Entity("Template.Domain.Model.User", b =>
+            modelBuilder.Entity("TemplateUser", b =>
                 {
                     b.HasOne("Template.Domain.Model.Template", null)
-                        .WithMany("UsersAccess")
-                        .HasForeignKey("TemplateId");
+                        .WithMany()
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Template.Domain.Model.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersAccessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Template.Domain.Model.Template", b =>
                 {
                     b.Navigation("Questions");
-
-                    b.Navigation("Tags");
-
-                    b.Navigation("UsersAccess");
                 });
 #pragma warning restore 612, 618
         }
