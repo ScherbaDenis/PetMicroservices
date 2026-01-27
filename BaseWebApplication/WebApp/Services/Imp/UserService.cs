@@ -7,17 +7,19 @@ namespace WebApp.Services.Imp
     {
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
-        private const string BaseUrl = "https://localhost:7263/api/user";
+        private readonly string _baseUrl;
 
-        public UserService(HttpClient httpClient)
+        public UserService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
             _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            _baseUrl = configuration["ApiEndpoints:UserService"] 
+                ?? throw new InvalidOperationException("UserService endpoint not configured.");
         }
 
         public async Task<UserDto> CreateAsync(UserDto item, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PostAsJsonAsync(BaseUrl, item, cancellationToken);
+            var response = await _httpClient.PostAsJsonAsync(_baseUrl, item, cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<UserDto>(_jsonOptions, cancellationToken)
                    ?? throw new InvalidOperationException("Failed to deserialize UserDto.");
@@ -25,13 +27,13 @@ namespace WebApp.Services.Imp
 
         public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.DeleteAsync($"{BaseUrl}/{id}", cancellationToken);
+            var response = await _httpClient.DeleteAsync($"{_baseUrl}/{id}", cancellationToken);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task<IEnumerable<UserDto>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var response = await _httpClient.GetAsync(BaseUrl, cancellationToken);
+            var response = await _httpClient.GetAsync(_baseUrl, cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<IEnumerable<UserDto>>(_jsonOptions, cancellationToken)
                    ?? Enumerable.Empty<UserDto>();
@@ -39,7 +41,7 @@ namespace WebApp.Services.Imp
 
         public async Task<UserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.GetAsync($"{BaseUrl}/{id}", cancellationToken);
+            var response = await _httpClient.GetAsync($"{_baseUrl}/{id}", cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<UserDto>(_jsonOptions, cancellationToken)
                    ?? throw new InvalidOperationException("User not found.");
@@ -47,7 +49,7 @@ namespace WebApp.Services.Imp
 
         public async Task UpdateAsync(UserDto item, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/{item.Id}", item, cancellationToken);
+            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{item.Id}", item, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
     }

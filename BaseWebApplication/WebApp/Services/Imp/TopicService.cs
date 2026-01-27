@@ -7,17 +7,19 @@ namespace WebApp.Services.Imp
     {
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
-        private const string BaseUrl = "https://localhost:7263/api/topic";
+        private readonly string _baseUrl;
 
-        public TopicService(HttpClient httpClient)
+        public TopicService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
             _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            _baseUrl = configuration["ApiEndpoints:TopicService"] 
+                ?? throw new InvalidOperationException("TopicService endpoint not configured.");
         }
 
         public async Task<TopicDto> CreateAsync(TopicDto item, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PostAsJsonAsync(BaseUrl, item, cancellationToken);
+            var response = await _httpClient.PostAsJsonAsync(_baseUrl, item, cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<TopicDto>(_jsonOptions, cancellationToken)
                    ?? throw new InvalidOperationException("Failed to deserialize TopicDto.");
@@ -25,13 +27,13 @@ namespace WebApp.Services.Imp
 
         public async Task DeleteAsync(int id, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.DeleteAsync($"{BaseUrl}/{id}", cancellationToken);
+            var response = await _httpClient.DeleteAsync($"{_baseUrl}/{id}", cancellationToken);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task<IEnumerable<TopicDto>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var response = await _httpClient.GetAsync(BaseUrl, cancellationToken);
+            var response = await _httpClient.GetAsync(_baseUrl, cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<IEnumerable<TopicDto>>(_jsonOptions, cancellationToken)
                    ?? Enumerable.Empty<TopicDto>();
@@ -39,7 +41,7 @@ namespace WebApp.Services.Imp
 
         public async Task<TopicDto> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.GetAsync($"{BaseUrl}/{id}", cancellationToken);
+            var response = await _httpClient.GetAsync($"{_baseUrl}/{id}", cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<TopicDto>(_jsonOptions, cancellationToken)
                    ?? throw new InvalidOperationException("Topic not found.");
@@ -47,7 +49,7 @@ namespace WebApp.Services.Imp
 
         public async Task UpdateAsync(TopicDto item, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/{item.Id}", item, cancellationToken);
+            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{item.Id}", item, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
     }
