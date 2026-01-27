@@ -4,7 +4,7 @@ using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class TemplatesController(ITemplateService service) : Controller
+    public class TemplateController(ITemplateService service) : Controller
     {
         private readonly ITemplateService _service = service;
 

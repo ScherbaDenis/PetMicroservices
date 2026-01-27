@@ -4,7 +4,7 @@ using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class UsersController(IUserService service) : Controller
+    public class UserController(IUserService service) : Controller
     {
         private readonly IUserService _service = service;
 

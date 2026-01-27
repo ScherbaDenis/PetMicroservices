@@ -4,7 +4,7 @@ using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class TopicsController(ITopicService service) : Controller
+    public class TopicController(ITopicService service) : Controller
     {
         private readonly ITopicService _service = service;
 

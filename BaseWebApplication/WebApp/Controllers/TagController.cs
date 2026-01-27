@@ -4,7 +4,7 @@ using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class TagsController(ITagService service) : Controller
+    public class TagController(ITagService service) : Controller
     {
         private readonly ITagService _service = service;
 
