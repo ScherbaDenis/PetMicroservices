@@ -9,6 +9,16 @@ namespace WebApp.Controllers
         private readonly ICommentService _service = service;
         private readonly ITemplateService _templateService = templateService;
 
+        private async Task PopulateTemplatesViewBag(CancellationToken cancellationToken)
+        {
+            var templates = await _templateService.GetAllAsync(cancellationToken);
+            ViewBag.Templates = templates.Select(t => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+            {
+                Value = t.Id.ToString(),
+                Text = t.Title
+            }).ToList();
+        }
+
         // GET: /Comment
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
@@ -27,12 +37,7 @@ namespace WebApp.Controllers
         // GET: /Comment/Create
         public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
-            var templates = await _templateService.GetAllAsync(cancellationToken);
-            ViewBag.Templates = templates.Select(t => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-            {
-                Value = t.Id.ToString(),
-                Text = t.Title
-            }).ToList();
+            await PopulateTemplatesViewBag(cancellationToken);
             return View();
         }
 
@@ -43,12 +48,7 @@ namespace WebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var templates = await _templateService.GetAllAsync(cancellationToken);
-                ViewBag.Templates = templates.Select(t => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-                {
-                    Value = t.Id.ToString(),
-                    Text = t.Title
-                }).ToList();
+                await PopulateTemplatesViewBag(cancellationToken);
                 return View(dto);
             }
             await _service.CreateAsync(dto, cancellationToken);
@@ -61,12 +61,7 @@ namespace WebApp.Controllers
             var item = await _service.GetByIdAsync(id, cancellationToken);
             if (item == null) return NotFound();
             
-            var templates = await _templateService.GetAllAsync(cancellationToken);
-            ViewBag.Templates = templates.Select(t => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-            {
-                Value = t.Id.ToString(),
-                Text = t.Title
-            }).ToList();
+            await PopulateTemplatesViewBag(cancellationToken);
             return View(item);
         }
 
@@ -78,12 +73,7 @@ namespace WebApp.Controllers
             if (id != dto.Id) return BadRequest();
             if (!ModelState.IsValid)
             {
-                var templates = await _templateService.GetAllAsync(cancellationToken);
-                ViewBag.Templates = templates.Select(t => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-                {
-                    Value = t.Id.ToString(),
-                    Text = t.Title
-                }).ToList();
+                await PopulateTemplatesViewBag(cancellationToken);
                 return View(dto);
             }
 
