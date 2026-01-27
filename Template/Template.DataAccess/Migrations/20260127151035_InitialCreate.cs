@@ -294,11 +294,11 @@ namespace Template.DataAccess.MsSql.Migrations
                 schema: "template");
 
             migrationBuilder.DropTable(
-                name: "tags",
+                name: "templates",
                 schema: "template");
 
             migrationBuilder.DropTable(
-                name: "templates",
+                name: "tags",
                 schema: "template");
 
             migrationBuilder.DropTable(
