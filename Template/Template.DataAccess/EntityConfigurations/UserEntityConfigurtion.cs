@@ -9,9 +9,16 @@ namespace Template.DataAccess.MsSql.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasKey(x => x.Id);
             builder.ToTable("users");
-            builder.HasIndex(x => x.Name);
+
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.HasIndex(x => x.Name)
+                .HasDatabaseName("IX_users_name");
         }
     }
 }
