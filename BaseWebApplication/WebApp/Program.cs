@@ -9,9 +9,9 @@ builder.Services.AddControllersWithViews();
 
 // Services
 
-builder.Services.AddScoped<ITemplateService, TemplateService>();
-builder.Services.AddScoped<ITopicService, TopicService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddHttpClient<ITemplateService, TemplateService>();
+builder.Services.AddHttpClient<ITopicService, TopicService>();
+builder.Services.AddHttpClient<IUserService, UserService>();
 
 builder.Services.AddHttpClient<ITagService, TagService>();
 
