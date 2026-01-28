@@ -23,7 +23,7 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _templateRepository.AddAsync(entity, cancellationToken);
-            await _templateRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Template created successfully: {Template}", entity);
         }
@@ -35,16 +35,19 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _templateRepository.DeleteAsync(entity, cancellationToken);
-            await _templateRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Template deleted successfully: {Template}", entity);
         }
 
-        public IEnumerable<TemplateDto> Find(Func<TemplateDto, bool> predicate)
+        public async Task<IEnumerable<TemplateDto>> FindAsync(
+            Func<TemplateDto, bool> predicate,
+            CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Finding template...");
-            var entities = _templateRepository.Find(t => predicate(t.ToDto()));
-            return entities.Select(t => t.ToDto());
+            _logger.LogInformation("Finding templates with predicate...");
+            var entities = await _templateRepository.GetAllAsync(cancellationToken);
+            var dtos = entities.Select(e => e.ToDto()).Where(predicate);
+            return dtos;
         }
 
         public async Task<TemplateDto?> FindAsync(Guid id, CancellationToken cancellationToken = default)
@@ -62,10 +65,10 @@ namespace Template.Service.Services
             return template.ToDto();
         }
 
-        public IEnumerable<TemplateDto> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<TemplateDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all templates...");
-            var templates = _templateRepository.GetAllAsync(cancellationToken);
+            var templates = await _templateRepository.GetAllAsync(cancellationToken);
 
             _logger.LogInformation("Retrieved {Count} templates", templates is ICollection<Domain.Model.Template> col ? col.Count : -1);
 
@@ -79,7 +82,7 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _templateRepository.UpdateAsync(entity, cancellationToken);
-            await _templateRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Template updated successfully: {Template}", entity);
         }

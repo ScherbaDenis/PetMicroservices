@@ -27,9 +27,8 @@ namespace Template.DataAccess.MsSql.Repositories
 
         public IQuestionRepository QuestionRepository =>
           _questionRepository ??= new QuestionRepository(
-              _context
-              //,
-              //_loggerFactory.CreateLogger<QuestionRepository>()
+              _context,
+              _loggerFactory.CreateLogger<QuestionRepository>()
           );
 
         public ITagRepository TagRepository =>
