@@ -68,19 +68,20 @@ namespace Comment.Tests.Services
         }
 
         [Fact]
-        public void Find_ShouldCallRepositoryFind()
+        public async Task Find_ShouldCallRepositoryFind()
         {
             // Arrange
-            var expected = new List<Domain.Models.Comment> { new Domain.Models.Comment() };
-            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                     .ReturnsAsync(expected.FirstOrDefault);
+            var expected = new Domain.Models.Comment();
+            var guid = Guid.NewGuid();
+            _mockRepo.Setup(r => r.FindAsync(guid, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(expected);
 
             // Act
-            var result = _service.FindAsync(c => true);
+            var result = await _service.FindAsync(guid);
 
             // Assert
             Assert.NotNull(result);
-            _mockRepo.Verify(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mockRepo.Verify(r => r.FindAsync(guid, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
