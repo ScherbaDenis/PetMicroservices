@@ -4,8 +4,6 @@ namespace Comment.Domain.Models
 {
     public class Comment : Entity<Guid>
     {
-        public Guid Id { get; set; }
-
         public Template Template { get; set; }
 
         public string Text { get; set; }
