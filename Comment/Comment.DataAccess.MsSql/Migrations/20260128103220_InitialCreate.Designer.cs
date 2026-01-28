@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comment.DataAccess.MsSql.Migrations
 {
     [DbContext(typeof(CommentDbContext))]
-    [Migration("20260128101210_InitialCreate")]
+    [Migration("20260128103220_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -46,38 +46,6 @@ namespace Comment.DataAccess.MsSql.Migrations
                         .HasDatabaseName("IX_comments_TemplateId");
 
                     b.ToTable("comments", "Comment");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000001"),
-                            TemplateId = new Guid("10000000-0000-0000-0000-000000000001"),
-                            Text = "Great product! Highly recommended."
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000002"),
-                            TemplateId = new Guid("10000000-0000-0000-0000-000000000001"),
-                            Text = "The service was excellent and very helpful."
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000003"),
-                            TemplateId = new Guid("10000000-0000-0000-0000-000000000002"),
-                            Text = "Good quality, but a bit expensive."
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000004"),
-                            TemplateId = new Guid("10000000-0000-0000-0000-000000000002"),
-                            Text = "Fast delivery and good packaging."
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000005"),
-                            TemplateId = new Guid("10000000-0000-0000-0000-000000000003"),
-                            Text = "Issue resolved quickly by support team."
-                        });
                 });
 
             modelBuilder.Entity("Comment.Domain.Models.Template", b =>
@@ -97,23 +65,6 @@ namespace Comment.DataAccess.MsSql.Migrations
                         .HasDatabaseName("IX_templates_Title");
 
                     b.ToTable("templates", "Comment");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000001"),
-                            Title = "Customer Feedback Template"
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000002"),
-                            Title = "Product Review Template"
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000003"),
-                            Title = "Support Ticket Template"
-                        });
                 });
 
             modelBuilder.Entity("Comment.Domain.Models.Comment", b =>

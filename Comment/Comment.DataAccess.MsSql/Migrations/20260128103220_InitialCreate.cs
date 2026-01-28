@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Comment.DataAccess.MsSql.Migrations
 {
     /// <inheritdoc />
@@ -48,30 +46,6 @@ namespace Comment.DataAccess.MsSql.Migrations
                         principalTable: "templates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.InsertData(
-                schema: "Comment",
-                table: "templates",
-                columns: new[] { "Id", "Title" },
-                values: new object[,]
-                {
-                    { new Guid("10000000-0000-0000-0000-000000000001"), "Customer Feedback Template" },
-                    { new Guid("10000000-0000-0000-0000-000000000002"), "Product Review Template" },
-                    { new Guid("10000000-0000-0000-0000-000000000003"), "Support Ticket Template" }
-                });
-
-            migrationBuilder.InsertData(
-                schema: "Comment",
-                table: "comments",
-                columns: new[] { "Id", "TemplateId", "Text" },
-                values: new object[,]
-                {
-                    { new Guid("20000000-0000-0000-0000-000000000001"), new Guid("10000000-0000-0000-0000-000000000001"), "Great product! Highly recommended." },
-                    { new Guid("20000000-0000-0000-0000-000000000002"), new Guid("10000000-0000-0000-0000-000000000001"), "The service was excellent and very helpful." },
-                    { new Guid("20000000-0000-0000-0000-000000000003"), new Guid("10000000-0000-0000-0000-000000000002"), "Good quality, but a bit expensive." },
-                    { new Guid("20000000-0000-0000-0000-000000000004"), new Guid("10000000-0000-0000-0000-000000000002"), "Fast delivery and good packaging." },
-                    { new Guid("20000000-0000-0000-0000-000000000005"), new Guid("10000000-0000-0000-0000-000000000003"), "Issue resolved quickly by support team." }
                 });
 
             migrationBuilder.CreateIndex(
