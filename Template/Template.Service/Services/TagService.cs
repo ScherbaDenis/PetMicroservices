@@ -25,7 +25,7 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _tagRepository.AddAsync(entity, cancellationToken);
-            await _tagRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Tag created successfully: {Tag}", entity);
         }
@@ -38,18 +38,19 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _tagRepository.DeleteAsync(entity, cancellationToken);
-            await _tagRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Tag deleted successfully: {Tag}", entity);
         }
 
-        public IEnumerable<TagDto> Find(Func<TagDto, bool> predicate)
+        public async Task<IEnumerable<TagDto>> FindAsync(Func<TagDto, bool> predicate, CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Finding tag...");
+            _logger.LogInformation("Finding tags with predicate...");
 
             // perform find on entities then map to DTOs
-            var entities = _tagRepository.Find(t => predicate(t.ToDto()));
-            return entities.Select(t => t.ToDto());
+            var entities = await _tagRepository.GetAllAsync(cancellationToken);
+            var dtos = entities.Select(e => e.ToDto()).Where(predicate);
+            return dtos;
         }
 
         public async Task<TagDto?> FindAsync(int id, CancellationToken cancellationToken = default)
@@ -68,11 +69,11 @@ namespace Template.Service.Services
             return tag.ToDto();
         }
 
-        public IEnumerable<TagDto> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<TagDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all tags...");
 
-            var tags = _tagRepository.GetAllAsync(cancellationToken);
+            var tags = await _tagRepository.GetAllAsync(cancellationToken);
 
             _logger.LogInformation("Retrieved {Count} tags", tags is ICollection<Tag> col ? col.Count : -1);
 
@@ -87,7 +88,7 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _tagRepository.UpdateAsync(entity, cancellationToken);
-            await _tagRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Tag updated successfully: {Tag}", entity);
         }

@@ -24,7 +24,7 @@ namespace Template.Service.Services
             _logger.LogInformation("Creating question: {Question}", item);
             var entity = item.ToEntity();
             await _questionRepository.AddAsync(entity, cancellationToken);
-            await _questionRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Question created successfully: {Question}", entity);
         }
 
@@ -34,7 +34,7 @@ namespace Template.Service.Services
             _logger.LogInformation("Updating question: {Question}", item);
             var entity = item.ToEntity();
             await _questionRepository.UpdateAsync(entity, cancellationToken);
-            await _questionRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Question updated successfully: {Question}", entity);
         }
 
@@ -44,14 +44,14 @@ namespace Template.Service.Services
             _logger.LogInformation("Deleting question: {Question}", item);
             var entity = item.ToEntity();
             await _questionRepository.DeleteAsync(entity, cancellationToken);
-            await _questionRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Question deleted successfully: {Question}", entity);
         }
 
-        public IEnumerable<QuestionDto> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<QuestionDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all questions...");
-            var questions = _questionRepository.GetAllAsync(cancellationToken);
+            var questions = await _questionRepository.GetAllAsync(cancellationToken);
             _logger.LogInformation("Retrieved {Count} questions", questions is ICollection<Question> col ? col.Count : -1);
             return questions.Select(q => q.ToDto());
         }
@@ -69,11 +69,12 @@ namespace Template.Service.Services
             return question.ToDto();
         }
 
-        public IEnumerable<QuestionDto> Find(Func<QuestionDto, bool> predicate)
+        public async Task<IEnumerable<QuestionDto>> FindAsync(Func<QuestionDto, bool> predicate, CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Finding question...");
-            var entities = _questionRepository.Find(q => predicate(q.ToDto()));
-            return entities.Select(q => q.ToDto());
+            _logger.LogInformation("Finding questions with predicate...");
+            var entities = await _questionRepository.GetAllAsync(cancellationToken);
+            var dtos = entities.Select(e => e.ToDto()).Where(predicate);
+            return dtos;
         }
     }
 }
