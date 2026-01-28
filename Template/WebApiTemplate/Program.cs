@@ -55,17 +55,17 @@ builder.Services.AddDbContext<TemplateDbContext>(options =>
                        context.SaveChanges();
                    }
 
-                   if (!context.Set<Domain.Model.Template>().Any())
+                   if (!context.Set<Template.Domain.Model.Template>().Any())
                    {
                        // Seed Templates
-                       context.Set<Domain.Model.Template>().AddRange(
-                           new Domain.Model.Template
+                       context.Set<Template.Domain.Model.Template>().AddRange(
+                           new Template.Domain.Model.Template
                            {
                                Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
                                Title = "Customer Feedback Survey",
                                Description = "A template for collecting customer feedback"
                            },
-                           new Domain.Model.Template
+                           new Template.Domain.Model.Template
                            {
                                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                                Title = "Employee Onboarding Checklist",

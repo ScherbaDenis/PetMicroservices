@@ -9,9 +9,9 @@ namespace WebApp.Controllers
         private readonly ITagService _service = service;
 
         // GET: /Tags
-        public IActionResult Index(CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var tags = _service.GetAllAsync(cancellationToken);
+            var tags = await _service.GetAllAsync(cancellationToken);
             return View(tags);
         }
 

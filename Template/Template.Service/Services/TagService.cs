@@ -34,13 +34,19 @@ namespace Template.Service.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            _logger.LogInformation("Deleting tag: {Tag}", item);
+            _logger.LogInformation("Deleting tag: {@Tag}", item);
 
-            var entity = item.ToEntity();
+            var entity = await _tagRepository.FindAsync(item.Id, cancellationToken);
+            if (entity == null)
+            {
+                _logger.LogWarning("Tag with ID {TagId} not found for deletion.", item.Id);
+                throw new InvalidOperationException($"Tag with ID {item.Id} not found.");
+            }
+
             await _tagRepository.DeleteAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Tag deleted successfully: {Tag}", entity);
+            _logger.LogInformation("Tag deleted successfully: {@Tag}", entity);
         }
 
         public async Task<IEnumerable<TagDto>> FindAsync(Func<TagDto, bool> predicate, CancellationToken cancellationToken = default)
@@ -84,13 +90,22 @@ namespace Template.Service.Services
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            _logger.LogInformation("Updating tag: {Tag}", item);
+            _logger.LogInformation("Updating tag: {@Tag}", item);
 
-            var entity = item.ToEntity();
+            var entity = await _tagRepository.FindAsync(item.Id, cancellationToken);
+            if (entity == null)
+            {
+                _logger.LogWarning("Tag with ID {TagId} not found for update.", item.Id);
+                throw new InvalidOperationException($"Tag with ID {item.Id} not found.");
+            }
+
+            // Update properties
+            entity.Name = item.Name;
+
             await _tagRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Tag updated successfully: {Tag}", entity);
+            _logger.LogInformation("Tag updated successfully: {@Tag}", entity);
         }
     }
 }
