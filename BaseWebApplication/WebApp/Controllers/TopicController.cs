@@ -9,9 +9,9 @@ namespace WebApp.Controllers
         private readonly ITopicService _service = service;
 
         // GET: /Topics
-        public IActionResult Index(CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var topics = _service.GetAllAsync(cancellationToken);
+            var topics = await _service.GetAllAsync(cancellationToken);
             return View(topics);
         }
 

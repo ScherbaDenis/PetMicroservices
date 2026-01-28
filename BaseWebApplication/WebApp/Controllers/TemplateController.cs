@@ -9,9 +9,9 @@ namespace WebApp.Controllers
         private readonly ITemplateService _service = service;
 
         // GET: /Templates
-        public IActionResult Index(CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var items = _service.GetAllAsync(cancellationToken);
+            var items = await _service.GetAllAsync(cancellationToken);
             return View(items);
         }
 
