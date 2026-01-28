@@ -29,7 +29,7 @@ namespace Template.Tests.Repositories
             var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Test Template" };
 
             await _repository.AddAsync(template);
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             var saved = _context.Templates.FirstOrDefault();
             Assert.NotNull(saved);
@@ -44,7 +44,7 @@ namespace Template.Tests.Repositories
             await _context.SaveChangesAsync();
 
             await _repository.DeleteAsync(template);
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             Assert.Empty(_context.Templates);
         }
@@ -71,7 +71,7 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public void GetAllAsync_ShouldReturnAllTemplates()
+        public async Task GetAllAsync_ShouldReturnAllTemplates()
         {
             _context.Templates.AddRange(
                 new Domain.Model.Template { Id = Guid.NewGuid(), Title = "T1" },
@@ -79,7 +79,7 @@ namespace Template.Tests.Repositories
             );
             _context.SaveChanges();
 
-            var result = _repository.GetAllAsync();
+            var result = await _repository.GetAllAsync();
 
             Assert.Equal(2, result.Count());
         }
@@ -94,14 +94,14 @@ namespace Template.Tests.Repositories
 
             template.Title = "NewName";
             await _repository.UpdateAsync(template);
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             var updated = _context.Templates.First(t => t.Id == guid);
             Assert.Equal("NewName", updated.Title);
         }
 
         [Fact]
-        public void Find_WithPredicate_ShouldReturnMatchingTemplates()
+        public async Task FindAsync_WithPredicate_ShouldReturnMatchingTemplates()
         {
             _context.Templates.AddRange(
                 new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Match" },
@@ -109,7 +109,7 @@ namespace Template.Tests.Repositories
             );
             _context.SaveChanges();
 
-            var result = _repository.Find(t => t.Title == "Match");
+            var result = await _repository.FindAsync(t => t.Title == "Match");
 
             Assert.Single(result);
             Assert.Equal("Match", result.First().Title);

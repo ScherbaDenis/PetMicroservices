@@ -32,7 +32,7 @@ namespace Template.Tests.Services
             await _service.CreateAsync(topicDto);
 
             _mockRepo.Verify(r => r.AddAsync(It.IsAny<Topic>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace Template.Tests.Services
             await _service.DeleteAsync(topicDto);
 
             _mockRepo.Verify(r => r.DeleteAsync(It.IsAny<Topic>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -59,15 +59,15 @@ namespace Template.Tests.Services
         }
 
         [Fact]
-        public void Find_ShouldCallRepositoryFind()
+        public async Task Find_ShouldCallRepositoryFind()
         {
             var expected = new List<Topic> { new Topic() };
-            _mockRepo.Setup(r => r.Find(It.IsAny<Func<Topic, bool>>())).Returns(expected);
+            _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(expected);
 
-            var result = _service.Find(t => true);
+            var result = await _service.FindAsync(t => true);
 
             Assert.NotNull(result);
-            _mockRepo.Verify(r => r.Find(It.IsAny<Func<Topic, bool>>()), Times.Once);
+            _mockRepo.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -94,13 +94,13 @@ namespace Template.Tests.Services
         }
 
         [Fact]
-        public void GetAllAsync_ShouldReturnAllTopics()
+        public async Task GetAllAsync_ShouldReturnAllTopics()
         {
             var expected = new List<Topic> { new Topic(), new Topic() };
             _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
-                     .Returns(expected);
+                     .ReturnsAsync(expected);
 
-            var result = _service.GetAllAsync();
+            var result = await _service.GetAllAsync();
 
             Assert.NotNull(result);
         }
@@ -113,7 +113,7 @@ namespace Template.Tests.Services
             await _service.UpdateAsync(topicDto);
 
             _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<Topic>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
