@@ -29,7 +29,7 @@ namespace Comment.DataAccess.MsSql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TemplateId")
+                    b.Property<Guid?>("TemplateId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
@@ -118,8 +118,7 @@ namespace Comment.DataAccess.MsSql.Migrations
                     b.HasOne("Comment.Domain.Models.Template", "Template")
                         .WithMany()
                         .HasForeignKey("TemplateId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Template");
                 });

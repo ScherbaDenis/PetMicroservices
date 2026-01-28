@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comment.DataAccess.MsSql.Migrations
 {
     [DbContext(typeof(CommentDbContext))]
-    [Migration("20260128094536_InitialCreate")]
+    [Migration("20260128095031_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -32,7 +32,7 @@ namespace Comment.DataAccess.MsSql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TemplateId")
+                    b.Property<Guid?>("TemplateId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
@@ -121,8 +121,7 @@ namespace Comment.DataAccess.MsSql.Migrations
                     b.HasOne("Comment.Domain.Models.Template", "Template")
                         .WithMany()
                         .HasForeignKey("TemplateId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Template");
                 });

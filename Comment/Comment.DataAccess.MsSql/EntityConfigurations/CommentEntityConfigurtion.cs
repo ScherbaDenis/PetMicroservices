@@ -16,7 +16,7 @@ namespace Comment.DataAccess.MsSql.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(2000);
 
-            // Configure foreign key for Template relationship
+            // Configure foreign key for Template relationship as nullable
             builder.Property<Guid?>("TemplateId");
             
             builder.HasIndex("TemplateId")
@@ -25,6 +25,7 @@ namespace Comment.DataAccess.MsSql.EntityConfigurations
             builder.HasOne(x => x.Template)
                 .WithMany()
                 .HasForeignKey("TemplateId")
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }

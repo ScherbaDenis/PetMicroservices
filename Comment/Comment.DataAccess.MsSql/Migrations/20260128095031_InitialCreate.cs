@@ -35,7 +35,7 @@ namespace Comment.DataAccess.MsSql.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TemplateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TemplateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Text = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false)
                 },
                 constraints: table =>
