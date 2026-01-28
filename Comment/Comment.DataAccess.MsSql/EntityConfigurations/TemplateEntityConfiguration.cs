@@ -5,7 +5,7 @@ using Comment.Domain.Models;
 
 namespace Comment.DataAccess.MsSql.EntityConfigurations
 {
-    class TemplateEntityConfigurtion : IEntityTypeConfiguration<Template>
+    class TemplateEntityConfiguration : IEntityTypeConfiguration<Template>
     {
         public void Configure(EntityTypeBuilder<Template> builder)
         {

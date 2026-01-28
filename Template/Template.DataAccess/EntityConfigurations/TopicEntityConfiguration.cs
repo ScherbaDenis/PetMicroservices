@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Template.DataAccess.MsSql.Repositories;
 using Template.Domain.Model;
 
 namespace Template.DataAccess.MsSql.EntityConfigurations
 {
-    class TagEntityConfigurtion : IEntityTypeConfiguration<Tag>
+    class TopicEntityConfiguration : IEntityTypeConfiguration<Topic>
     {
-        public void Configure(EntityTypeBuilder<Tag> builder)
+        public void Configure(EntityTypeBuilder<Topic> builder)
         {
-            builder.ToTable("tags");
+            builder.ToTable("topics");
 
             builder.HasKey(x => x.Id);
 
@@ -18,7 +17,7 @@ namespace Template.DataAccess.MsSql.EntityConfigurations
                 .HasMaxLength(100);
 
             builder.HasIndex(x => x.Name)
-                .HasDatabaseName("IX_tags_name");
+                .HasDatabaseName("IX_topics_name");
         }
     }
 }
