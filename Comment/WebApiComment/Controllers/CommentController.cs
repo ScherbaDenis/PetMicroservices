@@ -17,9 +17,9 @@ namespace WebApiComment.Controllers
 
         // GET: api/comment
         [HttpGet]
-        public ActionResult<IEnumerable<CommentDto>> GetAll(CancellationToken cancellationToken = default)
+        public async Task<ActionResult<IEnumerable<CommentDto>>> GetAll(CancellationToken cancellationToken = default)
         {
-            var comments = _commentService.GetAllAsync(cancellationToken);
+            var comments = await _commentService.GetAllAsync(cancellationToken);
             return Ok(comments);
         }
 
@@ -39,9 +39,9 @@ namespace WebApiComment.Controllers
 
         // GET: api/comment/template/{templateId}
         [HttpGet("template/{templateId}")]
-        public ActionResult<IEnumerable<CommentDto>> GetByTemplateId(Guid templateId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<IEnumerable<CommentDto>>> GetByTemplateId(Guid templateId, CancellationToken cancellationToken = default)
         {
-            var comments = _commentService.GetByTemplateAsync(templateId, cancellationToken);
+            var comments = await _commentService.GetByTemplateAsync(templateId, cancellationToken);
             return Ok(comments);
         }
 

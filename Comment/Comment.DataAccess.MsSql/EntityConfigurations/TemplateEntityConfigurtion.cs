@@ -9,10 +9,16 @@ namespace Comment.DataAccess.MsSql.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Template> builder)
         {
-            builder.HasKey(x => x.Id);
             builder.ToTable("templates");
-            builder.HasIndex(x => x.Id);
-            builder.HasIndex(x => x.Title);
+
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Title)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            builder.HasIndex(x => x.Title)
+                .HasDatabaseName("IX_templates_Title");
         }
     }
 }

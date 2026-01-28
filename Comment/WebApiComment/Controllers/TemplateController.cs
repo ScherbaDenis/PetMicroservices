@@ -17,9 +17,9 @@ namespace WebApiComment.Controllers
 
         // GET: api/template
         [HttpGet]
-        public ActionResult<IEnumerable<TemplateDto>> GetAll(CancellationToken cancellationToken = default)
+        public async Task<ActionResult<IEnumerable<TemplateDto>>> GetAll(CancellationToken cancellationToken = default)
         {
-            var templates = _templateService.GetAllAsync(cancellationToken);
+            var templates = await _templateService.GetAllAsync(cancellationToken);
             return Ok(templates);
         }
 

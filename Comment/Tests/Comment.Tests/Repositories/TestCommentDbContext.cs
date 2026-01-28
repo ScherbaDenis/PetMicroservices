@@ -16,19 +16,35 @@ namespace Comment.Tests.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure Comment entity without the problematic index on navigation property
+            // Configure Comment entity without applying the main configuration
+            // to work properly with InMemory database provider
             modelBuilder.Entity<Domain.Models.Comment>(builder =>
             {
                 builder.HasKey(x => x.Id);
-                builder.HasIndex(x => x.Id);
-                // Note: Removed HasIndex on Template navigation property as it's not supported by InMemory provider
+                
+                builder.Property(x => x.Text)
+                    .IsRequired()
+                    .HasMaxLength(2000);
+                
+                // Configure shadow property for TemplateId
+                builder.Property<Guid?>("TemplateId");
+                builder.HasIndex("TemplateId");
+                
+                // Note: Foreign key relationship is simplified for InMemory provider
+                builder.HasOne(x => x.Template)
+                    .WithMany()
+                    .HasForeignKey("TemplateId");
             });
 
             // Configure Template entity
             modelBuilder.Entity<Template>(builder =>
             {
                 builder.HasKey(x => x.Id);
-                builder.HasIndex(x => x.Id);
+                
+                builder.Property(x => x.Title)
+                    .IsRequired()
+                    .HasMaxLength(200);
+                    
                 builder.HasIndex(x => x.Title);
             });
         }
