@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Comment.DataAccess.MsSql.EntityConfigurations
 {
-    class CommentEntityConfigurtion : IEntityTypeConfiguration<Domain.Models.Comment>
+    class CommentEntityConfiguration : IEntityTypeConfiguration<Domain.Models.Comment>
     {
         public void Configure(EntityTypeBuilder<Domain.Models.Comment> builder)
         {

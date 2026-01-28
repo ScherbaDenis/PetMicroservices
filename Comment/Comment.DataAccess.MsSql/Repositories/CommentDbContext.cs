@@ -23,8 +23,8 @@ namespace Comment.DataAccess.MsSql.Repositories
         {
             modelBuilder.HasDefaultSchema("Comment");
 
-            modelBuilder.ApplyConfiguration(new CommentEntityConfigurtion());
-            modelBuilder.ApplyConfiguration(new TemplateEntityConfigurtion());
+            modelBuilder.ApplyConfiguration(new CommentEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new TemplateEntityConfiguration());
         }
     }
 }

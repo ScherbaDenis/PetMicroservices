@@ -5,11 +5,11 @@ using Template.Domain.Model;
 
 namespace Template.DataAccess.MsSql.EntityConfigurations
 {
-    class UserEntityConfigurtion : IEntityTypeConfiguration<User>
+    class TagEntityConfiguration : IEntityTypeConfiguration<Tag>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<Tag> builder)
         {
-            builder.ToTable("users");
+            builder.ToTable("tags");
 
             builder.HasKey(x => x.Id);
 
@@ -18,7 +18,7 @@ namespace Template.DataAccess.MsSql.EntityConfigurations
                 .HasMaxLength(100);
 
             builder.HasIndex(x => x.Name)
-                .HasDatabaseName("IX_users_name");
+                .HasDatabaseName("IX_tags_name");
         }
     }
 }

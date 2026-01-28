@@ -23,10 +23,10 @@ namespace Template.DataAccess.MsSql.Repositories
         {
             modelBuilder.HasDefaultSchema("template");
 
-            modelBuilder.ApplyConfiguration(new TagEntityConfigurtion());
-            modelBuilder.ApplyConfiguration(new UserEntityConfigurtion());
-            modelBuilder.ApplyConfiguration(new TopicEntityConfigurtion());
-            modelBuilder.ApplyConfiguration(new TemplateEntityConfigurtion());
+            modelBuilder.ApplyConfiguration(new TagEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new TopicEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new TemplateEntityConfiguration());
             modelBuilder.ApplyConfiguration(new QuestionEntityConfiguration());
         }
     }

@@ -4,7 +4,7 @@ using Template.Domain.Model;
 
 namespace Template.DataAccess.MsSql.EntityConfigurations
 {
-    class TemplateEntityConfigurtion : IEntityTypeConfiguration<Domain.Model.Template>
+    class TemplateEntityConfiguration : IEntityTypeConfiguration<Domain.Model.Template>
     {
         public void Configure(EntityTypeBuilder<Domain.Model.Template> builder)
         {
