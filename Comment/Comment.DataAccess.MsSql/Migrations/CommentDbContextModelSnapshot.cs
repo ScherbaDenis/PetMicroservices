@@ -47,32 +47,32 @@ namespace Comment.DataAccess.MsSql.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            TemplateId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000001"),
+                            TemplateId = new Guid("10000000-0000-0000-0000-000000000001"),
                             Text = "Great product! Highly recommended."
                         },
                         new
                         {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            TemplateId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000002"),
+                            TemplateId = new Guid("10000000-0000-0000-0000-000000000001"),
                             Text = "The service was excellent and very helpful."
                         },
                         new
                         {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            TemplateId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000003"),
+                            TemplateId = new Guid("10000000-0000-0000-0000-000000000002"),
                             Text = "Good quality, but a bit expensive."
                         },
                         new
                         {
-                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            TemplateId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000004"),
+                            TemplateId = new Guid("10000000-0000-0000-0000-000000000002"),
                             Text = "Fast delivery and good packaging."
                         },
                         new
                         {
-                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            TemplateId = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000005"),
+                            TemplateId = new Guid("10000000-0000-0000-0000-000000000003"),
                             Text = "Issue resolved quickly by support team."
                         });
                 });
@@ -98,17 +98,17 @@ namespace Comment.DataAccess.MsSql.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            Id = new Guid("10000000-0000-0000-0000-000000000001"),
                             Title = "Customer Feedback Template"
                         },
                         new
                         {
-                            Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                            Id = new Guid("10000000-0000-0000-0000-000000000002"),
                             Title = "Product Review Template"
                         },
                         new
                         {
-                            Id = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                            Id = new Guid("10000000-0000-0000-0000-000000000003"),
                             Title = "Support Ticket Template"
                         });
                 });

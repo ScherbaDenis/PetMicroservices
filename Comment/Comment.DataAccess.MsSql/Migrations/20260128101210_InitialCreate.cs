@@ -56,9 +56,9 @@ namespace Comment.DataAccess.MsSql.Migrations
                 columns: new[] { "Id", "Title" },
                 values: new object[,]
                 {
-                    { new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "Customer Feedback Template" },
-                    { new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "Product Review Template" },
-                    { new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), "Support Ticket Template" }
+                    { new Guid("10000000-0000-0000-0000-000000000001"), "Customer Feedback Template" },
+                    { new Guid("10000000-0000-0000-0000-000000000002"), "Product Review Template" },
+                    { new Guid("10000000-0000-0000-0000-000000000003"), "Support Ticket Template" }
                 });
 
             migrationBuilder.InsertData(
@@ -67,11 +67,11 @@ namespace Comment.DataAccess.MsSql.Migrations
                 columns: new[] { "Id", "TemplateId", "Text" },
                 values: new object[,]
                 {
-                    { new Guid("11111111-1111-1111-1111-111111111111"), new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "Great product! Highly recommended." },
-                    { new Guid("22222222-2222-2222-2222-222222222222"), new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "The service was excellent and very helpful." },
-                    { new Guid("33333333-3333-3333-3333-333333333333"), new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "Good quality, but a bit expensive." },
-                    { new Guid("44444444-4444-4444-4444-444444444444"), new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "Fast delivery and good packaging." },
-                    { new Guid("55555555-5555-5555-5555-555555555555"), new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), "Issue resolved quickly by support team." }
+                    { new Guid("20000000-0000-0000-0000-000000000001"), new Guid("10000000-0000-0000-0000-000000000001"), "Great product! Highly recommended." },
+                    { new Guid("20000000-0000-0000-0000-000000000002"), new Guid("10000000-0000-0000-0000-000000000001"), "The service was excellent and very helpful." },
+                    { new Guid("20000000-0000-0000-0000-000000000003"), new Guid("10000000-0000-0000-0000-000000000002"), "Good quality, but a bit expensive." },
+                    { new Guid("20000000-0000-0000-0000-000000000004"), new Guid("10000000-0000-0000-0000-000000000002"), "Fast delivery and good packaging." },
+                    { new Guid("20000000-0000-0000-0000-000000000005"), new Guid("10000000-0000-0000-0000-000000000003"), "Issue resolved quickly by support team." }
                 });
 
             migrationBuilder.CreateIndex(
