@@ -9,19 +9,19 @@ namespace Template.Tests.Services
 {
     public class TopicServiceTests
     {
-        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<ITopicRepository> _mockRepo;
         private readonly Mock<ILogger<TopicService>> _mockLogger;
         private readonly TopicService _service;
 
         public TopicServiceTests()
         {
-            _unitOfWork = new Mock<IUnitOfWork>();
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<ITopicRepository>();
             _mockLogger = new Mock<ILogger<TopicService>>();
-            _unitOfWork.Setup(uow => uow.TopicRepository).Returns(_mockRepo.Object);
+            _mockUnitOfWork.Setup(uow => uow.TopicRepository).Returns(_mockRepo.Object);
 
-            _service = new TopicService(_unitOfWork.Object, _mockLogger.Object);
+            _service = new TopicService(_mockUnitOfWork.Object, _mockLogger.Object);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace Template.Tests.Services
             await _service.CreateAsync(topicDto);
 
             _mockRepo.Verify(r => r.AddAsync(It.IsAny<Topic>(), It.IsAny<CancellationToken>()), Times.Once);
-            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace Template.Tests.Services
             await _service.DeleteAsync(topicDto);
 
             _mockRepo.Verify(r => r.DeleteAsync(It.IsAny<Topic>(), It.IsAny<CancellationToken>()), Times.Once);
-            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -113,7 +113,7 @@ namespace Template.Tests.Services
             await _service.UpdateAsync(topicDto);
 
             _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<Topic>(), It.IsAny<CancellationToken>()), Times.Once);
-            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]

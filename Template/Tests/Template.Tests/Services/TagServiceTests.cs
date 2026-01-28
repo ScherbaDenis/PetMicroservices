@@ -10,19 +10,19 @@ namespace Template.Tests.Services
 {
     public class TagServiceTests
     {
-        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<ITagRepository> _mockRepo;
         private readonly Mock<ILogger<TagService>> _mockLogger;
         private readonly TagService _service;
 
         public TagServiceTests()
         {
-            _unitOfWork = new Mock<IUnitOfWork>();
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<ITagRepository>();
             _mockLogger = new Mock<ILogger<TagService>>();
-            _unitOfWork.Setup(uow => uow.TagRepository).Returns(_mockRepo.Object);
+            _mockUnitOfWork.Setup(uow => uow.TagRepository).Returns(_mockRepo.Object);
 
-            _service = new TagService(_unitOfWork.Object, _mockLogger.Object);
+            _service = new TagService(_mockUnitOfWork.Object, _mockLogger.Object);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace Template.Tests.Services
             await _service.CreateAsync(tagDto);
 
             _mockRepo.Verify(r => r.AddAsync(It.IsAny<Tag>(), It.IsAny<CancellationToken>()), Times.Once);
-            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace Template.Tests.Services
             await _service.DeleteAsync(tagDto);
 
             _mockRepo.Verify(r => r.DeleteAsync(It.IsAny<Tag>(), It.IsAny<CancellationToken>()), Times.Once);
-            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace Template.Tests.Services
             await _service.UpdateAsync(tagDto);
 
             _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<Tag>(), It.IsAny<CancellationToken>()), Times.Once);
-            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
