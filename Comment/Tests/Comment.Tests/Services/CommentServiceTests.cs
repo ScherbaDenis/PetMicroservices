@@ -152,5 +152,90 @@ namespace Comment.Tests.Services
             // Arrange & Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _service.UpdateAsync((CommentDto?)null!));
         }
+
+        [Fact]
+        public async Task GetByTemplateAsync_ShouldReturnCommentsForTemplate()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var template = new Domain.Models.Template { Id = templateId, Title = "Test Template" };
+            var comments = new List<Domain.Models.Comment>
+            {
+                new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Comment 1", Template = template },
+                new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Comment 2", Template = template }
+            };
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Models.Comment, bool>>>(), It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(comments);
+
+            // Act
+            var result = await _service.GetByTemplateAsync(templateId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+            _mockRepo.Verify(r => r.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Models.Comment, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetByTemplateAsync_ShouldReturnEmpty_WhenNoCommentsExist()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var emptyComments = new List<Domain.Models.Comment>();
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Models.Comment, bool>>>(), It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(emptyComments);
+
+            // Act
+            var result = await _service.GetByTemplateAsync(templateId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task FindAsync_WithPredicate_ShouldReturnMatchingComments()
+        {
+            // Arrange
+            var template = new Domain.Models.Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            var comments = new List<Domain.Models.Comment>
+            {
+                new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Match", Template = template },
+                new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "NoMatch", Template = template }
+            };
+            _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(comments);
+
+            // Act
+            var result = await _service.FindAsync(c => c.Text == "Match");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Single(result);
+            Assert.Equal("Match", result.First().Text);
+        }
+
+        [Fact]
+        public async Task GetPagedAsync_ShouldReturnPagedResults()
+        {
+            // Arrange
+            var template = new Domain.Models.Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            var comments = new List<Domain.Models.Comment>
+            {
+                new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Comment 1", Template = template },
+                new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Comment 2", Template = template }
+            };
+            _mockRepo.Setup(r => r.GetPagedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Models.Comment, bool>>>(), It.IsAny<CancellationToken>()))
+                     .ReturnsAsync((comments, 2));
+
+            // Act
+            var result = await _service.GetPagedAsync(0, 10);
+
+            // Assert
+            Assert.NotNull(result.Items);
+            Assert.Equal(2, result.Items.Count());
+            Assert.Equal(2, result.TotalCount);
+            _mockRepo.Verify(r => r.GetPagedAsync(0, 10, It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Models.Comment, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

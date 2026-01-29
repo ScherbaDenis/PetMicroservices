@@ -225,5 +225,40 @@ namespace Comment.Tests.Controllers
             // Assert
             Assert.IsType<NotFoundResult>(result);
         }
+
+        [Fact]
+        public async Task GetByTemplateId_ShouldReturnOkWithEmptyList_WhenNoCommentsExist()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var emptyComments = new List<CommentDto>();
+            _mockService.Setup(s => s.GetByTemplateAsync(templateId, It.IsAny<CancellationToken>()))
+                       .ReturnsAsync(emptyComments);
+
+            // Act
+            var result = await _controller.GetByTemplateId(templateId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedComments = Assert.IsAssignableFrom<IEnumerable<CommentDto>>(okResult.Value);
+            Assert.Empty(returnedComments);
+        }
+
+        [Fact]
+        public async Task GetAll_ShouldReturnOkWithEmptyList_WhenNoCommentsExist()
+        {
+            // Arrange
+            var emptyComments = new List<CommentDto>();
+            _mockService.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
+                       .ReturnsAsync(emptyComments);
+
+            // Act
+            var result = await _controller.GetAll();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedComments = Assert.IsAssignableFrom<IEnumerable<CommentDto>>(okResult.Value);
+            Assert.Empty(returnedComments);
+        }
     }
 }
