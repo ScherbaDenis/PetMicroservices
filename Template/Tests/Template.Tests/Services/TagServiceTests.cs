@@ -46,6 +46,9 @@ namespace Template.Tests.Services
         public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
         {
             var tagDto = new TagDto { Id = 1, Name = "t" };
+            var tag = new Tag { Id = 1, Name = "t" };
+            _mockRepo.Setup(r => r.FindAsync(tagDto.Id, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(tag);
 
             await _service.DeleteAsync(tagDto);
 
@@ -57,6 +60,16 @@ namespace Template.Tests.Services
         public async Task DeleteAsync_ShouldThrow_WhenTagIsNull()
         {
             await Assert.ThrowsAsync<ArgumentNullException>(() => _service.DeleteAsync((TagDto?)null!));
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldThrow_WhenTagNotFound()
+        {
+            var tagDto = new TagDto { Id = 999, Name = "nonexistent" };
+            _mockRepo.Setup(r => r.FindAsync(tagDto.Id, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync((Tag?)null);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _service.DeleteAsync(tagDto));
         }
 
         [Fact]
@@ -110,6 +123,9 @@ namespace Template.Tests.Services
         public async Task UpdateAsync_ShouldCallUpdateAndSaveChanges()
         {
             var tagDto = new TagDto { Id = 1, Name = "t" };
+            var tag = new Tag { Id = 1, Name = "old name" };
+            _mockRepo.Setup(r => r.FindAsync(tagDto.Id, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(tag);
 
             await _service.UpdateAsync(tagDto);
 
@@ -121,6 +137,16 @@ namespace Template.Tests.Services
         public async Task UpdateAsync_ShouldThrow_WhenTagIsNull()
         {
             await Assert.ThrowsAsync<ArgumentNullException>(() => _service.UpdateAsync((TagDto?)null!));
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldThrow_WhenTagNotFound()
+        {
+            var tagDto = new TagDto { Id = 999, Name = "nonexistent" };
+            _mockRepo.Setup(r => r.FindAsync(tagDto.Id, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync((Tag?)null);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _service.UpdateAsync(tagDto));
         }
     }
 }
