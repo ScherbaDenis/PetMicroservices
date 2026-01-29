@@ -1,0 +1,1364 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+		"name": "WebApiTemplate Tests",
+		"description": "Comprehensive test collection for WebApiTemplate microservice with Template, User, Topic, Tag, and WeatherForecast endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"item": [
+		{
+			"name": "Template Endpoints",
+			"item": [
+				{
+					"name": "Get All Templates",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Response contains templates\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0]).to.have.property('id');",
+									"        pm.expect(jsonData[0]).to.have.property('title');",
+									"        // Save first template ID for later use",
+									"        pm.environment.set(\"templateId\", jsonData[0].id);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/template",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template"
+							]
+						},
+						"description": "Retrieve all templates from the database"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Template by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has template properties\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('title');",
+									"});",
+									"",
+									"pm.test(\"Template ID matches request\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var requestedId = pm.variables.get(\"templateId\");",
+									"    pm.expect(requestedId, \"Template ID should be set in environment\").to.exist;",
+									"    pm.expect(jsonData.id).to.eql(requestedId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/template/{{templateId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template",
+								"{{templateId}}"
+							]
+						},
+						"description": "Retrieve a specific template by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has Location header\", function () {",
+									"    pm.response.to.have.header('Location');",
+									"});",
+									"",
+									"pm.test(\"Response contains created template\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('title');",
+									"    pm.expect(jsonData.title).to.eql('Test Template from Postman');",
+									"    ",
+									"    // Save the created template ID for update and delete tests",
+									"    pm.environment.set(\"createdTemplateId\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"{{$guid}}\",\n  \"title\": \"Test Template from Postman\",\n  \"description\": \"A test template created via Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/template",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template"
+							]
+						},
+						"description": "Create a new template"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"No content in response\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Ensure we have a template ID to update",
+									"if (!pm.environment.get(\"createdTemplateId\")) {",
+									"    console.log(\"Warning: No createdTemplateId found. Using templateId instead.\");",
+									"    pm.environment.set(\"createdTemplateId\", pm.environment.get(\"templateId\"));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"{{createdTemplateId}}\",\n  \"title\": \"Updated Template from Postman\",\n  \"description\": \"An updated test template\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/template/{{createdTemplateId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template",
+								"{{createdTemplateId}}"
+							]
+						},
+						"description": "Update an existing template"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"No content in response\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/template/{{createdTemplateId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template",
+								"{{createdTemplateId}}"
+							]
+						},
+						"description": "Delete a template by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Non-Existent Template (404 Test)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Response handles non-existent resource\", function () {",
+									"    pm.expect(pm.response.code).to.equal(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/template/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Test error handling for non-existent template"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests for Template CRUD operations"
+		},
+		{
+			"name": "User Endpoints",
+			"item": [
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Response contains users\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0]).to.have.property('id');",
+									"        pm.expect(jsonData[0]).to.have.property('name');",
+									"        // Save first user ID for later use",
+									"        pm.environment.set(\"userId\", jsonData[0].id);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						},
+						"description": "Retrieve all users from the database"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has user properties\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"});",
+									"",
+									"pm.test(\"User ID matches request\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var requestedId = pm.variables.get(\"userId\");",
+									"    pm.expect(requestedId, \"User ID should be set in environment\").to.exist;",
+									"    pm.expect(jsonData.id).to.eql(requestedId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/user/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"{{userId}}"
+							]
+						},
+						"description": "Retrieve a specific user by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has Location header\", function () {",
+									"    pm.response.to.have.header('Location');",
+									"});",
+									"",
+									"pm.test(\"Response contains created user\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"    pm.expect(jsonData.name).to.eql('Test User from Postman');",
+									"    ",
+									"    // Save the created user ID for update and delete tests",
+									"    pm.environment.set(\"createdUserId\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"{{$guid}}\",\n  \"name\": \"Test User from Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						},
+						"description": "Create a new user"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"No content in response\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Ensure we have a user ID to update",
+									"if (!pm.environment.get(\"createdUserId\")) {",
+									"    console.log(\"Warning: No createdUserId found. Using userId instead.\");",
+									"    pm.environment.set(\"createdUserId\", pm.environment.get(\"userId\"));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"{{createdUserId}}\",\n  \"name\": \"Updated User from Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/user/{{createdUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"{{createdUserId}}"
+							]
+						},
+						"description": "Update an existing user"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"No content in response\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/user/{{createdUserId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"{{createdUserId}}"
+							]
+						},
+						"description": "Delete a user by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Non-Existent User (404 Test)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Response handles non-existent resource\", function () {",
+									"    pm.expect(pm.response.code).to.equal(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/user/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Test error handling for non-existent user"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests for User CRUD operations"
+		},
+		{
+			"name": "Topic Endpoints",
+			"item": [
+				{
+					"name": "Get All Topics",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Response contains topics\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0]).to.have.property('id');",
+									"        pm.expect(jsonData[0]).to.have.property('name');",
+									"        // Save first topic ID for later use",
+									"        pm.environment.set(\"topicId\", jsonData[0].id);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/topic",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"topic"
+							]
+						},
+						"description": "Retrieve all topics from the database"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Topic by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has topic properties\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"});",
+									"",
+									"pm.test(\"Topic ID matches request\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var requestedId = pm.variables.get(\"topicId\");",
+									"    pm.expect(requestedId, \"Topic ID should be set in environment\").to.exist;",
+									"    pm.expect(jsonData.id).to.eql(requestedId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/topic/{{topicId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"topic",
+								"{{topicId}}"
+							]
+						},
+						"description": "Retrieve a specific topic by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Topic",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has Location header\", function () {",
+									"    pm.response.to.have.header('Location');",
+									"});",
+									"",
+									"pm.test(\"Response contains created topic\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"    pm.expect(jsonData.name).to.eql('Test Topic from Postman');",
+									"    ",
+									"    // Save the created topic ID for update and delete tests",
+									"    pm.environment.set(\"createdTopicId\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 0,\n  \"name\": \"Test Topic from Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/topic",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"topic"
+							]
+						},
+						"description": "Create a new topic"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Topic",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"No content in response\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Ensure we have a topic ID to update",
+									"if (!pm.environment.get(\"createdTopicId\")) {",
+									"    console.log(\"Warning: No createdTopicId found. Using topicId instead.\");",
+									"    pm.environment.set(\"createdTopicId\", pm.environment.get(\"topicId\"));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{createdTopicId}},\n  \"name\": \"Updated Topic from Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/topic/{{createdTopicId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"topic",
+								"{{createdTopicId}}"
+							]
+						},
+						"description": "Update an existing topic"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Topic",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"No content in response\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/topic/{{createdTopicId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"topic",
+								"{{createdTopicId}}"
+							]
+						},
+						"description": "Delete a topic by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Non-Existent Topic (404 Test)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Response handles non-existent resource\", function () {",
+									"    pm.expect(pm.response.code).to.equal(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/topic/999999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"topic",
+								"999999"
+							]
+						},
+						"description": "Test error handling for non-existent topic"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests for Topic CRUD operations"
+		},
+		{
+			"name": "Tag Endpoints",
+			"item": [
+				{
+					"name": "Get All Tags",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Response contains tags\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0]).to.have.property('id');",
+									"        pm.expect(jsonData[0]).to.have.property('name');",
+									"        // Save first tag ID for later use",
+									"        pm.environment.set(\"tagId\", jsonData[0].id);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/tag",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tag"
+							]
+						},
+						"description": "Retrieve all tags from the database"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tag by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has tag properties\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"});",
+									"",
+									"pm.test(\"Tag ID matches request\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var requestedId = pm.variables.get(\"tagId\");",
+									"    pm.expect(requestedId, \"Tag ID should be set in environment\").to.exist;",
+									"    pm.expect(jsonData.id).to.eql(requestedId);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/tag/{{tagId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tag",
+								"{{tagId}}"
+							]
+						},
+						"description": "Retrieve a specific tag by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has Location header\", function () {",
+									"    pm.response.to.have.header('Location');",
+									"});",
+									"",
+									"pm.test(\"Response contains created tag\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"    pm.expect(jsonData.name).to.eql('Test Tag from Postman');",
+									"    ",
+									"    // Save the created tag ID for update and delete tests",
+									"    pm.environment.set(\"createdTagId\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 0,\n  \"name\": \"Test Tag from Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/tag",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tag"
+							]
+						},
+						"description": "Create a new tag"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"No content in response\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Ensure we have a tag ID to update",
+									"if (!pm.environment.get(\"createdTagId\")) {",
+									"    console.log(\"Warning: No createdTagId found. Using tagId instead.\");",
+									"    pm.environment.set(\"createdTagId\", pm.environment.get(\"tagId\"));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{createdTagId}},\n  \"name\": \"Updated Tag from Postman\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/tag/{{createdTagId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tag",
+								"{{createdTagId}}"
+							]
+						},
+						"description": "Update an existing tag"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"No content in response\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tag/{{createdTagId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tag",
+								"{{createdTagId}}"
+							]
+						},
+						"description": "Delete a tag by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Non-Existent Tag (404 Test)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Response handles non-existent resource\", function () {",
+									"    pm.expect(pm.response.code).to.equal(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/tag/999999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tag",
+								"999999"
+							]
+						},
+						"description": "Test error handling for non-existent tag"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests for Tag CRUD operations"
+		},
+		{
+			"name": "WeatherForecast Endpoint",
+			"item": [
+				{
+					"name": "Get Weather Forecast",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Response contains weather forecast data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.be.greaterThan(0);",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0]).to.have.property('date');",
+									"        pm.expect(jsonData[0]).to.have.property('temperatureC');",
+									"        pm.expect(jsonData[0]).to.have.property('summary');",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 2000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/WeatherForecast",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"WeatherForecast"
+							]
+						},
+						"description": "Retrieve weather forecast data"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests for WeatherForecast endpoint"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		}
+	]
+}
