@@ -24,7 +24,7 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _topicRepository.AddAsync(entity, cancellationToken);
-            await _topicRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Topic created successfully: {Topic}", item);
         }
@@ -37,16 +37,17 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _topicRepository.DeleteAsync(entity, cancellationToken);
-            await _topicRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Topic deleted successfully: {Topic}", entity);
         }
 
-        public IEnumerable<TopicDto> Find(Func<TopicDto, bool> predicate)
+        public async Task<IEnumerable<TopicDto>> FindAsync(Func<TopicDto, bool> predicate, CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Finding topic...");
-            var entities = _topicRepository.Find(t => predicate(t.ToDto()));
-            return entities.Select(t => t.ToDto());
+            _logger.LogInformation("Finding topics with predicate...");
+            var entities = await _topicRepository.GetAllAsync(cancellationToken);
+            var dtos = entities.Select(e => e.ToDto()).Where(predicate);
+            return dtos;
         }
 
         public async Task<TopicDto?> FindAsync(int id, CancellationToken cancellationToken = default)
@@ -64,11 +65,11 @@ namespace Template.Service.Services
             return topic.ToDto();
         }
 
-        public IEnumerable<TopicDto> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<TopicDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all topics...");
 
-            var topics = _topicRepository.GetAllAsync(cancellationToken);
+            var topics = await _topicRepository.GetAllAsync(cancellationToken);
 
             _logger.LogInformation("Retrieved {Count} topics", topics is ICollection<Topic> col ? col.Count : -1);
 
@@ -83,7 +84,7 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _topicRepository.UpdateAsync(entity, cancellationToken);
-            await _topicRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Topic updated successfully: {Topic}", item);
         }

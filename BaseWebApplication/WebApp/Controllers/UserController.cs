@@ -1,24 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Template.Domain.DTOs;
-using Template.Domain.Services;
+using WebApp.Services;
+using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class UsersController(IUserService service) : Controller
+    public class UserController(IUserService service) : Controller
     {
         private readonly IUserService _service = service;
 
         // GET: /Users
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var users = _service.GetAllAsync();
+            var users = await _service.GetAllAsync(cancellationToken);
             return View(users);
         }
 
         // GET: /Users/Details/5
         public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
         {
-            var user = await _service.FindAsync(id, cancellationToken);
+            var user = await _service.GetByIdAsync(id, cancellationToken);
             if (user == null) return NotFound();
             return View(user);
         }
@@ -39,7 +39,7 @@ namespace WebApp.Controllers
         // GET: /Users/Edit/5
         public async Task<IActionResult> Edit(Guid id, CancellationToken cancellationToken)
         {
-            var user = await _service.FindAsync(id, cancellationToken);
+            var user = await _service.GetByIdAsync(id, cancellationToken);
             if (user == null) return NotFound();
             return View(user);
         }
@@ -59,7 +59,7 @@ namespace WebApp.Controllers
         // GET: /Users/Delete/5
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            var user = await _service.FindAsync(id, cancellationToken);
+            var user = await _service.GetByIdAsync(id, cancellationToken);
             if (user == null) return NotFound();
             return View(user);
         }
@@ -69,10 +69,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id, CancellationToken cancellationToken)
         {
-            var user = await _service.FindAsync(id, cancellationToken);
+            var user = await _service.GetByIdAsync(id, cancellationToken);
             if (user == null) return NotFound();
 
-            await _service.DeleteAsync(user, cancellationToken);
+            await _service.DeleteAsync(user.Id, cancellationToken);
             return RedirectToAction(nameof(Index));
         }
     }

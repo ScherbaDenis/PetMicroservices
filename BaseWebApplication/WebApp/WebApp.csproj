@@ -7,13 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.9" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Template\Template.DataAccess\Template.DataAccess.MsSql.csproj" />
-    <ProjectReference Include="..\..\Template\Template.Domain\Template.Domain.csproj" />
-    <ProjectReference Include="..\..\Template\Template.Service\Template.Service.csproj" />
+    <Folder Include="Infrastructure\" />
   </ItemGroup>
 
 </Project>

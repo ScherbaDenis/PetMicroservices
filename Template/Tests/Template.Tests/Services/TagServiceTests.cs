@@ -10,19 +10,19 @@ namespace Template.Tests.Services
 {
     public class TagServiceTests
     {
-        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<ITagRepository> _mockRepo;
         private readonly Mock<ILogger<TagService>> _mockLogger;
         private readonly TagService _service;
 
         public TagServiceTests()
         {
-            _unitOfWork = new Mock<IUnitOfWork>();
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<ITagRepository>();
             _mockLogger = new Mock<ILogger<TagService>>();
-            _unitOfWork.Setup(uow => uow.TagRepository).Returns(_mockRepo.Object);
+            _mockUnitOfWork.Setup(uow => uow.TagRepository).Returns(_mockRepo.Object);
 
-            _service = new TagService(_unitOfWork.Object, _mockLogger.Object);
+            _service = new TagService(_mockUnitOfWork.Object, _mockLogger.Object);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace Template.Tests.Services
             await _service.CreateAsync(tagDto);
 
             _mockRepo.Verify(r => r.AddAsync(It.IsAny<Tag>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace Template.Tests.Services
             await _service.DeleteAsync(tagDto);
 
             _mockRepo.Verify(r => r.DeleteAsync(It.IsAny<Tag>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -60,15 +60,15 @@ namespace Template.Tests.Services
         }
 
         [Fact]
-        public void Find_ShouldCallRepositoryFind()
+        public async Task Find_ShouldCallRepositoryFind()
         {
             var expected = new List<Tag> { new Tag() };
-            _mockRepo.Setup(r => r.Find(It.IsAny<Func<Tag, bool>>())).Returns(expected);
+            _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(expected);
 
-            var result = _service.Find(t => true);
+            var result = await _service.FindAsync(t => true);
 
             Assert.NotNull(result);
-            _mockRepo.Verify(r => r.Find(It.IsAny<Func<Tag, bool>>()), Times.Once);
+            _mockRepo.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -95,13 +95,13 @@ namespace Template.Tests.Services
         }
 
         [Fact]
-        public void GetAllAsync_ShouldReturnAllTags()
+        public async Task GetAllAsync_ShouldReturnAllTags()
         {
             var expected = new List<Tag> { new Tag(), new Tag() };
             _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
-                     .Returns(expected);
+                     .ReturnsAsync(expected);
 
-            var result = _service.GetAllAsync();
+            var result = await _service.GetAllAsync();
 
             Assert.NotNull(result);
         }
@@ -114,7 +114,7 @@ namespace Template.Tests.Services
             await _service.UpdateAsync(tagDto);
 
             _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<Tag>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]

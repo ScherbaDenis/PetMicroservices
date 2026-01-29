@@ -25,7 +25,7 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _userRepository.AddAsync(entity, cancellationToken);
-            await _userRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("User created successfully: {User}", entity);
         }
@@ -38,17 +38,18 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _userRepository.DeleteAsync(entity, cancellationToken);
-            await _userRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("User deleted successfully: {User}", entity);
         }
 
-        public IEnumerable<UserDto> Find(Func<UserDto, bool> predicate)
+        public async Task<IEnumerable<UserDto>> FindAsync(Func<UserDto, bool> predicate, CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Finding user...");
+            _logger.LogInformation("Finding users with predicate...");
 
-            var entities = _userRepository.Find(u => predicate(u.ToDto()));
-            return entities.Select(u => u.ToDto());
+            var entities = await _userRepository.GetAllAsync(cancellationToken);
+            var dtos = entities.Select(e => e.ToDto()).Where(predicate);
+            return dtos;
         }
 
         public async Task<UserDto?> FindAsync(Guid id, CancellationToken cancellationToken = default)
@@ -67,11 +68,11 @@ namespace Template.Service.Services
             return user.ToDto();
         }
 
-        public IEnumerable<UserDto> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<UserDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all users...");
 
-            var users = _userRepository.GetAllAsync(cancellationToken);
+            var users = await _userRepository.GetAllAsync(cancellationToken);
 
             _logger.LogInformation("Retrieved {Count} users", users is ICollection<User> col ? col.Count : -1);
 
@@ -86,7 +87,7 @@ namespace Template.Service.Services
 
             var entity = item.ToEntity();
             await _userRepository.UpdateAsync(entity, cancellationToken);
-            await _userRepository.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("User updated successfully: {User}", entity);
         }

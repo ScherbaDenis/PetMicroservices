@@ -17,9 +17,9 @@ namespace WebApiTemplate.Controllers
 
         // GET: api/tag
         [HttpGet]
-        public ActionResult<IEnumerable<TagDto>> GetAll(CancellationToken cancellationToken = default)
+        public async Task<ActionResult<IEnumerable<TagDto>>> GetAll(CancellationToken cancellationToken = default)
         {
-            var tags = _tagService.GetAllAsync(cancellationToken);
+            var tags = await _tagService.GetAllAsync(cancellationToken);
             return Ok(tags);
         }
 

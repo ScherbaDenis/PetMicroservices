@@ -11,7 +11,7 @@ namespace Template.Domain.Services
     /// </summary>
     public interface IService<TDto, TId>
     {
-        IEnumerable<TDto> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<TDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
         Task<TDto?> FindAsync(TId id, CancellationToken cancellationToken = default);
 
@@ -21,6 +21,6 @@ namespace Template.Domain.Services
 
         Task DeleteAsync(TDto item, CancellationToken cancellationToken = default);
 
-        IEnumerable<TDto> Find(Func<TDto, bool> predicate);
+        Task<IEnumerable<TDto>> FindAsync(Func<TDto, bool> predicate, CancellationToken cancellationToken = default);
     }
 }

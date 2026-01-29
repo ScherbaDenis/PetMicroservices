@@ -1,18 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Template.DataAccess.MsSql.Repositories;
 using Template.Domain.Model;
 
 namespace Template.DataAccess.MsSql.EntityConfigurations
 {
-    class TopicEntityConfigurtion : IEntityTypeConfiguration<Topic>
+    class TopicEntityConfiguration : IEntityTypeConfiguration<Topic>
     {
         public void Configure(EntityTypeBuilder<Topic> builder)
         {
+            builder.ToTable("topics");
+
             builder.HasKey(x => x.Id);
-            builder.ToTable("topics", TemplateDbContext.DEFAULT_SCHEMA);
-            builder.HasIndex(x => x.Id);
-            builder.HasIndex(x => x.Name);
+
+            builder.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.HasIndex(x => x.Name)
+                .HasDatabaseName("IX_topics_name");
         }
     }
 }

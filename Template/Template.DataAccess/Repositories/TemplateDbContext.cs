@@ -13,23 +13,20 @@ namespace Template.DataAccess.MsSql.Repositories
             //Database.EnsureCreated();
         }
 
-        public const string DEFAULT_SCHEMA = "template";
-
         public DbSet<Tag> Tags { get; set; }
-
         public DbSet<User> Users { get; set; }
-
         public DbSet<Topic> Topics { get; set; }
-
         public DbSet<Domain.Model.Template> Templates { get; set; }
         public DbSet<Question> Questions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new TagEntityConfigurtion());
-            modelBuilder.ApplyConfiguration(new UserEntityConfigurtion());
-            modelBuilder.ApplyConfiguration(new TopicEntityConfigurtion());
-            modelBuilder.ApplyConfiguration(new TemplateEntityConfigurtion());
+            modelBuilder.HasDefaultSchema("template");
+
+            modelBuilder.ApplyConfiguration(new TagEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new TopicEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new TemplateEntityConfiguration());
             modelBuilder.ApplyConfiguration(new QuestionEntityConfiguration());
         }
     }

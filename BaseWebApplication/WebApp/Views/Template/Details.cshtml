@@ -1,5 +1,5 @@
-﻿@using Template.Domain.Model
-@model Template
+﻿@using WebApp.Services.DTOs
+@model TemplateDto
 
 <h1>Details</h1>
 <div><strong>Title:</strong> @Model.Title</div>
@@ -7,5 +7,5 @@
 <div><strong>Owner:</strong> @Model.Owner?.Name</div>
 <div><strong>Topic:</strong> @Model.Topic?.Name</div>
 <div><strong>Tags:</strong> @string.Join(", ", Model.Tags?.Select(t => t.Name) ?? [])</div>
-<div><strong>Users Access:</strong> @string.Join(", ", Model.UsersAccess?.Select(u => u.Name) ?? [])</div>
+@* <div><strong>Users Access:</strong> @string.Join(", ", Model.UsersAccess?.Select(u => u.Name) ?? [])</div> *@
 <p><a asp-action="Index">Back</a></p>

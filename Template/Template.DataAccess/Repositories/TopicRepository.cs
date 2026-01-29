@@ -4,58 +4,13 @@ using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repositories
 {
-    public class TopicRepository(TemplateDbContext context, ILogger<TopicRepository> logger) : ITopicRepository
+    /// <summary>
+    /// Repository for managing Topic entities.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="logger">The logger instance.</param>
+    public class TopicRepository(TemplateDbContext context, ILogger<TopicRepository> logger) 
+        : RepositoryBase<Topic, int>(context, logger), ITopicRepository
     {
-        private readonly TemplateDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
-        private readonly ILogger<TopicRepository> _logger = logger ?? throw new ArgumentNullException(nameof(context));
-
-        public async Task AddAsync(Topic item, CancellationToken cancellationToken = default)
-        {
-            ArgumentNullException.ThrowIfNull(item);
-
-            _logger.LogInformation("Adding a new topic: {Topic}", item);
-            await _context.Topics.AddAsync(item, cancellationToken);
-        }
-
-        public async Task DeleteAsync(Topic item, CancellationToken cancellationToken = default)
-        {
-            ArgumentNullException.ThrowIfNull(item);
-
-            _logger.LogInformation("Deleting topic: {Topic}", item);
-            _context.Topics.Remove(item);
-            await Task.CompletedTask; // keep async signature
-        }
-
-        public async Task<Topic?> FindAsync(int id, CancellationToken cancellationToken = default)
-        {
-            _logger.LogInformation("Async Finding a topic...");
-            return await _context.Topics.FindAsync(id, cancellationToken);
-        }
-
-        public IEnumerable<Topic> GetAllAsync(CancellationToken cancellationToken = default)
-        {
-            _logger.LogInformation("Retrieving all topics...");
-            return [.. _context.Topics];
-        }
-
-        public async Task UpdateAsync(Topic item, CancellationToken cancellationToken = default)
-        {
-            ArgumentNullException.ThrowIfNull(item);
-
-            _logger.LogInformation("Updating topic: {Topic}", item);
-            _context.Topics.Update(item);
-            await Task.CompletedTask;
-        }
-
-        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            _logger.LogInformation("Saving changes to database...");
-            return await _context.SaveChangesAsync(cancellationToken);
-        }
-        public IEnumerable<Topic> Find(Func<Topic, bool> predicate)
-        {
-            _logger.LogInformation("Finding a topic...");
-            return _context.Topics.Where(predicate);
-        }
     }
 }

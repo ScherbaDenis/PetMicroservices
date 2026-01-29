@@ -5,14 +5,20 @@ using Comment.Domain.Models;
 
 namespace Comment.DataAccess.MsSql.EntityConfigurations
 {
-    class TemplateEntityConfigurtion : IEntityTypeConfiguration<Template>
+    class TemplateEntityConfiguration : IEntityTypeConfiguration<Template>
     {
         public void Configure(EntityTypeBuilder<Template> builder)
         {
+            builder.ToTable("templates");
+
             builder.HasKey(x => x.Id);
-            builder.ToTable("templates", CommentDbContext.DEFAULT_SCHEMA);
-            builder.HasIndex(x => x.Id);
-            builder.HasIndex(x => x.Title);
+
+            builder.Property(x => x.Title)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            builder.HasIndex(x => x.Title)
+                .HasDatabaseName("IX_templates_Title");
         }
     }
 }

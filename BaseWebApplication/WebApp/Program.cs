@@ -1,32 +1,20 @@
-using Microsoft.EntityFrameworkCore;
-using Template.DataAccess.MsSql.Repositories;
-using Template.Domain.Repository;
-using Template.Domain.Services;
-using Template.Service.Services;
+
+using WebApp.Services;
+using WebApp.Services.Imp;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// DbContext
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<TemplateDbContext>(options =>
-    options.UseSqlServer(connectionString));
+// Services
 
-// Repos and services
-builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
-builder.Services.AddScoped<ITopicRepository, TopicRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddHttpClient<ITemplateService, TemplateService>();
+builder.Services.AddHttpClient<ITopicService, TopicService>();
+builder.Services.AddHttpClient<IUserService, UserService>();
 
-
-builder.Services.AddScoped<ITemplateService, TemplateService>();
-builder.Services.AddScoped<ITopicService, TopicService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ITagService, TagService>();
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddHttpClient<ITagService, TagService>();
+builder.Services.AddHttpClient<ICommentService, CommentService>();
 
 var app = builder.Build();
 

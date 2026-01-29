@@ -18,7 +18,7 @@ namespace Comment.Tests.Controllers
         }
 
         [Fact]
-        public void GetAll_ShouldReturnOkWithComments()
+        public async Task GetAll_ShouldReturnOkWithComments()
         {
             // Arrange
             var templateDto = new TemplateDto { Id = Guid.NewGuid(), Title = "Test Template" };
@@ -28,10 +28,10 @@ namespace Comment.Tests.Controllers
                 new CommentDto { Id = Guid.NewGuid(), Text = "Comment 2", TemplateDto = templateDto }
             };
             _mockService.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
-                       .Returns(comments);
+                       .ReturnsAsync(comments);
 
             // Act
-            var result = _controller.GetAll();
+            var result = await _controller.GetAll();
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -74,7 +74,7 @@ namespace Comment.Tests.Controllers
         }
 
         [Fact]
-        public void GetByTemplateId_ShouldReturnOkWithComments()
+        public async Task GetByTemplateId_ShouldReturnOkWithComments()
         {
             // Arrange
             var templateId = Guid.NewGuid();
@@ -85,10 +85,10 @@ namespace Comment.Tests.Controllers
                 new CommentDto { Id = Guid.NewGuid(), Text = "Comment 2", TemplateDto = templateDto }
             };
             _mockService.Setup(s => s.GetByTemplateAsync(templateId, It.IsAny<CancellationToken>()))
-                       .Returns(comments);
+                       .ReturnsAsync(comments);
 
             // Act
-            var result = _controller.GetByTemplateId(templateId);
+            var result = await _controller.GetByTemplateId(templateId);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);

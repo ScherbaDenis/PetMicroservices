@@ -29,7 +29,7 @@ namespace Template.Tests.Repositories
             var topic = new Topic { Id = 1, Name = "Test Topic" };
 
             await _repository.AddAsync(topic);
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             var saved = _context.Topics.FirstOrDefault();
             Assert.NotNull(saved);
@@ -44,7 +44,7 @@ namespace Template.Tests.Repositories
             await _context.SaveChangesAsync();
 
             await _repository.DeleteAsync(topic);
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             Assert.Empty(_context.Topics);
         }
@@ -70,7 +70,7 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public void GetAllAsync_ShouldReturnAllTopics()
+        public async Task GetAllAsync_ShouldReturnAllTopics()
         {
             _context.Topics.AddRange(
                 new Topic { Id = 4, Name = "T1" },
@@ -78,7 +78,7 @@ namespace Template.Tests.Repositories
             );
             _context.SaveChanges();
 
-            var result = _repository.GetAllAsync();
+            var result = await _repository.GetAllAsync();
 
             Assert.Equal(2, result.Count());
         }
@@ -92,14 +92,14 @@ namespace Template.Tests.Repositories
 
             topic.Name = "NewName";
             await _repository.UpdateAsync(topic);
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             var updated = _context.Topics.First(t => t.Id == 6);
             Assert.Equal("NewName", updated.Name);
         }
 
         [Fact]
-        public void Find_WithPredicate_ShouldReturnMatchingTopics()
+        public async Task FindAsync_WithPredicate_ShouldReturnMatchingTopics()
         {
             _context.Topics.AddRange(
                 new Topic { Id = 7, Name = "Match" },
@@ -107,7 +107,7 @@ namespace Template.Tests.Repositories
             );
             _context.SaveChanges();
 
-            var result = _repository.Find(t => t.Name == "Match");
+            var result = await _repository.FindAsync(t => t.Name == "Match");
 
             Assert.Single(result);
             Assert.Equal("Match", result.First().Name);

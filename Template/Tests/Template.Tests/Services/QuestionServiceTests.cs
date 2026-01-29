@@ -15,19 +15,19 @@ namespace Template.Tests.Services
 {
     public class QuestionServiceTests
     {
-        private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IQuestionRepository> _mockRepo;
         private readonly Mock<ILogger<QuestionService>> _mockLogger;
         private readonly QuestionService _service;
 
         public QuestionServiceTests()
         {
-            _unitOfWork = new Mock<IUnitOfWork>();
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<IQuestionRepository>();
             _mockLogger = new Mock<ILogger<QuestionService>>();
-            _unitOfWork.Setup(uow => uow.QuestionRepository).Returns(_mockRepo.Object);
+            _mockUnitOfWork.Setup(uow => uow.QuestionRepository).Returns(_mockRepo.Object);
 
-            _service = new QuestionService(_unitOfWork.Object, _mockLogger.Object);
+            _service = new QuestionService(_mockUnitOfWork.Object, _mockLogger.Object);
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace Template.Tests.Services
             await _service.CreateAsync(dto);
 
             _mockRepo.Verify(r => r.AddAsync(It.IsAny<Question>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -49,19 +49,19 @@ namespace Template.Tests.Services
             await _service.DeleteAsync(dto);
 
             _mockRepo.Verify(r => r.DeleteAsync(It.IsAny<Question>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
-        public void Find_ShouldCallRepositoryFind()
+        public async Task Find_ShouldCallRepositoryFind()
         {
             var expected = new List<Question> { new Question { Id = Guid.NewGuid(), Title = "title" } };
-            _mockRepo.Setup(r => r.Find(It.IsAny<Func<Question, bool>>())).Returns(expected);
+            _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(expected);
 
-            var result = _service.Find(q => true);
+            var result = await _service.FindAsync(q => true);
 
             Assert.NotNull(result);
-            _mockRepo.Verify(r => r.Find(It.IsAny<Func<Question, bool>>()), Times.Once);
+            _mockRepo.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -88,16 +88,16 @@ namespace Template.Tests.Services
         }
 
         [Fact]
-        public void GetAllAsync_ShouldReturnAllQuestions()
+        public async Task GetAllAsync_ShouldReturnAllQuestions()
         {
             var expected = new List<Question>
             {
                 new Question { Id = Guid.NewGuid(), Title = "One" },
                 new Question { Id = Guid.NewGuid(), Title = "Two" }
             };
-            _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).Returns(expected);
+            _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(expected);
 
-            var result = _service.GetAllAsync();
+            var result = await _service.GetAllAsync();
 
             Assert.NotNull(result);
             Assert.True(result.Any());
@@ -111,7 +111,7 @@ namespace Template.Tests.Services
             await _service.UpdateAsync(dto);
 
             _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<Question>(), It.IsAny<CancellationToken>()), Times.Once);
-            _mockRepo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

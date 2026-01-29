@@ -1,24 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Template.Domain.Services;
-using Template.Domain.DTOs;
+using WebApp.Services;
+using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class TemplatesController(ITemplateService service) : Controller
+    public class TemplateController(ITemplateService service) : Controller
     {
         private readonly ITemplateService _service = service;
 
         // GET: /Templates
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var items = _service.GetAllAsync();
+            var items = await _service.GetAllAsync(cancellationToken);
             return View(items);
         }
 
         // GET: /Templates/Details/{id}
         public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
         {
-            var item = await _service.FindAsync(id, cancellationToken);
+            var item = await _service.GetByIdAsync(id, cancellationToken);
             if (item == null) return NotFound();
             return View(item);
         }
@@ -39,7 +39,7 @@ namespace WebApp.Controllers
         // GET: /Templates/Edit/{id}
         public async Task<IActionResult> Edit(Guid id, CancellationToken cancellationToken)
         {
-            var item = await _service.FindAsync(id, cancellationToken);
+            var item = await _service.GetByIdAsync(id, cancellationToken);
             if (item == null) return NotFound();
             return View(item);
         }
@@ -59,7 +59,7 @@ namespace WebApp.Controllers
         // GET: /Templates/Delete/{id}
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            var item = await _service.FindAsync(id, cancellationToken);
+            var item = await _service.GetByIdAsync(id, cancellationToken);
             if (item == null) return NotFound();
             return View(item);
         }
@@ -69,10 +69,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id, CancellationToken cancellationToken)
         {
-            var item = await _service.FindAsync(id, cancellationToken);
+            var item = await _service.GetByIdAsync(id, cancellationToken);
             if (item == null) return NotFound();
 
-            await _service.DeleteAsync(item, cancellationToken);
+            await _service.DeleteAsync(item.Id, cancellationToken);
             return RedirectToAction(nameof(Index));
         }
     }

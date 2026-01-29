@@ -35,7 +35,7 @@ namespace Comment.Tests.Repositories
 
             // Act
             await _repository.AddAsync(comment);
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             // Assert
             var saved = _context.Comments.FirstOrDefault();
@@ -55,7 +55,7 @@ namespace Comment.Tests.Repositories
 
             // Act
             await _repository.DeleteAsync(comment);
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             // Assert
             Assert.Empty(_context.Comments);
@@ -103,7 +103,7 @@ namespace Comment.Tests.Repositories
             _context.SaveChanges();
 
             // Act
-            var result = _repository.GetAllAsync();
+            IEnumerable<Domain.Models.Comment> result = _repository.GetAllAsync().Result;
 
             // Assert
             Assert.Equal(2, result.Count());
@@ -123,7 +123,7 @@ namespace Comment.Tests.Repositories
             // Act
             comment.Text = "NewText";
             await _repository.UpdateAsync(comment);
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             // Assert
             var updated = _context.Comments.First(c => c.Id == guid);
@@ -131,7 +131,7 @@ namespace Comment.Tests.Repositories
         }
 
         [Fact]
-        public void Find_WithPredicate_ShouldReturnMatchingComments()
+        public async void Find_WithPredicate_ShouldReturnMatchingComments()
         {
             // Arrange
             var template = new Template { Id = Guid.NewGuid(), Title = "Test Template" };
@@ -143,7 +143,7 @@ namespace Comment.Tests.Repositories
             _context.SaveChanges();
 
             // Act
-            var result = _repository.Find(c => c.Text == "Match");
+            var result = await _repository.FindAsync(c => c.Text == "Match");
 
             // Assert
             Assert.Single(result);

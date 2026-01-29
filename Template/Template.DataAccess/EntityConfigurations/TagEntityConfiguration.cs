@@ -5,14 +5,20 @@ using Template.Domain.Model;
 
 namespace Template.DataAccess.MsSql.EntityConfigurations
 {
-    class TagEntityConfigurtion : IEntityTypeConfiguration<Tag>
+    class TagEntityConfiguration : IEntityTypeConfiguration<Tag>
     {
         public void Configure(EntityTypeBuilder<Tag> builder)
         {
+            builder.ToTable("tags");
+
             builder.HasKey(x => x.Id);
-            builder.ToTable("tags", TemplateDbContext.DEFAULT_SCHEMA);
-            builder.HasIndex(x => x.Id);
-            builder.HasIndex(x => x.Name);
+
+            builder.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.HasIndex(x => x.Name)
+                .HasDatabaseName("IX_tags_name");
         }
     }
 }

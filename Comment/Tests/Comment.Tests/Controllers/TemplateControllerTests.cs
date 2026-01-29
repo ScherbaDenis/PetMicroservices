@@ -18,7 +18,7 @@ namespace Comment.Tests.Controllers
         }
 
         [Fact]
-        public void GetAll_ShouldReturnOkWithTemplates()
+        public async Task GetAll_ShouldReturnOkWithTemplates()
         {
             // Arrange
             var templates = new List<TemplateDto>
@@ -27,10 +27,10 @@ namespace Comment.Tests.Controllers
                 new TemplateDto { Id = Guid.NewGuid(), Title = "Template 2" }
             };
             _mockService.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
-                       .Returns(templates);
+                       .ReturnsAsync(templates);
 
             // Act
-            var result = _controller.GetAll();
+            var result = await _controller.GetAll();
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);

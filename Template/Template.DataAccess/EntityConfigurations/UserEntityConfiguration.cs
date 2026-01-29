@@ -5,14 +5,20 @@ using Template.Domain.Model;
 
 namespace Template.DataAccess.MsSql.EntityConfigurations
 {
-    class UserEntityConfigurtion : IEntityTypeConfiguration<User>
+    class UserEntityConfiguration : IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            builder.ToTable("users");
+
             builder.HasKey(x => x.Id);
-            builder.ToTable("users", TemplateDbContext.DEFAULT_SCHEMA);
-            builder.HasIndex(x => x.Id);
-            builder.HasIndex(x => x.Name);
+
+            builder.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.HasIndex(x => x.Name)
+                .HasDatabaseName("IX_users_name");
         }
     }
 }

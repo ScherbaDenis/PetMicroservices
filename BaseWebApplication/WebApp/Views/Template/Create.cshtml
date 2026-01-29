@@ -1,12 +1,10 @@
-﻿@model Template
+﻿@model TemplateDto
 @using Microsoft.AspNetCore.Mvc.Rendering
-@using Template.Domain.Model
+@using WebApp.Services.DTOs
 
-<h1>Edit Template</h1>
+<h1>Create Template</h1>
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-
+<form asp-action="Create" method="post">
     <div>
         <label asp-for="Title"></label>
         <input asp-for="Title" class="form-control" />
@@ -34,10 +32,10 @@
         <select asp-for="Tags" asp-items="ViewBag.Tags" multiple class="form-control"></select>
     </div>
 
-    <div>
+@*     <div>
         <label>Users Access</label>
         <select asp-for="UsersAccess" asp-items="ViewBag.UsersAccess" multiple class="form-control"></select>
-    </div>
+    </div> *@
 
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
