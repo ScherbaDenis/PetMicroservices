@@ -12,12 +12,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 //DbContext
 builder.Services.AddControllers();// DbContext
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<CommentDbContext>(options =>
-    options.UseSqlServer(connectionString)
-           .UseSeeding((context, _) =>
-           {
+// Only configure SQL Server DbContext if not in Testing environment
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    builder.Services.AddDbContext<CommentDbContext>(options =>
+        options.UseSqlServer(connectionString)
+               .UseSeeding((context, _) =>
+               {
                // Only seed data in Development environment
                var env = builder.Environment;
                if (env.IsDevelopment())
@@ -93,6 +97,7 @@ builder.Services.AddDbContext<CommentDbContext>(options =>
                    await context.Database.MigrateAsync(cancellationToken);
                }
            }));
+}
 
 // Repositories
 builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
@@ -116,3 +121,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Make Program class accessible to integration tests
+public partial class Program { }
