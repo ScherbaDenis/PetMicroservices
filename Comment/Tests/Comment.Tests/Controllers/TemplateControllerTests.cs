@@ -195,5 +195,22 @@ namespace Comment.Tests.Controllers
             // Assert
             Assert.IsType<NotFoundResult>(result);
         }
+
+        [Fact]
+        public async Task GetAll_ShouldReturnOkWithEmptyList_WhenNoTemplatesExist()
+        {
+            // Arrange
+            var emptyTemplates = new List<TemplateDto>();
+            _mockService.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>()))
+                       .ReturnsAsync(emptyTemplates);
+
+            // Act
+            var result = await _controller.GetAll();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedTemplates = Assert.IsAssignableFrom<IEnumerable<TemplateDto>>(okResult.Value);
+            Assert.Empty(returnedTemplates);
+        }
     }
 }
