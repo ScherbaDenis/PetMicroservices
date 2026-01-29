@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\Template.DataAccess\Template.DataAccess.MsSql.csproj" />
     <ProjectReference Include="..\..\Template.Domain\Template.Domain.csproj" />
     <ProjectReference Include="..\..\Template.Service\Template.Service.csproj" />
+    <ProjectReference Include="..\..\WebApiTemplate\WebApiTemplate.csproj" />
   </ItemGroup>
 
   <ItemGroup>
