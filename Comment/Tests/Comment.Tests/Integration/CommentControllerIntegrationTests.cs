@@ -245,26 +245,6 @@ namespace Comment.Tests.Integration
             return comment.Id;
         }
 
-        private async Task<Guid> SeedTemplateAsync()
-        {
-            using var scope = _factory.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<CommentDbContext>();
-            
-            var template = new Template
-            {
-                Id = Guid.NewGuid(),
-                Title = "Test Template"
-            };
-            
-            context.Templates.Add(template);
-            await context.SaveChangesAsync();
-            
-            // Detach all entities to avoid tracking conflicts
-            context.ChangeTracker.Clear();
-            
-            return template.Id;
-        }
-
         private async Task SeedTemplateWithCommentsAsync(Guid templateId)
         {
             using var scope = _factory.Services.CreateScope();
