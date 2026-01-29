@@ -91,7 +91,7 @@ namespace Comment.Tests.Repositories
         }
 
         [Fact]
-        public void GetAllAsync_ShouldReturnAllComments()
+        public async Task GetAllAsync_ShouldReturnAllComments()
         {
             // Arrange
             var template = new Template { Id = Guid.NewGuid(), Title = "Test Template" };
@@ -100,10 +100,10 @@ namespace Comment.Tests.Repositories
                 new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "C1", Template = template },
                 new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "C2", Template = template }
             );
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             // Act
-            IEnumerable<Domain.Models.Comment> result = _repository.GetAllAsync().Result;
+            IEnumerable<Domain.Models.Comment> result = await _repository.GetAllAsync();
 
             // Assert
             Assert.Equal(2, result.Count());
