@@ -42,6 +42,12 @@ namespace Template.Tests.Services
         }
 
         [Fact]
+        public async Task CreateAsync_ShouldThrow_WhenQuestionIsNull()
+        {
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _service.CreateAsync((QuestionDto?)null!));
+        }
+
+        [Fact]
         public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
         {
             var dto = new QuestionDto { Id = Guid.NewGuid(), Title = "title", Description = "desc" };
@@ -50,6 +56,12 @@ namespace Template.Tests.Services
 
             _mockRepo.Verify(r => r.DeleteAsync(It.IsAny<Question>(), It.IsAny<CancellationToken>()), Times.Once);
             _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldThrow_WhenQuestionIsNull()
+        {
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _service.DeleteAsync((QuestionDto?)null!));
         }
 
         [Fact]
@@ -112,6 +124,12 @@ namespace Template.Tests.Services
 
             _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<Question>(), It.IsAny<CancellationToken>()), Times.Once);
             _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldThrow_WhenQuestionIsNull()
+        {
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _service.UpdateAsync((QuestionDto?)null!));
         }
     }
 }
