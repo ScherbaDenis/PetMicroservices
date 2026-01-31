@@ -16,6 +16,10 @@ if ! dotnet ef --version > /dev/null 2>&1; then
     echo ""
 fi
 
+# Restore packages first
+echo "Restoring packages..."
+dotnet restore ../WebApiTemplate
+
 # Apply migrations to create/update the database
 echo "Applying migrations to the database..."
 dotnet ef database update --startup-project ../WebApiTemplate

@@ -16,6 +16,10 @@ if %errorlevel% neq 0 (
     echo.
 )
 
+REM Restore packages first
+echo Restoring packages...
+dotnet restore ../WebApiTemplate
+
 REM Apply migrations to create/update the database
 echo Applying migrations to the database...
 dotnet ef database update --startup-project ../WebApiTemplate
