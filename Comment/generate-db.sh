@@ -18,7 +18,11 @@ fi
 
 # Restore packages first
 echo "Restoring packages..."
-dotnet restore ../WebApiComment
+if ! dotnet restore ../WebApiComment; then
+    echo ""
+    echo "✗ Failed to restore packages. Please check the error messages above."
+    exit 1
+fi
 
 # Apply migrations to create/update the database
 echo "Applying migrations to the database..."

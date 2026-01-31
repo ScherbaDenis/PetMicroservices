@@ -19,6 +19,11 @@ if %errorlevel% neq 0 (
 REM Restore packages first
 echo Restoring packages...
 dotnet restore ../WebApiComment
+if %errorlevel% neq 0 (
+    echo.
+    echo Failed to restore packages. Please check the error messages above.
+    exit /b 1
+)
 
 REM Apply migrations to create/update the database
 echo Applying migrations to the database...
