@@ -1,6 +1,15 @@
 # PetMicroservices
 Test project from learn Microservices.
 
+## Database Setup
+
+To generate and set up the databases for the microservices, use the provided database generation scripts:
+
+- **Comment Microservice**: Run `./Comment/generate-db.sh` (Linux/macOS) or `Comment\generate-db.bat` (Windows)
+- **Template Microservice**: Run `./Template/generate-db.sh` (Linux/macOS) or `Template\generate-db.bat` (Windows)
+
+For detailed instructions and manual database operations, see [DATABASE_GENERATION.md](DATABASE_GENERATION.md).
+
 ## Testing
 
 ### Postman Tests
