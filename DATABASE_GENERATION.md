@@ -70,6 +70,8 @@ Server=localhost;Database=CommentDb;Trusted_Connection=True;MultipleActiveResult
 Server=localhost;Database=TemplateDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True
 ```
 
+> **⚠️ Security Note**: The connection strings use `TrustServerCertificate=True` which bypasses SSL certificate validation. This is appropriate for local development but **should never be used in production environments**. In production, use properly signed certificates and remove this setting.
+
 ## Manual Database Operations
 
 If you need more control, you can use the dotnet-ef CLI directly:
