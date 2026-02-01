@@ -15,15 +15,20 @@ namespace Template.DataAccess.MsSql.Repositories
         /// <inheritdoc/>
         public async Task<IEnumerable<Domain.Model.Template>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            return await _dbSet
+            // Load all templates with their relationships
+            var allTemplates = await _dbSet
                 .Include(t => t.Owner)
                 .Include(t => t.Topic)
                 .Include(t => t.Tags)
                 .Include(t => t.UsersAccess)
                 .Include(t => t.Questions)
-                .Where(t => t.Owner != null && t.Owner.Id == userId || 
-                           t.UsersAccess != null && t.UsersAccess.Any(u => u.Id == userId))
                 .ToListAsync(cancellationToken);
+
+            // Filter in-memory to support both real DB and in-memory DB
+            return allTemplates.Where(t => 
+                (t.Owner != null && t.Owner.Id == userId) || 
+                (t.UsersAccess != null && t.UsersAccess.Any(u => u.Id == userId))
+            );
         }
     }
 }

@@ -123,5 +123,27 @@ namespace Template.Tests.Services
         {
             await Assert.ThrowsAsync<ArgumentNullException>(() => _service.UpdateAsync((TemplateDto?)null!));
         }
+
+        [Fact]
+        public async Task GetByUserIdAsync_ShouldReturnUserTemplates()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var expected = new List<Domain.Model.Template> 
+            { 
+                new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Template 1" },
+                new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Template 2" }
+            };
+            _mockRepo.Setup(r => r.GetByUserIdAsync(userId, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(expected);
+
+            // Act
+            var result = await _service.GetByUserIdAsync(userId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+            _mockRepo.Verify(r => r.GetByUserIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }
