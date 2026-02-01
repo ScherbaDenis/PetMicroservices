@@ -281,3 +281,5 @@ pub/
 src/**/app.yaml
 src/**/inf.yaml
 
+/BaseWebApplication/WebApp/wwwroot/js/userDetails.js
+/BaseWebApplication/WebApp/wwwroot/js/userList.js
