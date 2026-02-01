@@ -11,6 +11,31 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DefaultCorsPolicy", policy =>
+    {
+        // In development, allow any origin. In production, should be restricted to specific domains
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        }
+        else
+        {
+            // In production, restrict to specific origins from configuration
+            var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() 
+                ?? new[] { "https://localhost:5001" };
+            
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        }
+    });
+});
+
 // DbContext
 if (!builder.Environment.IsEnvironment("Testing"))
 {
@@ -144,6 +169,9 @@ if (!builder.Environment.IsEnvironment("Testing"))
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
+
+// Enable CORS
+app.UseCors("DefaultCorsPolicy");
 
 app.UseAuthorization();
 
