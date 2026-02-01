@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Configure CORS
+// Note: In production, consider restricting allowed origins to specific trusted domains
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DefaultCorsPolicy", policy =>
@@ -47,7 +48,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // Enable CORS
-app.UseCors();
+app.UseCors("DefaultCorsPolicy");
 
 app.UseAuthorization();
 
