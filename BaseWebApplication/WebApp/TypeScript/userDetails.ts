@@ -96,7 +96,7 @@ class UserTemplateManager {
                 descriptionCell.textContent = template.description || 'N/A';
                 
                 const topicCell = document.createElement('td');
-                topicCell.textContent = template.topic?.name || 'N/A';
+                topicCell.textContent = (template.topic && template.topic.name) ? template.topic.name : 'N/A';
                 
                 const tagsCell = document.createElement('td');
                 if (template.tags && template.tags.length > 0) {
@@ -170,7 +170,7 @@ class UserTemplateManager {
             const csvRows = templates.map(template => {
                 const title = escapeCsvValue(template.title);
                 const description = escapeCsvValue(template.description || 'N/A');
-                const topic = escapeCsvValue(template.topic?.name || 'N/A');
+                const topic = escapeCsvValue((template.topic && template.topic.name) ? template.topic.name : 'N/A');
                 const tags = escapeCsvValue(
                     template.tags && template.tags.length > 0
                         ? template.tags.map(tag => tag.name).join('; ')
