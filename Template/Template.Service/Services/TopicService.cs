@@ -35,7 +35,9 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Deleting topic: {Topic}", item);
 
-            var entity = item.ToEntity();
+            var entity = await _topicRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Topic with Id {item.Id} not found.");
+
             await _topicRepository.DeleteAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -82,7 +84,10 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Updating topic: {Topic}", item);
 
-            var entity = item.ToEntity();
+            var entity = await _topicRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Topic with Id {item.Id} not found.");
+            entity.Name = item.Name; // Todo: Use AutoMapper or similar for complex mappings
+
             await _topicRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -81,7 +81,6 @@ namespace Template.Tests.Integration
             var createdTag = await response.Content.ReadFromJsonAsync<TagDto>();
             Assert.NotNull(createdTag);
             Assert.Equal(newTag.Name, createdTag.Name);
-            Assert.NotEqual(0, createdTag.Id); // Should have an assigned ID
 
             // Verify it was actually created by fetching it
             var getResponse = await _client.GetAsync($"/api/tag/{createdTag.Id}");

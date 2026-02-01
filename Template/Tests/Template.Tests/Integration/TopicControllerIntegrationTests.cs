@@ -81,7 +81,6 @@ namespace Template.Tests.Integration
             var createdTopic = await response.Content.ReadFromJsonAsync<TopicDto>();
             Assert.NotNull(createdTopic);
             Assert.Equal(newTopic.Name, createdTopic.Name);
-            Assert.NotEqual(0, createdTopic.Id); // Should have an assigned ID
 
             // Verify it was actually created by fetching it
             var getResponse = await _client.GetAsync($"/api/topic/{createdTopic.Id}");

@@ -33,7 +33,9 @@ namespace Template.Service.Services
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Deleting template: {Template}", item);
 
-            var entity = item.ToEntity();
+            var entity = await _templateRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Template with Id {item.Id} not found.");
+
             await _templateRepository.DeleteAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -80,7 +82,12 @@ namespace Template.Service.Services
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Updating template: {Template}", item);
 
-            var entity = item.ToEntity();
+            var entity = await _templateRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Template with Id {item.Id} not found.");
+
+            entity.Title = item.Title; //TODO: Map other properties as needed
+            entity.Description = item.Description;
+
             await _templateRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

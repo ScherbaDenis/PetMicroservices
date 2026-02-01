@@ -42,7 +42,10 @@ namespace Template.Service.Services
         {
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Deleting question: {Question}", item);
-            var entity = item.ToEntity();
+
+            var entity = await _questionRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Question with Id {item.Id} not found.");
+
             await _questionRepository.DeleteAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Question deleted successfully: {Question}", entity);

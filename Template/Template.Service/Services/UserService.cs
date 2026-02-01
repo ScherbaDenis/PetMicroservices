@@ -36,7 +36,9 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Deleting user: {User}", item);
 
-            var entity = item.ToEntity();
+            var entity = await _userRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"User with Id {item.Id} not found.");
+
             await _userRepository.DeleteAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -85,7 +87,10 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Updating user: {User}", item);
 
-            var entity = item.ToEntity();
+            var entity = await _userRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"User with Id {item.Id} not found.");
+            entity.Name = item.Name; // Todo Update other properties as needed
+
             await _userRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

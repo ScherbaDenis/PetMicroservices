@@ -17,9 +17,9 @@ namespace WebApiTemplate.Controllers
 
         // GET: api/user
         [HttpGet]
-        public ActionResult<IEnumerable<UserDto>> GetAll(CancellationToken cancellationToken = default)
+        public async Task< ActionResult<IEnumerable<UserDto>>> GetAll(CancellationToken cancellationToken = default)
         {
-            var users = _userService.GetAllAsync(cancellationToken);
+            var users = await _userService.GetAllAsync(cancellationToken);
             return Ok(users);
         }
 
