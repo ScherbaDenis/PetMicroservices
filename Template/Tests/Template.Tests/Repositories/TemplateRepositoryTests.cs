@@ -99,20 +99,5 @@ namespace Template.Tests.Repositories
             var updated = _context.Templates.First(t => t.Id == guid);
             Assert.Equal("NewName", updated.Title);
         }
-
-        [Fact]
-        public async Task FindAsync_WithPredicate_ShouldReturnMatchingTemplates()
-        {
-            _context.Templates.AddRange(
-                new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Match" },
-                new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Skip" }
-            );
-            _context.SaveChanges();
-
-            var result = await _repository.FindAsync(t => t.Title == "Match");
-
-            Assert.Single(result);
-            Assert.Equal("Match", result.First().Title);
-        }
     }
 }

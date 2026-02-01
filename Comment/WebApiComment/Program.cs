@@ -112,6 +112,14 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
+// Ensure database is created and migrations are applied
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<CommentDbContext>();
+
+    dbContext.Database.Migrate();
+}
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();

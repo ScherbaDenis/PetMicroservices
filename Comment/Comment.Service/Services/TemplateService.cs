@@ -30,7 +30,9 @@ namespace Comment.Service.Services
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Deleting template: {Template}", item);
 
-            var entity = item.ToEntity();
+            var entity = await _templateRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Template with Id {item.Id} not found.");
+
             await _templateRepository.DeleteAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -74,11 +76,15 @@ namespace Comment.Service.Services
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Updating template: {Template}", item);
 
-            var entity = item.ToEntity();
-            await _templateRepository.UpdateAsync(entity, cancellationToken);
+            var dbEntity = await _templateRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(dbEntity, $"Template with Id {item.Id} not found.");
+
+            dbEntity.Title = item.Title; // Todo: Map other properties as needed
+
+            await _templateRepository.UpdateAsync(dbEntity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Template updated successfully: {Template}", entity);
+            _logger.LogInformation("Template updated successfully: {Template}", dbEntity);
         }
         public async Task<IEnumerable<TemplateDto>> FindAsync(Expression<Func<TemplateDto, bool>> predicate, CancellationToken cancellationToken = default)
         {

@@ -30,7 +30,9 @@ namespace Comment.Service.Services
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Deleting comment: {Comment}", item);
 
-            var entity = item.ToEntity();
+            var entity = await _commentRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Comment with Id {item.Id} not found.");
+
             await _commentRepository.DeleteAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -89,11 +91,14 @@ namespace Comment.Service.Services
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Updating comment: {Comment}", item);
 
-            var entity = item.ToEntity();
-            await _commentRepository.UpdateAsync(entity, cancellationToken);
+            var dbEntity = await _commentRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(dbEntity, $"Comment with Id {item.Id} not found.");  
+            
+            dbEntity.Text = item.Text; // Todo: Map other properties as needed
+            await _commentRepository.UpdateAsync(dbEntity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Comment updated successfully: {Comment}", entity);
+            _logger.LogInformation("Comment updated successfully: {Comment}", dbEntity);
         }
 
         // Optional: Pagination support

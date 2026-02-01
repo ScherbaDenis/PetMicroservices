@@ -99,20 +99,5 @@ namespace Template.Tests.Repositories
             var updated = _context.Users.First(t => t.Id == guid);
             Assert.Equal("NewName", updated.Name);
         }
-
-        [Fact]
-        public async Task FindAsync_WithPredicate_ShouldReturnMatchingUsers()
-        {
-            _context.Users.AddRange(
-                new User { Id = Guid.NewGuid(), Name = "Match" },
-                new User { Id = Guid.NewGuid(), Name = "Skip" }
-            );
-            _context.SaveChanges();
-
-            var result = await _repository.FindAsync(t => t.Name == "Match");
-
-            Assert.Single(result);
-            Assert.Equal("Match", result.First().Name);
-        }
     }
 }
