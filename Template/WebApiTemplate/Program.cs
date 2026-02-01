@@ -11,6 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DefaultCorsPolicy", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // DbContext
 if (!builder.Environment.IsEnvironment("Testing"))
 {
@@ -144,6 +155,9 @@ if (!builder.Environment.IsEnvironment("Testing"))
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
+
+// Enable CORS
+app.UseCors("DefaultCorsPolicy");
 
 app.UseAuthorization();
 
