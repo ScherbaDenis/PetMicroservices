@@ -60,8 +60,16 @@ class UserListManager {
             const users = await this.fetchUsers();
             // Create CSV header
             const csvHeader = 'ID,Name\n';
-            // Create CSV rows
-            const csvRows = users.map(user => `"${user.id}","${user.name}"`).join('\n');
+            // Helper function to escape CSV values
+            const escapeCsvValue = (value) => {
+                // Escape quotes by doubling them and wrap in quotes if contains special chars
+                if (value.includes('"') || value.includes(',') || value.includes('\n')) {
+                    return `"${value.replace(/"/g, '""')}"`;
+                }
+                return `"${value}"`;
+            };
+            // Create CSV rows with proper escaping
+            const csvRows = users.map(user => `${escapeCsvValue(user.id)},${escapeCsvValue(user.name)}`).join('\n');
             const csvContent = csvHeader + csvRows;
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
@@ -92,18 +100,28 @@ class UserListManager {
             }
             // Clear existing rows
             tableBody.innerHTML = '';
-            // Add new rows
+            // Helper function to safely escape HTML
+            const escapeHtml = (text) => {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            };
+            // Add new rows with proper XSS protection
             users.forEach(user => {
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${user.id}</td>
-                    <td>${user.name}</td>
-                    <td>
-                        <a href="/User/Details/${user.id}">Details</a> |
-                        <a href="/User/Edit/${user.id}">Edit</a> |
-                        <a href="/User/Delete/${user.id}">Delete</a>
-                    </td>
+                const idCell = document.createElement('td');
+                idCell.textContent = user.id;
+                const nameCell = document.createElement('td');
+                nameCell.textContent = user.name;
+                const actionsCell = document.createElement('td');
+                actionsCell.innerHTML = `
+                    <a href="/User/Details/${escapeHtml(user.id)}">Details</a> |
+                    <a href="/User/Edit/${escapeHtml(user.id)}">Edit</a> |
+                    <a href="/User/Delete/${escapeHtml(user.id)}">Delete</a>
                 `;
+                row.appendChild(idCell);
+                row.appendChild(nameCell);
+                row.appendChild(actionsCell);
                 tableBody.appendChild(row);
             });
             console.log('User list refreshed successfully');
@@ -115,7 +133,8 @@ class UserListManager {
 }
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    const userListManager = new UserListManager('https://localhost:7263/api/user');
+    // Use relative URL to work in both development and production
+    const userListManager = new UserListManager('/proxy/template/user');
     // Attach download handlers
     const downloadJsonBtn = document.getElementById('downloadJsonBtn');
     if (downloadJsonBtn) {
