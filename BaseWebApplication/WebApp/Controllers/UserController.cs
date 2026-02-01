@@ -4,9 +4,16 @@ using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class UserController(IUserService service) : Controller
+    public class UserController : Controller
     {
-        private readonly IUserService _service = service;
+        private readonly IUserService _service;
+        private readonly ITemplateService _templateService;
+
+        public UserController(IUserService service, ITemplateService templateService)
+        {
+            _service = service;
+            _templateService = templateService;
+        }
 
         // GET: /Users
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -21,6 +28,31 @@ namespace WebApp.Controllers
             var user = await _service.GetByIdAsync(id, cancellationToken);
             if (user == null) return NotFound();
             return View(user);
+        }
+
+        /// <summary>
+        /// API endpoint to get templates for a specific user as JSON
+        /// Example: GET /User/GetTemplates/11111111-1111-1111-1111-111111111111
+        /// </summary>
+        /// <param name="id">User ID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>JSON array of templates</returns>
+        [HttpGet]
+        public async Task<IActionResult> GetTemplates(Guid id, CancellationToken cancellationToken)
+        {
+            var user = await _service.GetByIdAsync(id, cancellationToken);
+            if (user == null) return NotFound(new { error = "User not found" });
+
+            // Example usage of GetByUserIdAsync method
+            var templates = await _templateService.GetByUserIdAsync(id, cancellationToken);
+            
+            return Json(new 
+            { 
+                userId = user.Id, 
+                userName = user.Name, 
+                templates = templates,
+                count = templates.Count()
+            });
         }
 
         // GET: /Users/Create

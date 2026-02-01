@@ -53,6 +53,17 @@ namespace WebApp.Services.Imp
             response.EnsureSuccessStatusCode();
         }
 
+        /// <summary>
+        /// Retrieves all templates associated with a specific user by calling the Template API.
+        /// Endpoint: GET /api/template/user/{userId}
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user whose templates to retrieve</param>
+        /// <param name="cancellationToken">Cancellation token for async operation</param>
+        /// <returns>A collection of TemplateDto objects owned by or accessible to the user</returns>
+        /// <remarks>
+        /// This method is used in the User Details view to display templates via TypeScript.
+        /// The endpoint is accessed through the YARP reverse proxy at /proxy/template/user/{userId}
+        /// </remarks>
         public async Task<IEnumerable<TemplateDto>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}/user/{userId}", cancellationToken);
