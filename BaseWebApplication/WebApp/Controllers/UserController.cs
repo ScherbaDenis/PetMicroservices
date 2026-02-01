@@ -4,16 +4,9 @@ using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class UserController : Controller
+    public class UserController(IUserService service) : Controller
     {
-        private readonly IUserService _service;
-        private readonly ITemplateService _templateService;
-
-        public UserController(IUserService service, ITemplateService templateService)
-        {
-            _service = service;
-            _templateService = templateService;
-        }
+        private readonly IUserService _service = service;
 
         // GET: /Users
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -28,14 +21,6 @@ namespace WebApp.Controllers
             var user = await _service.GetByIdAsync(id, cancellationToken);
             if (user == null) return NotFound();
             return View(user);
-        }
-
-        // GET: /User/GetTemplates/5 - Simple proxy to Template microservice (no validation/logic)
-        [HttpGet]
-        public async Task<IActionResult> GetTemplates(Guid id, CancellationToken cancellationToken)
-        {
-            var templates = await _templateService.GetByUserIdAsync(id, cancellationToken);
-            return Json(templates);
         }
 
         // GET: /Users/Create

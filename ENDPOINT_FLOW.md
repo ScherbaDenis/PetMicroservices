@@ -2,7 +2,7 @@
 
 ## Architecture
 
-The WebApp acts as a **simple proxy** with no validation or business logic. JavaScript calls the WebApp endpoint, which forwards the request directly to the Template microservice.
+JavaScript calls the Template microservice **directly** via the YARP reverse proxy. There is no custom WebApp endpoint - the WebApp only provides the YARP proxy configuration.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -13,26 +13,19 @@ The WebApp acts as a **simple proxy** with no validation or business logic. Java
 │         │ JavaScript (userDetails.js)                          │
 │         │                                                       │
 │         ▼                                                       │
-│  fetch('/User/GetTemplates/{userId}')                          │
+│  fetch('/proxy/template/user/{userId}')                        │
 └─────────────────────────┬───────────────────────────────────────┘
                           │
-                          │ HTTP GET
+                          │ HTTP GET (CORS enabled)
                           │
                           ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                    WebApp (ASP.NET Core)                        │
 │                                                                 │
-│  UserController.GetTemplates(userId)                            │
-│         │                                                       │
-│         │ *** SIMPLE PROXY - NO VALIDATION/LOGIC ***           │
-│         │                                                       │
-│         ▼                                                       │
-│  _templateService.GetByUserIdAsync(userId)                     │
-│         │                                                       │
-│         │ TemplateService (HttpClient)                         │
-│         │                                                       │
-│         ▼                                                       │
-│  HTTP GET to /api/template/user/{userId}                       │
+│              YARP Reverse Proxy Configuration                   │
+│         (No custom controller logic - just routing)             │
+│                                                                 │
+│  Route: /proxy/template/** → https://localhost:7263/api/template/**
 └─────────────────────────┬───────────────────────────────────────┘
                           │
                           │ HTTP GET
@@ -50,17 +43,15 @@ The WebApp acts as a **simple proxy** with no validation or business logic. Java
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Key Point: WebApp is a Simple Proxy
+## Key Point: Direct Proxy via YARP
 
-The WebApp endpoint **does NOT**:
-- ❌ Validate if the user exists
-- ❌ Check permissions
-- ❌ Transform or process the data
-- ❌ Add extra fields to the response
+The WebApp **does NOT have** a custom UserController endpoint for templates.
 
-The WebApp endpoint **only**:
-- ✅ Forwards the request to the Template microservice
-- ✅ Returns the response as-is
+Instead:
+- ✅ JavaScript calls `/proxy/template/user/{userId}` directly
+- ✅ YARP reverse proxy forwards the request to Template microservice
+- ✅ No custom controller logic in WebApp
+- ✅ All business logic handled by the microservice
 
 ## Request Flow Example
 
@@ -75,39 +66,18 @@ const templateManager = new UserTemplateManager(userId);
 templateManager.displayTemplates();
 ```
 
-### 3. JavaScript calls WebApp endpoint
+### 3. YARP proxy forwards to microservice
 ```
-GET /User/GetTemplates/11111111-1111-1111-1111-111111111111
-```
-
-### 4. WebApp controller acts as simple proxy
-```csharp
-// Simple proxy - no validation, no logic, just forward the request
-[HttpGet]
-public async Task<IActionResult> GetTemplates(Guid id, CancellationToken cancellationToken)
-{
-    var templates = await _templateService.GetByUserIdAsync(id, cancellationToken);
-    return Json(templates);
-}
+Request: GET /proxy/template/user/11111111-1111-1111-1111-111111111111
+Proxied to: GET https://localhost:7263/api/template/user/11111111-1111-1111-1111-111111111111
 ```
 
-### 5. TemplateService calls microservice
-```csharp
-public async Task<IEnumerable<TemplateDto>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
-{
-    var response = await _httpClient.GetAsync($"{_baseUrl}/user/{userId}", cancellationToken);
-    response.EnsureSuccessStatusCode();
-    return await response.Content.ReadFromJsonAsync<IEnumerable<TemplateDto>>(_jsonOptions, cancellationToken)
-           ?? Enumerable.Empty<TemplateDto>();
-}
-```
-
-### 6. WebApiTemplate returns data
+### 4. WebApiTemplate returns data
 ```
 GET https://localhost:7263/api/template/user/11111111-1111-1111-1111-111111111111
 ```
 
-### 7. Response flows back (unchanged from microservice)
+### 5. Response flows back (unchanged from microservice)
 ```json
 [
   {
@@ -126,7 +96,7 @@ GET https://localhost:7263/api/template/user/11111111-1111-1111-1111-11111111111
 
 **Note:** WebApp returns the exact response from the microservice without modification.
 
-### 8. JavaScript displays templates
+### 6. JavaScript displays templates
 The templates are rendered in the table on the User Details page.
 
 ## CORS Configuration
@@ -181,21 +151,21 @@ app.UseCors("DefaultCorsPolicy");
 
 | File | Purpose |
 |------|---------|
-| `TypeScript/userDetails.ts` | Client-side logic to fetch templates |
-| `Controllers/UserController.cs` | WebApp endpoint for getting user templates |
-| `Services/ITemplateService.cs` | Service interface |
-| `Services/Imp/TemplateService.cs` | Service implementation calling Template API |
+| `TypeScript/userDetails.ts` | Client-side logic calling `/proxy/template/user/{id}` |
 | `Views/User/Details.cshtml` | UI displaying templates table |
+| `Program.cs` | YARP reverse proxy configuration |
 | `Template/WebApiTemplate/Controllers/TemplateController.cs` | API endpoint in microservice |
+
+**Note:** There is NO UserController.GetTemplates endpoint. The YARP proxy handles all routing.
 
 ## Benefits of This Architecture
 
-1. **Simple Proxy Pattern**: WebApp acts as a passthrough with no business logic
-2. **CORS Handling**: Properly configured at both layers
-3. **Type Safety**: TypeScript on client, C# on server
-4. **Separation of Concerns**: WebApp handles routing, Template microservice handles business logic
-5. **Flexibility**: Easy to add caching or monitoring at WebApp layer if needed later
-6. **No Validation Overhead**: Microservice handles all validation and business rules
+1. **Pure YARP Proxy**: WebApp only provides routing configuration, no custom logic
+2. **Direct Communication**: JavaScript talks directly to microservice (via proxy)
+3. **CORS Handling**: Configured at microservice and YARP level
+4. **Simplified WebApp**: No unnecessary controller endpoints
+5. **Separation of Concerns**: Microservice handles all business logic
+6. **Reduced Latency**: One less hop (no controller processing)
 
 ## Testing
 

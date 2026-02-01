@@ -30,17 +30,18 @@ class UserTemplateManager {
     }
 
     /**
-     * Fetches templates for the current user via WebApp proxy
-     * Calls: GET /User/GetTemplates/{userId}
-     * WebApp acts as simple proxy (no validation) to Template microservice
+     * Fetches templates for the current user from the Template API
+     * Calls: GET /proxy/template/user/{userId}
+     * Direct call to Template microservice via YARP proxy
      */
     async fetchUserTemplates(): Promise<TemplateDto[]> {
         try {
-            const response = await fetch(`/User/GetTemplates/${this.userId}`, {
+            const response = await fetch(`/proxy/template/user/${this.userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                mode: 'cors',
             });
 
             if (!response.ok) {
