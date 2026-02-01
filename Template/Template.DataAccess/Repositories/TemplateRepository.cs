@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Template.Domain.Repository;
 
 namespace Template.DataAccess.MsSql.Repositories
@@ -11,5 +12,23 @@ namespace Template.DataAccess.MsSql.Repositories
     public class TemplateRepository(TemplateDbContext context, ILogger<TemplateRepository> logger) 
         : RepositoryBase<Domain.Model.Template, Guid>(context, logger), ITemplateRepository
     {
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Domain.Model.Template>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        {
+            // Load all templates with their relationships
+            var allTemplates = await _dbSet
+                .Include(t => t.Owner)
+                .Include(t => t.Topic)
+                .Include(t => t.Tags)
+                .Include(t => t.UsersAccess)
+                .Include(t => t.Questions)
+                .ToListAsync(cancellationToken);
+
+            // Filter in-memory to support both real DB and in-memory DB
+            return allTemplates.Where(t => 
+                (t.Owner != null && t.Owner.Id == userId) || 
+                (t.UsersAccess != null && t.UsersAccess.Any(u => u.Id == userId))
+            );
+        }
     }
 }

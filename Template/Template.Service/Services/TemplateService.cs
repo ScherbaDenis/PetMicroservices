@@ -86,5 +86,16 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Template updated successfully: {Template}", entity);
         }
+
+        public async Task<IEnumerable<TemplateDto>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving templates for user: {UserId}", userId);
+            var templates = await _templateRepository.GetByUserIdAsync(userId, cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} templates for user {UserId}", 
+                templates is ICollection<Domain.Model.Template> col ? col.Count : -1, userId);
+
+            return templates.Select(t => t.ToDto());
+        }
     }
 }
