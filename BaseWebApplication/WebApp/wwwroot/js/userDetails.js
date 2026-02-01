@@ -3,27 +3,27 @@
  * UserTemplateManager - Handles fetching and displaying templates for a specific user
  */
 class UserTemplateManager {
-    constructor(userId, apiBaseUrl = '/proxy/template') {
+    constructor(userId) {
         this.userId = userId;
-        this.apiBaseUrl = apiBaseUrl;
     }
     /**
-     * Fetches templates for the current user from the API
+     * Fetches templates for the current user from the WebApp API
+     * Calls: GET /User/GetTemplates/{userId}
+     * The WebApp endpoint will then call the Template microservice with CORS
      */
     async fetchUserTemplates() {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/user/${this.userId}`, {
+            const response = await fetch(`/User/GetTemplates/${this.userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors', // Enable CORS
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const templates = await response.json();
-            return templates;
+            const result = await response.json();
+            return result.templates || [];
         }
         catch (error) {
             console.error('Error fetching user templates:', error);

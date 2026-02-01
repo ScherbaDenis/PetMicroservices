@@ -30,20 +30,13 @@ namespace WebApp.Controllers
             return View(user);
         }
 
-        /// <summary>
-        /// API endpoint to get templates for a specific user as JSON
-        /// Example: GET /User/GetTemplates/11111111-1111-1111-1111-111111111111
-        /// </summary>
-        /// <param name="id">User ID</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>JSON array of templates</returns>
+        // GET: /User/GetTemplates/5
         [HttpGet]
         public async Task<IActionResult> GetTemplates(Guid id, CancellationToken cancellationToken)
         {
             var user = await _service.GetByIdAsync(id, cancellationToken);
             if (user == null) return NotFound(new { error = "User not found" });
 
-            // Example usage of GetByUserIdAsync method
             var templates = await _templateService.GetByUserIdAsync(id, cancellationToken);
             
             return Json(new 
