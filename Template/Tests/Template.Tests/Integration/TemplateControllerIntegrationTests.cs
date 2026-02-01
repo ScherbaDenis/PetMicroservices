@@ -192,6 +192,52 @@ namespace Template.Tests.Integration
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
+        [Fact]
+        public async Task GetByUserId_ShouldReturnUserTemplates()
+        {
+            // Arrange
+            var (userId, templateIds) = await SeedUserWithTemplatesAsync();
+
+            // Act
+            var response = await _client.GetAsync($"/api/template/user/{userId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var templates = await response.Content.ReadFromJsonAsync<List<TemplateDto>>();
+            Assert.NotNull(templates);
+            Assert.Equal(2, templates.Count);
+            Assert.All(templates, t => Assert.Contains(t.Id, templateIds));
+        }
+
+        [Fact]
+        public async Task GetByUserId_ShouldReturnNotFound_WhenUserDoesNotExist()
+        {
+            // Arrange
+            var nonExistentId = Guid.NewGuid();
+
+            // Act
+            var response = await _client.GetAsync($"/api/template/user/{nonExistentId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetByUserId_ShouldReturnEmptyList_WhenUserHasNoTemplates()
+        {
+            // Arrange
+            var userId = await SeedUserAsync();
+
+            // Act
+            var response = await _client.GetAsync($"/api/template/user/{userId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var templates = await response.Content.ReadFromJsonAsync<List<TemplateDto>>();
+            Assert.NotNull(templates);
+            Assert.Empty(templates);
+        }
+
         private async Task<Guid> SeedDataAsync()
         {
             using var scope = _factory.Services.CreateScope();
@@ -211,6 +257,64 @@ namespace Template.Tests.Integration
             context.ChangeTracker.Clear();
             
             return template.Id;
+        }
+
+        private async Task<Guid> SeedUserAsync()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<TemplateDbContext>();
+            
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test User"
+            };
+            
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+            
+            // Detach all entities to avoid tracking conflicts
+            context.ChangeTracker.Clear();
+            
+            return user.Id;
+        }
+
+        private async Task<(Guid userId, List<Guid> templateIds)> SeedUserWithTemplatesAsync()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<TemplateDbContext>();
+            
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test User"
+            };
+            
+            var template1 = new Domain.Model.Template
+            {
+                Id = Guid.NewGuid(),
+                Title = "Template 1",
+                Description = "Description 1",
+                Owner = user
+            };
+            
+            var template2 = new Domain.Model.Template
+            {
+                Id = Guid.NewGuid(),
+                Title = "Template 2",
+                Description = "Description 2",
+                Owner = user
+            };
+            
+            context.Users.Add(user);
+            context.Templates.Add(template1);
+            context.Templates.Add(template2);
+            await context.SaveChangesAsync();
+            
+            // Detach all entities to avoid tracking conflicts
+            context.ChangeTracker.Clear();
+            
+            return (user.Id, new List<Guid> { template1.Id, template2.Id });
         }
     }
 }

@@ -9,12 +9,14 @@ namespace Template.Tests.Controllers
     public class TemplateControllerTests
     {
         private readonly Mock<ITemplateService> _mockService;
+        private readonly Mock<IUserService> _mockUserService;
         private readonly TemplateController _controller;
 
         public TemplateControllerTests()
         {
             _mockService = new Mock<ITemplateService>();
-            _controller = new TemplateController(_mockService.Object);
+            _mockUserService = new Mock<IUserService>();
+            _controller = new TemplateController(_mockService.Object, _mockUserService.Object);
         }
 
         [Fact]
@@ -195,6 +197,46 @@ namespace Template.Tests.Controllers
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task GetByUserId_ShouldReturnOkWithTemplates_WhenUserExists()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var user = new UserDto { Id = userId, Name = "Test user" };
+            var templates = new List<TemplateDto>
+            {
+                new TemplateDto { Id = Guid.NewGuid(), Title = "Template 1", Description = "Description 1" },
+                new TemplateDto { Id = Guid.NewGuid(), Title = "Template 2", Description = "Description 2" }
+            };
+            _mockUserService.Setup(s => s.FindAsync(userId, It.IsAny<CancellationToken>()))
+                           .ReturnsAsync(user);
+            _mockService.Setup(s => s.GetByUserIdAsync(userId, It.IsAny<CancellationToken>()))
+                       .ReturnsAsync(templates);
+
+            // Act
+            var result = await _controller.GetByUserId(userId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedTemplates = Assert.IsAssignableFrom<IEnumerable<TemplateDto>>(okResult.Value);
+            Assert.Equal(2, returnedTemplates.Count());
+        }
+
+        [Fact]
+        public async Task GetByUserId_ShouldReturnNotFound_WhenUserDoesNotExist()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            _mockUserService.Setup(s => s.FindAsync(userId, It.IsAny<CancellationToken>()))
+                           .ReturnsAsync((UserDto?)null);
+
+            // Act
+            var result = await _controller.GetByUserId(userId);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result.Result);
         }
     }
 }
