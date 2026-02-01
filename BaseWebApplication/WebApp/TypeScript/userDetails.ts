@@ -85,13 +85,6 @@ class UserTemplateManager {
                 noTemplatesMessage.classList.add('d-none');
             }
 
-            // Helper function to safely escape HTML
-            const escapeHtml = (text: string): string => {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            };
-
             // Add template rows with proper XSS protection
             templates.forEach(template => {
                 const row = document.createElement('tr');
