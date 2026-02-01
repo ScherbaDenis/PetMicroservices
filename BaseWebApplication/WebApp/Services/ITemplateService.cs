@@ -9,5 +9,6 @@ namespace WebApp.Services
         Task DeleteAsync(Guid templateId, CancellationToken cancellationToken);
         Task UpdateAsync(TemplateDto templateDto, CancellationToken cancellationToken);
         Task<IEnumerable<TemplateDto>> GetAllAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<TemplateDto>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken);
     }
 }
