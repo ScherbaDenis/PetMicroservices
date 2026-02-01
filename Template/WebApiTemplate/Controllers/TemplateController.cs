@@ -9,10 +9,12 @@ namespace WebApiTemplate.Controllers
     public class TemplateController : ControllerBase
     {
         private readonly ITemplateService _templateService;
+        private readonly IUserService _userService;
 
-        public TemplateController(ITemplateService templateService)
+        public TemplateController(ITemplateService templateService, IUserService userService)
         {
             _templateService = templateService ?? throw new ArgumentNullException(nameof(templateService));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         // GET: api/template
@@ -87,6 +89,21 @@ namespace WebApiTemplate.Controllers
 
             await _templateService.DeleteAsync(template, cancellationToken);
             return NoContent();
+        }
+
+        // GET: api/template/user/{userId}
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<TemplateDto>>> GetByUserId(Guid userId, CancellationToken cancellationToken = default)
+        {
+            var user = await _userService.FindAsync(userId, cancellationToken);
+            
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var templates = await _templateService.GetByUserIdAsync(userId, cancellationToken);
+            return Ok(templates);
         }
     }
 }
