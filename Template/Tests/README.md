@@ -73,6 +73,7 @@ The collection includes comprehensive tests for:
 ### Template Endpoints (`/api/template`)
 - ✅ GET all templates
 - ✅ GET template by ID
+- ✅ GET templates by user ID (`/api/template/user/{userId}`)
 - ✅ POST create template
 - ✅ PUT update template
 - ✅ DELETE template
@@ -81,7 +82,6 @@ The collection includes comprehensive tests for:
 ### User Endpoints (`/api/user`)
 - ✅ GET all users
 - ✅ GET user by ID
-- ✅ GET user templates (`/api/user/{id}/templates`)
 - ✅ POST create user
 - ✅ PUT update user
 - ✅ DELETE user

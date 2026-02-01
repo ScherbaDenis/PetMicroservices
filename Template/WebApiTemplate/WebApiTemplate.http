@@ -19,7 +19,7 @@ Accept: application/json
 ###
 
 # Get templates for a specific user
-GET {{WebApiTemplate_HostAddress}}/api/user/{{userId}}/templates
+GET {{WebApiTemplate_HostAddress}}/api/template/user/{{userId}}
 Accept: application/json
 
 ###

@@ -120,6 +120,55 @@
                     "response": []
                 },
                 {
+                    "name": "Get Templates by User ID",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is an array\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('array');",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response time is less than 2000ms\", function () {",
+                                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/template/user/{{userId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "template",
+                                "user",
+                                "{{userId}}"
+                            ]
+                        },
+                        "description": "Retrieve all templates associated with a specific user (owned or accessible)"
+                    },
+                    "response": []
+                },
+                {
                     "name": "Create Template",
                     "event": [
                         {
@@ -432,55 +481,6 @@
                             ]
                         },
                         "description": "Retrieve a specific user by its ID"
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Get User Templates",
-                    "event": [
-                        {
-                            "listen": "test",
-                            "script": {
-                                "exec": [
-                                    "pm.test(\"Status code is 200\", function () {",
-                                    "    pm.response.to.have.status(200);",
-                                    "});",
-                                    "",
-                                    "pm.test(\"Response is an array\", function () {",
-                                    "    var jsonData = pm.response.json();",
-                                    "    pm.expect(jsonData).to.be.an('array');",
-                                    "});",
-                                    "",
-                                    "pm.test(\"Response time is less than 2000ms\", function () {",
-                                    "    pm.expect(pm.response.responseTime).to.be.below(2000);",
-                                    "});"
-                                ],
-                                "type": "text/javascript"
-                            }
-                        }
-                    ],
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{baseUrl}}/api/user/{{userId}}/templates",
-                            "host": [
-                                "{{baseUrl}}"
-                            ],
-                            "path": [
-                                "api",
-                                "user",
-                                "{{userId}}",
-                                "templates"
-                            ]
-                        },
-                        "description": "Retrieve all templates associated with a specific user (owned or accessible)"
                     },
                     "response": []
                 },
