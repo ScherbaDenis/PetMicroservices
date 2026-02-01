@@ -52,13 +52,5 @@ namespace WebApp.Services.Imp
             var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{templateDto.Id}", templateDto, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
-
-        public async Task<IEnumerable<TemplateDto>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
-        {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/user/{userId}", cancellationToken);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<IEnumerable<TemplateDto>>(_jsonOptions, cancellationToken)
-                   ?? Enumerable.Empty<TemplateDto>();
-        }
     }
 }
