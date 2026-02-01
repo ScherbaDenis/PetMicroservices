@@ -81,6 +81,7 @@ The collection includes comprehensive tests for:
 ### User Endpoints (`/api/user`)
 - ✅ GET all users
 - ✅ GET user by ID
+- ✅ GET user templates (`/api/user/{id}/templates`)
 - ✅ POST create user
 - ✅ PUT update user
 - ✅ DELETE user
