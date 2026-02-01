@@ -30,9 +30,9 @@ class UserTemplateManager {
     }
 
     /**
-     * Fetches templates for the current user from the WebApp API
+     * Fetches templates for the current user via WebApp proxy
      * Calls: GET /User/GetTemplates/{userId}
-     * The WebApp endpoint will then call the Template microservice with CORS
+     * WebApp acts as simple proxy (no validation) to Template microservice
      */
     async fetchUserTemplates(): Promise<TemplateDto[]> {
         try {
@@ -47,8 +47,8 @@ class UserTemplateManager {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json();
-            return result.templates || [];
+            const templates: TemplateDto[] = await response.json();
+            return templates;
         } catch (error) {
             console.error('Error fetching user templates:', error);
             throw error;

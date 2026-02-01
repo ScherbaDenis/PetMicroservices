@@ -2,7 +2,7 @@
 
 ## Architecture
 
-The application uses a clean separation where JavaScript calls a WebApp endpoint, which then calls the Template microservice API with proper CORS handling.
+The WebApp acts as a **simple proxy** with no validation or business logic. JavaScript calls the WebApp endpoint, which forwards the request directly to the Template microservice.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -24,7 +24,7 @@ The application uses a clean separation where JavaScript calls a WebApp endpoint
 │                                                                 │
 │  UserController.GetTemplates(userId)                            │
 │         │                                                       │
-│         │ CORS enabled (DefaultCorsPolicy)                     │
+│         │ *** SIMPLE PROXY - NO VALIDATION/LOGIC ***           │
 │         │                                                       │
 │         ▼                                                       │
 │  _templateService.GetByUserIdAsync(userId)                     │
@@ -50,6 +50,18 @@ The application uses a clean separation where JavaScript calls a WebApp endpoint
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+## Key Point: WebApp is a Simple Proxy
+
+The WebApp endpoint **does NOT**:
+- ❌ Validate if the user exists
+- ❌ Check permissions
+- ❌ Transform or process the data
+- ❌ Add extra fields to the response
+
+The WebApp endpoint **only**:
+- ✅ Forwards the request to the Template microservice
+- ✅ Returns the response as-is
+
 ## Request Flow Example
 
 ### 1. User navigates to Details page
@@ -68,23 +80,14 @@ templateManager.displayTemplates();
 GET /User/GetTemplates/11111111-1111-1111-1111-111111111111
 ```
 
-### 4. WebApp controller processes request
+### 4. WebApp controller acts as simple proxy
 ```csharp
+// Simple proxy - no validation, no logic, just forward the request
 [HttpGet]
 public async Task<IActionResult> GetTemplates(Guid id, CancellationToken cancellationToken)
 {
-    var user = await _service.GetByIdAsync(id, cancellationToken);
-    if (user == null) return NotFound(new { error = "User not found" });
-
     var templates = await _templateService.GetByUserIdAsync(id, cancellationToken);
-    
-    return Json(new 
-    { 
-        userId = user.Id, 
-        userName = user.Name, 
-        templates = templates,
-        count = templates.Count()
-    });
+    return Json(templates);
 }
 ```
 
@@ -104,21 +107,24 @@ public async Task<IEnumerable<TemplateDto>> GetByUserIdAsync(Guid userId, Cancel
 GET https://localhost:7263/api/template/user/11111111-1111-1111-1111-111111111111
 ```
 
-### 7. Response flows back
+### 7. Response flows back (unchanged from microservice)
 ```json
-{
-  "userId": "11111111-1111-1111-1111-111111111111",
-  "userName": "John Doe",
-  "templates": [
-    {
-      "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-      "title": "Customer Feedback Survey",
-      "description": "A template for collecting customer feedback"
-    }
-  ],
-  "count": 1
-}
+[
+  {
+    "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "title": "Customer Feedback Survey",
+    "description": "A template for collecting customer feedback",
+    "owner": {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "name": "John Doe"
+    },
+    "topic": { "name": "Technology" },
+    "tags": [{ "name": "Survey" }]
+  }
+]
 ```
+
+**Note:** WebApp returns the exact response from the microservice without modification.
 
 ### 8. JavaScript displays templates
 The templates are rendered in the table on the User Details page.
@@ -184,12 +190,12 @@ app.UseCors("DefaultCorsPolicy");
 
 ## Benefits of This Architecture
 
-1. **Separation of Concerns**: WebApp handles presentation, Template microservice handles data
+1. **Simple Proxy Pattern**: WebApp acts as a passthrough with no business logic
 2. **CORS Handling**: Properly configured at both layers
 3. **Type Safety**: TypeScript on client, C# on server
-4. **Testability**: Each layer can be tested independently
-5. **Security**: WebApp can add authentication/authorization before calling microservice
-6. **Flexibility**: Easy to add caching, logging, or validation at WebApp layer
+4. **Separation of Concerns**: WebApp handles routing, Template microservice handles business logic
+5. **Flexibility**: Easy to add caching or monitoring at WebApp layer if needed later
+6. **No Validation Overhead**: Microservice handles all validation and business rules
 
 ## Testing
 

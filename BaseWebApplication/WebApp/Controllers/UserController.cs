@@ -30,22 +30,12 @@ namespace WebApp.Controllers
             return View(user);
         }
 
-        // GET: /User/GetTemplates/5
+        // GET: /User/GetTemplates/5 - Simple proxy to Template microservice (no validation/logic)
         [HttpGet]
         public async Task<IActionResult> GetTemplates(Guid id, CancellationToken cancellationToken)
         {
-            var user = await _service.GetByIdAsync(id, cancellationToken);
-            if (user == null) return NotFound(new { error = "User not found" });
-
             var templates = await _templateService.GetByUserIdAsync(id, cancellationToken);
-            
-            return Json(new 
-            { 
-                userId = user.Id, 
-                userName = user.Name, 
-                templates = templates,
-                count = templates.Count()
-            });
+            return Json(templates);
         }
 
         // GET: /Users/Create
