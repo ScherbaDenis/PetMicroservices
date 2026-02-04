@@ -26,7 +26,7 @@
 
     <div class="card mb-4" id="templatesSection">
         <div class="card-header bg-info text-white">
-            <h5 class="mb-0">Templates</h5>
+            <h5 class="mb-0">User's Templates</h5>
         </div>
         <div class="card-body">
             <div id="noTemplatesMessage" class="alert alert-info d-none" role="alert">
@@ -40,11 +40,45 @@
                             <th>Description</th>
                             <th>Topic</th>
                             <th>Tags</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="templatesTableBody">
                         <tr>
-                            <td colspan="4" class="text-center">
+                            <td colspan="5" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4" id="availableTemplatesSection">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Available Templates to Assign</h5>
+        </div>
+        <div class="card-body">
+            <div id="noAvailableTemplatesMessage" class="alert alert-info d-none" role="alert">
+                No templates available to assign.
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Topic</th>
+                            <th>Tags</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="availableTemplatesTableBody">
+                        <tr>
+                            <td colspan="5" class="text-center">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
