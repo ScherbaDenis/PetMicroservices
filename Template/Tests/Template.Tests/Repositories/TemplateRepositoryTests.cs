@@ -188,5 +188,170 @@ namespace Template.Tests.Repositories
             // Assert
             Assert.Equal(2, result.Count());
         }
+
+        [Fact]
+        public async Task AssignTemplateToUserAsync_ShouldAddUserToUsersAccess()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var user = new User { Id = userId, Name = "Test User" };
+            var template = new Domain.Model.Template 
+            { 
+                Id = templateId, 
+                Title = "Test Template",
+                UsersAccess = new List<User>()
+            };
+            _context.Users.Add(user);
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _repository.AssignTemplateToUserAsync(templateId, userId);
+            await _context.SaveChangesAsync();
+
+            // Assert
+            var updatedTemplate = await _context.Templates
+                .Include(t => t.UsersAccess)
+                .FirstAsync(t => t.Id == templateId);
+            Assert.NotNull(updatedTemplate.UsersAccess);
+            Assert.Single(updatedTemplate.UsersAccess);
+            Assert.Equal(userId, updatedTemplate.UsersAccess.First().Id);
+        }
+
+        [Fact]
+        public async Task AssignTemplateToUserAsync_ShouldNotDuplicateUser_WhenAlreadyAssigned()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var user = new User { Id = userId, Name = "Test User" };
+            var template = new Domain.Model.Template 
+            { 
+                Id = templateId, 
+                Title = "Test Template",
+                UsersAccess = new List<User> { user }
+            };
+            _context.Users.Add(user);
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _repository.AssignTemplateToUserAsync(templateId, userId);
+            await _context.SaveChangesAsync();
+
+            // Assert
+            var updatedTemplate = await _context.Templates
+                .Include(t => t.UsersAccess)
+                .FirstAsync(t => t.Id == templateId);
+            Assert.NotNull(updatedTemplate.UsersAccess);
+            Assert.Single(updatedTemplate.UsersAccess); // Should still be 1, not 2
+        }
+
+        [Fact]
+        public async Task AssignTemplateToUserAsync_ShouldThrow_WhenTemplateNotFound()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var user = new User { Id = userId, Name = "Test User" };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(() => 
+                _repository.AssignTemplateToUserAsync(templateId, userId));
+        }
+
+        [Fact]
+        public async Task AssignTemplateToUserAsync_ShouldThrow_WhenUserNotFound()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var template = new Domain.Model.Template 
+            { 
+                Id = templateId, 
+                Title = "Test Template",
+                UsersAccess = new List<User>()
+            };
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(() => 
+                _repository.AssignTemplateToUserAsync(templateId, userId));
+        }
+
+        [Fact]
+        public async Task UnassignTemplateFromUserAsync_ShouldRemoveUserFromUsersAccess()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var user = new User { Id = userId, Name = "Test User" };
+            var template = new Domain.Model.Template 
+            { 
+                Id = templateId, 
+                Title = "Test Template",
+                UsersAccess = new List<User> { user }
+            };
+            _context.Users.Add(user);
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _repository.UnassignTemplateFromUserAsync(templateId, userId);
+            await _context.SaveChangesAsync();
+
+            // Assert
+            var updatedTemplate = await _context.Templates
+                .Include(t => t.UsersAccess)
+                .FirstAsync(t => t.Id == templateId);
+            Assert.NotNull(updatedTemplate.UsersAccess);
+            Assert.Empty(updatedTemplate.UsersAccess);
+        }
+
+        [Fact]
+        public async Task UnassignTemplateFromUserAsync_ShouldDoNothing_WhenUserNotAssigned()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var otherUserId = Guid.NewGuid();
+            var otherUser = new User { Id = otherUserId, Name = "Other User" };
+            var template = new Domain.Model.Template 
+            { 
+                Id = templateId, 
+                Title = "Test Template",
+                UsersAccess = new List<User> { otherUser }
+            };
+            _context.Users.Add(otherUser);
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _repository.UnassignTemplateFromUserAsync(templateId, userId);
+            await _context.SaveChangesAsync();
+
+            // Assert
+            var updatedTemplate = await _context.Templates
+                .Include(t => t.UsersAccess)
+                .FirstAsync(t => t.Id == templateId);
+            Assert.NotNull(updatedTemplate.UsersAccess);
+            Assert.Single(updatedTemplate.UsersAccess); // Other user should still be there
+        }
+
+        [Fact]
+        public async Task UnassignTemplateFromUserAsync_ShouldThrow_WhenTemplateNotFound()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(() => 
+                _repository.UnassignTemplateFromUserAsync(templateId, userId));
+        }
     }
 }
