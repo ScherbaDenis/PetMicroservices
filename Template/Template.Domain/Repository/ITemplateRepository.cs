@@ -12,5 +12,21 @@ namespace Template.Domain.Repository
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         /// <returns>A collection of templates associated with the user.</returns>
         Task<IEnumerable<Model.Template>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Asynchronously assigns a template to a user by adding the user to the template's UsersAccess collection.
+        /// </summary>
+        /// <param name="templateId">The template's identifier.</param>
+        /// <param name="userId">The user's identifier.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        Task AssignTemplateToUserAsync(Guid templateId, Guid userId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Asynchronously unassigns a template from a user by removing the user from the template's UsersAccess collection.
+        /// </summary>
+        /// <param name="templateId">The template's identifier.</param>
+        /// <param name="userId">The user's identifier.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        Task UnassignTemplateFromUserAsync(Guid templateId, Guid userId, CancellationToken cancellationToken = default);
     }
 }

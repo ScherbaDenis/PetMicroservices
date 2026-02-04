@@ -105,5 +105,35 @@ namespace WebApiTemplate.Controllers
             var templates = await _templateService.GetByUserIdAsync(userId, cancellationToken);
             return Ok(templates);
         }
+
+        // POST: api/template/{templateId}/assign/{userId}
+        [HttpPost("{templateId}/assign/{userId}")]
+        public async Task<ActionResult> AssignTemplateToUser(Guid templateId, Guid userId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await _templateService.AssignTemplateToUserAsync(templateId, userId, cancellationToken);
+                return Ok();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        // DELETE: api/template/{templateId}/assign/{userId}
+        [HttpDelete("{templateId}/assign/{userId}")]
+        public async Task<ActionResult> UnassignTemplateFromUser(Guid templateId, Guid userId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await _templateService.UnassignTemplateFromUserAsync(templateId, userId, cancellationToken);
+                return Ok();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

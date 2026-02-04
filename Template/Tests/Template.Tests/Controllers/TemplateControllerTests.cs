@@ -238,5 +238,73 @@ namespace Template.Tests.Controllers
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
         }
+
+        [Fact]
+        public async Task AssignTemplateToUser_ShouldReturnOk_WhenSuccessful()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            _mockService.Setup(s => s.AssignTemplateToUserAsync(templateId, userId, It.IsAny<CancellationToken>()))
+                       .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _controller.AssignTemplateToUser(templateId, userId);
+
+            // Assert
+            Assert.IsType<OkResult>(result);
+            _mockService.Verify(s => s.AssignTemplateToUserAsync(templateId, userId, It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task AssignTemplateToUser_ShouldReturnNotFound_WhenTemplateOrUserNotFound()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            _mockService.Setup(s => s.AssignTemplateToUserAsync(templateId, userId, It.IsAny<CancellationToken>()))
+                       .ThrowsAsync(new InvalidOperationException("Template or user not found"));
+
+            // Act
+            var result = await _controller.AssignTemplateToUser(templateId, userId);
+
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Template or user not found", notFoundResult.Value);
+        }
+
+        [Fact]
+        public async Task UnassignTemplateFromUser_ShouldReturnOk_WhenSuccessful()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            _mockService.Setup(s => s.UnassignTemplateFromUserAsync(templateId, userId, It.IsAny<CancellationToken>()))
+                       .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _controller.UnassignTemplateFromUser(templateId, userId);
+
+            // Assert
+            Assert.IsType<OkResult>(result);
+            _mockService.Verify(s => s.UnassignTemplateFromUserAsync(templateId, userId, It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UnassignTemplateFromUser_ShouldReturnNotFound_WhenTemplateNotFound()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            _mockService.Setup(s => s.UnassignTemplateFromUserAsync(templateId, userId, It.IsAny<CancellationToken>()))
+                       .ThrowsAsync(new InvalidOperationException("Template not found"));
+
+            // Act
+            var result = await _controller.UnassignTemplateFromUser(templateId, userId);
+
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Template not found", notFoundResult.Value);
+        }
     }
 }
