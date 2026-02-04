@@ -57,12 +57,10 @@ namespace Template.DataAccess.MsSql.Repositories
                 return; // User already has access
             }
 
-            // Add user to UsersAccess
-            if (template.UsersAccess == null)
-            {
-                template.UsersAccess = new List<Domain.Model.User>();
-            }
-            ((List<Domain.Model.User>)template.UsersAccess).Add(user);
+            // Initialize UsersAccess as a List if null, or convert if needed
+            var usersAccessList = template.UsersAccess?.ToList() ?? new List<Domain.Model.User>();
+            usersAccessList.Add(user);
+            template.UsersAccess = usersAccessList;
         }
 
         /// <inheritdoc/>
@@ -77,15 +75,18 @@ namespace Template.DataAccess.MsSql.Repositories
                 throw new InvalidOperationException($"Template with Id {templateId} not found.");
             }
 
-            if (template.UsersAccess == null)
+            if (template.UsersAccess == null || !template.UsersAccess.Any())
             {
                 return; // No users assigned
             }
 
-            var userToRemove = template.UsersAccess.FirstOrDefault(u => u.Id == userId);
+            // Convert to list and remove
+            var usersAccessList = template.UsersAccess.ToList();
+            var userToRemove = usersAccessList.FirstOrDefault(u => u.Id == userId);
             if (userToRemove != null)
             {
-                ((List<Domain.Model.User>)template.UsersAccess).Remove(userToRemove);
+                usersAccessList.Remove(userToRemove);
+                template.UsersAccess = usersAccessList;
             }
         }
     }
