@@ -18,7 +18,7 @@ namespace Template.Tests.Controllers
         }
 
         [Fact]
-        public void GetAll_ShouldReturnOkWithTopics()
+        public async void GetAll_ShouldReturnOkWithTopics()
         {
             // Arrange
             var topics = new List<TopicDto>
@@ -30,13 +30,12 @@ namespace Template.Tests.Controllers
                        .ReturnsAsync(topics);
 
             // Act
-            var result = _controller.GetAll();
+            var result = await _controller.GetAll();
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnedTask = Assert.IsAssignableFrom<Task<IEnumerable<TopicDto>>>(okResult.Value);
-            var returnedTopics = returnedTask.Result;
-            Assert.Equal(2, returnedTopics.Count());
+            var returned = Assert.IsAssignableFrom<IEnumerable<TopicDto>>(okResult.Value);            
+            Assert.Equal(2, returned.Count());
         }
 
         [Fact]
