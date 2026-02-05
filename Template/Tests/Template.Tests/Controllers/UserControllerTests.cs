@@ -77,7 +77,7 @@ namespace Template.Tests.Controllers
             // Arrange
             var user = new UserDto { Id = Guid.NewGuid(), Name = "New user" };
             _mockService.Setup(s => s.CreateAsync(user, It.IsAny<CancellationToken>()))
-                       .Returns(Task.CompletedTask);
+                       .ReturnsAsync(user);
 
             // Act
             var result = await _controller.Create(user);

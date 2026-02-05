@@ -46,8 +46,8 @@ namespace WebApiTemplate.Controllers
                 return BadRequest("Topic cannot be null");
             }
 
-            await _topicService.CreateAsync(topicDto, cancellationToken);
-            return CreatedAtAction(nameof(GetById), new { id = topicDto.Id }, topicDto);
+            var createdTopic = await _topicService.CreateAsync(topicDto, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = createdTopic.Id }, createdTopic);
         }
 
         // PUT: api/topic/{id}

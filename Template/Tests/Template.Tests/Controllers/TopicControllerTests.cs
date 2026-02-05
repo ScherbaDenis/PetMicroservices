@@ -77,7 +77,7 @@ namespace Template.Tests.Controllers
             // Arrange
             var topic = new TopicDto { Id = 1, Name = "New topic" };
             _mockService.Setup(s => s.CreateAsync(topic, It.IsAny<CancellationToken>()))
-                       .Returns(Task.CompletedTask);
+                       .ReturnsAsync(topic);
 
             // Act
             var result = await _controller.Create(topic);

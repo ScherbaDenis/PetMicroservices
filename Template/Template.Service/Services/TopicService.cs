@@ -16,7 +16,7 @@ namespace Template.Service.Services
 
     // use centralized TopicMapper
 
-        public async Task CreateAsync(TopicDto item, CancellationToken cancellationToken = default)
+        public async Task<TopicDto> CreateAsync(TopicDto item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -27,6 +27,8 @@ namespace Template.Service.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Topic created successfully: {Topic}", item);
+            
+            return entity.ToDto();
         }
 
         public async Task DeleteAsync(TopicDto item, CancellationToken cancellationToken = default)
