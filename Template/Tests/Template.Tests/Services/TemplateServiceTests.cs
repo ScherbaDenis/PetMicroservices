@@ -150,5 +150,35 @@ namespace Template.Tests.Services
             Assert.Equal(2, result.Count());
             _mockRepo.Verify(r => r.GetByUserIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
         }
+
+        [Fact]
+        public async Task AssignTemplateToUserAsync_ShouldCallRepositoryAndSaveChanges()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+
+            // Act
+            await _service.AssignTemplateToUserAsync(templateId, userId);
+
+            // Assert
+            _mockRepo.Verify(r => r.AssignTemplateToUserAsync(templateId, userId, It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UnassignTemplateFromUserAsync_ShouldCallRepositoryAndSaveChanges()
+        {
+            // Arrange
+            var templateId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+
+            // Act
+            await _service.UnassignTemplateFromUserAsync(templateId, userId);
+
+            // Assert
+            _mockRepo.Verify(r => r.UnassignTemplateFromUserAsync(templateId, userId, It.IsAny<CancellationToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

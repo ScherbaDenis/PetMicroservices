@@ -104,5 +104,25 @@ namespace Template.Service.Services
 
             return templates.Select(t => t.ToDto());
         }
+
+        public async Task AssignTemplateToUserAsync(Guid templateId, Guid userId, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Assigning template {TemplateId} to user {UserId}", templateId, userId);
+            
+            await _templateRepository.AssignTemplateToUserAsync(templateId, userId, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            
+            _logger.LogInformation("Template {TemplateId} assigned to user {UserId} successfully", templateId, userId);
+        }
+
+        public async Task UnassignTemplateFromUserAsync(Guid templateId, Guid userId, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Unassigning template {TemplateId} from user {UserId}", templateId, userId);
+            
+            await _templateRepository.UnassignTemplateFromUserAsync(templateId, userId, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            
+            _logger.LogInformation("Template {TemplateId} unassigned from user {UserId} successfully", templateId, userId);
+        }
     }
 }

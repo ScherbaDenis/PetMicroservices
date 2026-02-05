@@ -121,82 +121,6 @@ class UserTemplateManager {
             }
         }
     }
-
-    /**
-     * Downloads user templates as JSON file
-     */
-    async downloadAsJson(): Promise<void> {
-        try {
-            const templates = await this.fetchUserTemplates();
-            const jsonString = JSON.stringify(templates, null, 2);
-            const blob = new Blob([jsonString], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `user-${this.userId}-templates-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-
-            console.log('User templates downloaded successfully as JSON');
-        } catch (error) {
-            console.error('Error downloading user templates:', error);
-            alert('Failed to download templates. Please try again.');
-        }
-    }
-
-    /**
-     * Downloads user templates as CSV file
-     */
-    async downloadAsCsv(): Promise<void> {
-        try {
-            const templates = await this.fetchUserTemplates();
-            
-            // Create CSV header
-            const csvHeader = 'Title,Description,Topic,Tags\n';
-            
-            // Helper function to escape CSV values
-            const escapeCsvValue = (value: string): string => {
-                // Escape quotes by doubling them and wrap in quotes if contains special chars
-                if (value.includes('"') || value.includes(',') || value.includes('\n')) {
-                    return `"${value.replace(/"/g, '""')}"`;
-                }
-                return `"${value}"`;
-            };
-            
-            // Create CSV rows with proper escaping
-            const csvRows = templates.map(template => {
-                const title = escapeCsvValue(template.title);
-                const description = escapeCsvValue(template.description || 'N/A');
-                const topic = escapeCsvValue((template.topic && template.topic.name) ? template.topic.name : 'N/A');
-                const tags = escapeCsvValue(
-                    template.tags && template.tags.length > 0
-                        ? template.tags.map(tag => tag.name).join('; ')
-                        : 'No tags'
-                );
-                return `${title},${description},${topic},${tags}`;
-            }).join('\n');
-            
-            const csvContent = csvHeader + csvRows;
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `user-${this.userId}-templates-${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-
-            console.log('User templates downloaded successfully as CSV');
-        } catch (error) {
-            console.error('Error downloading user templates:', error);
-            alert('Failed to download templates. Please try again.');
-        }
-    }
 }
 
 // Initialize when DOM is ready
@@ -219,29 +143,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load templates on page load
     templateManager.displayTemplates();
-
-    // Attach download handlers
-    const downloadJsonBtn = document.getElementById('downloadTemplatesJsonBtn');
-    if (downloadJsonBtn) {
-        downloadJsonBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            templateManager.downloadAsJson();
-        });
-    }
-
-    const downloadCsvBtn = document.getElementById('downloadTemplatesCsvBtn');
-    if (downloadCsvBtn) {
-        downloadCsvBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            templateManager.downloadAsCsv();
-        });
-    }
-
-    const refreshBtn = document.getElementById('refreshTemplatesBtn');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            templateManager.displayTemplates();
-        });
-    }
 });
