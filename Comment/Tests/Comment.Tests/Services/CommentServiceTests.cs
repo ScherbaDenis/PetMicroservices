@@ -52,6 +52,10 @@ namespace Comment.Tests.Services
             var templateDto = new TemplateDto { Id = Guid.NewGuid(), Title = "Test Template" };
             var commentDto = new CommentDto { Id = Guid.NewGuid(), Text = "Test comment", TemplateDto = templateDto };
 
+            // Add mock for _commentRepository.FindAsync
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(new Domain.Models.Comment { Id = commentDto.Id, Text = commentDto.Text });
+
             // Act
             await _service.DeleteAsync(commentDto);
 
@@ -138,6 +142,8 @@ namespace Comment.Tests.Services
             var templateDto = new TemplateDto { Id = Guid.NewGuid(), Title = "Test Template" };
             var commentDto = new CommentDto { Id = Guid.NewGuid(), Text = "Updated comment", TemplateDto = templateDto };
 
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(new Domain.Models.Comment { Id = commentDto.Id, Text = commentDto.Text });
             // Act
             await _service.UpdateAsync(commentDto);
 

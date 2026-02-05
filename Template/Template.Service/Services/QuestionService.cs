@@ -32,7 +32,10 @@ namespace Template.Service.Services
         {
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Updating question: {Question}", item);
-            var entity = item.ToEntity();
+
+            var entity = await _questionRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Question with Id {item.Id} not found.");
+
             await _questionRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Question updated successfully: {Question}", entity);

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Template.Domain.DTOs;
+using Template.Domain.Model;
 using Template.Domain.Repository;
 using Template.Service.Services;
 
@@ -44,6 +45,8 @@ namespace Template.Tests.Services
         public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
         {
             var templateDto = new TemplateDto { Id = Guid.NewGuid(), Title = "t" };
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(new Domain.Model.Template { Id = templateDto.Id });
 
             await _service.DeleteAsync(templateDto);
 
@@ -111,6 +114,8 @@ namespace Template.Tests.Services
         public async Task UpdateAsync_ShouldCallUpdateAndSaveChanges()
         {
             var templateDto = new TemplateDto { Id = Guid.NewGuid(), Title = "t" };
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(new Domain.Model.Template { Id = templateDto.Id });
 
             await _service.UpdateAsync(templateDto);
 

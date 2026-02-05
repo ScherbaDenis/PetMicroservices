@@ -52,6 +52,9 @@ namespace Template.Tests.Services
         {
             var dto = new QuestionDto { Id = Guid.NewGuid(), Title = "title", Description = "desc" };
 
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(new Question { Id = dto.Id });
+
             await _service.DeleteAsync(dto);
 
             _mockRepo.Verify(r => r.DeleteAsync(It.IsAny<Question>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -119,6 +122,8 @@ namespace Template.Tests.Services
         public async Task UpdateAsync_ShouldCallUpdateAndSaveChanges()
         {
             var dto = new QuestionDto { Id = Guid.NewGuid(), Title = "title" };
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(new Question { Id = dto.Id });
 
             await _service.UpdateAsync(dto);
 

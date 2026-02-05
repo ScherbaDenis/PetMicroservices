@@ -45,6 +45,8 @@ namespace Template.Tests.Services
         public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
         {
             var userDto = new UserDto { Id = Guid.NewGuid(), Name = "u" };
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new User { Id = userDto.Id });
 
             await _service.DeleteAsync(userDto);
 
@@ -112,6 +114,8 @@ namespace Template.Tests.Services
         public async Task UpdateAsync_ShouldCallUpdateAndSaveChanges()
         {
             var userDto = new UserDto { Id = Guid.NewGuid(), Name = "u" };
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new User { Id = userDto.Id });
 
             await _service.UpdateAsync(userDto);
 
