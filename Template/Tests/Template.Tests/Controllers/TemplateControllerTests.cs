@@ -79,7 +79,7 @@ namespace Template.Tests.Controllers
             // Arrange
             var template = new TemplateDto { Id = Guid.NewGuid(), Title = "New template" };
             _mockService.Setup(s => s.CreateAsync(template, It.IsAny<CancellationToken>()))
-                       .Returns(Task.CompletedTask);
+                       .ReturnsAsync(template);
 
             // Act
             var result = await _controller.Create(template);

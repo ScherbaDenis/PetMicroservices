@@ -15,7 +15,7 @@ namespace Template.Domain.Services
 
         Task<TDto?> FindAsync(TId id, CancellationToken cancellationToken = default);
 
-        Task CreateAsync(TDto item, CancellationToken cancellationToken = default);
+        Task<TDto> CreateAsync(TDto item, CancellationToken cancellationToken = default);
 
         Task UpdateAsync(TDto item, CancellationToken cancellationToken = default);
 

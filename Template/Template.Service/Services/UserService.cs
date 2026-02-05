@@ -17,7 +17,7 @@ namespace Template.Service.Services
     // Use centralized mappers
     
 
-        public async Task CreateAsync(UserDto item, CancellationToken cancellationToken = default)
+        public async Task<UserDto> CreateAsync(UserDto item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -28,6 +28,8 @@ namespace Template.Service.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("User created successfully: {User}", entity);
+            
+            return entity.ToDto();
         }
 
         public async Task DeleteAsync(UserDto item, CancellationToken cancellationToken = default)

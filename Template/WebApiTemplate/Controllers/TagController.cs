@@ -46,8 +46,8 @@ namespace WebApiTemplate.Controllers
                 return BadRequest("Tag cannot be null");
             }
 
-            await _tagService.CreateAsync(tagDto, cancellationToken);
-            return CreatedAtAction(nameof(GetById), new { id = tagDto.Id }, tagDto);
+            var createdTag = await _tagService.CreateAsync(tagDto, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = createdTag.Id }, createdTag);
         }
 
         // PUT: api/tag/{id}

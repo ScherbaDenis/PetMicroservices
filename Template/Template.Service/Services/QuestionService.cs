@@ -18,7 +18,7 @@ namespace Template.Service.Services
         private readonly ILogger<QuestionService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         private readonly IQuestionRepository _questionRepository = unitOfWork.QuestionRepository;
 
-        public async Task CreateAsync(QuestionDto item, CancellationToken cancellationToken = default)
+        public async Task<QuestionDto> CreateAsync(QuestionDto item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Creating question: {Question}", item);
@@ -26,6 +26,8 @@ namespace Template.Service.Services
             await _questionRepository.AddAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Question created successfully: {Question}", entity);
+            
+            return entity.ToDto();
         }
 
         public async Task UpdateAsync(QuestionDto item, CancellationToken cancellationToken = default)

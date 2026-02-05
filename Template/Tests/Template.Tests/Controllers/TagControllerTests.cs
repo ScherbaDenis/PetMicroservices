@@ -77,7 +77,7 @@ namespace Template.Tests.Controllers
             // Arrange
             var tag = new TagDto { Id = 1, Name = "New tag" };
             _mockService.Setup(s => s.CreateAsync(tag, It.IsAny<CancellationToken>()))
-                       .Returns(Task.CompletedTask);
+                       .ReturnsAsync(tag);
 
             // Act
             var result = await _controller.Create(tag);

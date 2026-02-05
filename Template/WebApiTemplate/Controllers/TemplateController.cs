@@ -48,8 +48,8 @@ namespace WebApiTemplate.Controllers
                 return BadRequest("Template cannot be null");
             }
 
-            await _templateService.CreateAsync(templateDto, cancellationToken);
-            return CreatedAtAction(nameof(GetById), new { id = templateDto.Id }, templateDto);
+            var createdTemplate = await _templateService.CreateAsync(templateDto, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = createdTemplate.Id }, createdTemplate);
         }
 
         // PUT: api/template/{id}

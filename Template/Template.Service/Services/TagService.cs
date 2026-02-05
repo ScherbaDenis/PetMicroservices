@@ -17,7 +17,7 @@ namespace Template.Service.Services
 
     // use centralized TagMapper
 
-        public async Task CreateAsync(TagDto item, CancellationToken cancellationToken = default)
+        public async Task<TagDto> CreateAsync(TagDto item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
 
@@ -28,6 +28,8 @@ namespace Template.Service.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Tag created successfully: {Tag}", entity);
+            
+            return entity.ToDto();
         }
 
         public async Task DeleteAsync(TagDto item, CancellationToken cancellationToken = default)

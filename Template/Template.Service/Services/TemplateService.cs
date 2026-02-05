@@ -16,7 +16,7 @@ namespace Template.Service.Services
 
         // use centralized TemplateMapper
 
-        public async Task CreateAsync(TemplateDto item, CancellationToken cancellationToken = default)
+        public async Task<TemplateDto> CreateAsync(TemplateDto item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
             _logger.LogInformation("Creating template: {Template}", item);
@@ -26,6 +26,8 @@ namespace Template.Service.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Template created successfully: {Template}", entity);
+            
+            return entity.ToDto();
         }
 
         public async Task DeleteAsync(TemplateDto item, CancellationToken cancellationToken = default)

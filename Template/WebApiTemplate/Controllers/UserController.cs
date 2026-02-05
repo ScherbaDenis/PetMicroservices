@@ -46,8 +46,8 @@ namespace WebApiTemplate.Controllers
                 return BadRequest("User cannot be null");
             }
 
-            await _userService.CreateAsync(userDto, cancellationToken);
-            return CreatedAtAction(nameof(GetById), new { id = userDto.Id }, userDto);
+            var createdUser = await _userService.CreateAsync(userDto, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
         }
 
         // PUT: api/user/{id}
