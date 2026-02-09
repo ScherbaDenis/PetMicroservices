@@ -269,5 +269,68 @@ namespace Comment.Tests.Services
             // Arrange & Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _service.HardDeleteAsync((CommentDto?)null!));
         }
+
+        [Fact]
+        public async Task GetAllDeletedAsync_ShouldReturnAllDeletedComments()
+        {
+            // Arrange
+            var template = new Domain.Models.Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            var deletedComments = new List<Domain.Models.Comment>
+            {
+                new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Deleted 1", Template = template, IsDeleted = true },
+                new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Deleted 2", Template = template, IsDeleted = true }
+            };
+            _mockRepo.Setup(r => r.GetAllDeletedAsync(It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(deletedComments);
+
+            // Act
+            var result = await _service.GetAllDeletedAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+            _mockRepo.Verify(r => r.GetAllDeletedAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task FindDeletedAsync_ShouldReturnDeletedComment()
+        {
+            // Arrange
+            var commentId = Guid.NewGuid();
+            var template = new Domain.Models.Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            var deletedComment = new Domain.Models.Comment
+            {
+                Id = commentId,
+                Text = "Deleted comment",
+                Template = template,
+                IsDeleted = true
+            };
+            _mockRepo.Setup(r => r.FindDeletedAsync(commentId, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(deletedComment);
+
+            // Act
+            var result = await _service.FindDeletedAsync(commentId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Deleted comment", result.Text);
+            _mockRepo.Verify(r => r.FindDeletedAsync(commentId, It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task FindDeletedAsync_ShouldReturnNull_WhenNotFound()
+        {
+            // Arrange
+            var commentId = Guid.NewGuid();
+            _mockRepo.Setup(r => r.FindDeletedAsync(commentId, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync((Domain.Models.Comment?)null);
+
+            // Act
+            var result = await _service.FindDeletedAsync(commentId);
+
+            // Assert
+            Assert.Null(result);
+            _mockRepo.Verify(r => r.FindDeletedAsync(commentId, It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

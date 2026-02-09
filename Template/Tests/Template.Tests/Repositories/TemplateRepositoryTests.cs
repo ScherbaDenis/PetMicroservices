@@ -371,5 +371,64 @@ namespace Template.Tests.Repositories
             await Assert.ThrowsAsync<InvalidOperationException>(() => 
                 _repository.UnassignTemplateFromUserAsync(templateId, userId));
         }
+
+        [Fact]
+        public async Task GetAllDeletedAsync_ShouldReturnOnlyDeletedTemplates()
+        {
+            // Arrange
+            var template1 = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Active" };
+            var template2 = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Deleted" };
+            _context.Templates.Add(template1);
+            _context.Templates.Add(template2);
+            await _context.SaveChangesAsync();
+
+            // Soft delete template2
+            await _repository.DeleteAsync(template2);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetAllDeletedAsync();
+
+            // Assert
+            Assert.Single(result);
+            Assert.Equal("Deleted", result.First().Title);
+            Assert.True(result.First().IsDeleted);
+        }
+
+        [Fact]
+        public async Task FindDeletedAsync_ShouldReturnDeletedTemplate()
+        {
+            // Arrange
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Deleted" };
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Soft delete the template
+            await _repository.DeleteAsync(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.FindDeletedAsync(template.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Deleted", result.Title);
+            Assert.True(result.IsDeleted);
+        }
+
+        [Fact]
+        public async Task FindDeletedAsync_ShouldReturnNullForActiveTemplate()
+        {
+            // Arrange
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Active" };
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.FindDeletedAsync(template.Id);
+
+            // Assert
+            Assert.Null(result);
+        }
     }
 }
