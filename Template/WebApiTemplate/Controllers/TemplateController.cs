@@ -91,6 +91,43 @@ namespace WebApiTemplate.Controllers
             return NoContent();
         }
 
+        // DELETE: api/template/admin/{id} (Hard delete - for admin use only)
+        [HttpDelete("admin/{id}")]
+        public async Task<ActionResult> HardDelete(Guid id, CancellationToken cancellationToken = default)
+        {
+            var template = await _templateService.FindAsync(id, cancellationToken);
+            
+            if (template == null)
+            {
+                return NotFound();
+            }
+
+            await _templateService.HardDeleteAsync(template, cancellationToken);
+            return NoContent();
+        }
+
+        // GET: api/template/admin/deleted (Get all deleted templates - for admin use only)
+        [HttpGet("admin/deleted")]
+        public async Task<ActionResult<IEnumerable<TemplateDto>>> GetAllDeleted(CancellationToken cancellationToken = default)
+        {
+            var deletedTemplates = await _templateService.GetAllDeletedAsync(cancellationToken);
+            return Ok(deletedTemplates);
+        }
+
+        // GET: api/template/admin/deleted/{id} (Get specific deleted template - for admin use only)
+        [HttpGet("admin/deleted/{id}")]
+        public async Task<ActionResult<TemplateDto>> GetDeletedById(Guid id, CancellationToken cancellationToken = default)
+        {
+            var template = await _templateService.FindDeletedAsync(id, cancellationToken);
+            
+            if (template == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(template);
+        }
+
         // GET: api/template/user/{userId}
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<TemplateDto>>> GetByUserId(Guid userId, CancellationToken cancellationToken = default)

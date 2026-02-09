@@ -56,6 +56,19 @@ namespace Template.Service.Services
             _logger.LogInformation("Question deleted successfully: {Question}", entity);
         }
 
+        public async Task HardDeleteAsync(QuestionDto item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            _logger.LogInformation("Hard deleting question (admin): {Question}", item);
+
+            var entity = await _questionRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Question with Id {item.Id} not found.");
+
+            await _questionRepository.HardDeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Question permanently deleted: {Question}", entity);
+        }
+
         public async Task<IEnumerable<QuestionDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all questions...");
@@ -83,6 +96,31 @@ namespace Template.Service.Services
             var entities = await _questionRepository.GetAllAsync(cancellationToken);
             var dtos = entities.Select(e => e.ToDto()).Where(predicate);
             return dtos;
+        }
+
+        public async Task<IEnumerable<QuestionDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving all deleted questions (admin)...");
+            var questions = await _questionRepository.GetAllDeletedAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} deleted questions", questions is ICollection<Question> col ? col.Count : -1);
+
+            return questions.Select(q => q.ToDto());
+        }
+
+        public async Task<QuestionDto?> FindDeletedAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Finding deleted question (admin): {Id}", id);
+            var question = await _questionRepository.FindDeletedAsync(id, cancellationToken);
+
+            if (question == null)
+            {
+                _logger.LogWarning("No deleted question found with Id: {Id}", id);
+                return null;
+            }
+
+            _logger.LogInformation("Deleted question found: {Question}", question);
+            return question.ToDto();
         }
     }
 }

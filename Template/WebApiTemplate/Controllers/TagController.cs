@@ -88,5 +88,42 @@ namespace WebApiTemplate.Controllers
             await _tagService.DeleteAsync(tag, cancellationToken);
             return NoContent();
         }
+
+        // DELETE: api/tag/admin/{id} (Hard delete - for admin use only)
+        [HttpDelete("admin/{id}")]
+        public async Task<ActionResult> HardDelete(int id, CancellationToken cancellationToken = default)
+        {
+            var tag = await _tagService.FindAsync(id, cancellationToken);
+            
+            if (tag == null)
+            {
+                return NotFound();
+            }
+
+            await _tagService.HardDeleteAsync(tag, cancellationToken);
+            return NoContent();
+        }
+
+        // GET: api/tag/admin/deleted (Get all deleted tags - for admin use only)
+        [HttpGet("admin/deleted")]
+        public async Task<ActionResult<IEnumerable<TagDto>>> GetAllDeleted(CancellationToken cancellationToken = default)
+        {
+            var deletedTags = await _tagService.GetAllDeletedAsync(cancellationToken);
+            return Ok(deletedTags);
+        }
+
+        // GET: api/tag/admin/deleted/{id} (Get specific deleted tag - for admin use only)
+        [HttpGet("admin/deleted/{id}")]
+        public async Task<ActionResult<TagDto>> GetDeletedById(int id, CancellationToken cancellationToken = default)
+        {
+            var tag = await _tagService.FindDeletedAsync(id, cancellationToken);
+            
+            if (tag == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tag);
+        }
     }
 }

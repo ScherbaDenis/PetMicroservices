@@ -88,5 +88,42 @@ namespace WebApiTemplate.Controllers
             await _topicService.DeleteAsync(topic, cancellationToken);
             return NoContent();
         }
+
+        // DELETE: api/topic/admin/{id} (Hard delete - for admin use only)
+        [HttpDelete("admin/{id}")]
+        public async Task<ActionResult> HardDelete(int id, CancellationToken cancellationToken = default)
+        {
+            var topic = await _topicService.FindAsync(id, cancellationToken);
+            
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            await _topicService.HardDeleteAsync(topic, cancellationToken);
+            return NoContent();
+        }
+
+        // GET: api/topic/admin/deleted (Get all deleted topics - for admin use only)
+        [HttpGet("admin/deleted")]
+        public async Task<ActionResult<IEnumerable<TopicDto>>> GetAllDeleted(CancellationToken cancellationToken = default)
+        {
+            var deletedTopics = await _topicService.GetAllDeletedAsync(cancellationToken);
+            return Ok(deletedTopics);
+        }
+
+        // GET: api/topic/admin/deleted/{id} (Get specific deleted topic - for admin use only)
+        [HttpGet("admin/deleted/{id}")]
+        public async Task<ActionResult<TopicDto>> GetDeletedById(int id, CancellationToken cancellationToken = default)
+        {
+            var topic = await _topicService.FindDeletedAsync(id, cancellationToken);
+            
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(topic);
+        }
     }
 }

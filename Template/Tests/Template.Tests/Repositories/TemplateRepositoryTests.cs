@@ -37,7 +37,7 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveTemplate()
+        public async Task DeleteAsync_ShouldSoftDeleteTemplate()
         {
             var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title  = "ToDelete" };
             _context.Templates.Add(template);
@@ -46,7 +46,25 @@ namespace Template.Tests.Repositories
             await _repository.DeleteAsync(template);
             await _context.SaveChangesAsync();
 
-            Assert.Empty(_context.Templates);
+            // Assert - Template should still exist in database but with IsDeleted = true
+            var deletedTemplate = await _context.Templates.FindAsync(template.Id);
+            Assert.NotNull(deletedTemplate);
+            Assert.True(deletedTemplate.IsDeleted);
+        }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldPermanentlyRemoveTemplate()
+        {
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title  = "ToDelete" };
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            await _repository.HardDeleteAsync(template);
+            await _context.SaveChangesAsync();
+
+            // Assert - Template should be completely removed from database
+            var deletedTemplate = await _context.Templates.FindAsync(template.Id);
+            Assert.Null(deletedTemplate);
         }
 
         [Fact]
@@ -352,6 +370,65 @@ namespace Template.Tests.Repositories
             // Act & Assert
             await Assert.ThrowsAsync<InvalidOperationException>(() => 
                 _repository.UnassignTemplateFromUserAsync(templateId, userId));
+        }
+
+        [Fact]
+        public async Task GetAllDeletedAsync_ShouldReturnOnlyDeletedTemplates()
+        {
+            // Arrange
+            var template1 = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Active" };
+            var template2 = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Deleted" };
+            _context.Templates.Add(template1);
+            _context.Templates.Add(template2);
+            await _context.SaveChangesAsync();
+
+            // Soft delete template2
+            await _repository.DeleteAsync(template2);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetAllDeletedAsync();
+
+            // Assert
+            Assert.Single(result);
+            Assert.Equal("Deleted", result.First().Title);
+            Assert.True(result.First().IsDeleted);
+        }
+
+        [Fact]
+        public async Task FindDeletedAsync_ShouldReturnDeletedTemplate()
+        {
+            // Arrange
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Deleted" };
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Soft delete the template
+            await _repository.DeleteAsync(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.FindDeletedAsync(template.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Deleted", result.Title);
+            Assert.True(result.IsDeleted);
+        }
+
+        [Fact]
+        public async Task FindDeletedAsync_ShouldReturnNullForActiveTemplate()
+        {
+            // Arrange
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Active" };
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.FindDeletedAsync(template.Id);
+
+            // Assert
+            Assert.Null(result);
         }
     }
 }

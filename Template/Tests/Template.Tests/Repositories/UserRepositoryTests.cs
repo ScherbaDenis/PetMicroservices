@@ -37,7 +37,7 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveUser()
+        public async Task DeleteAsync_ShouldSoftDeleteUser()
         {
             var user = new User { Id = Guid.NewGuid(), Name = "ToDelete" };
             _context.Users.Add(user);
@@ -46,7 +46,25 @@ namespace Template.Tests.Repositories
             await _repository.DeleteAsync(user);
             await _context.SaveChangesAsync();
 
-            Assert.Empty(_context.Users);
+            // Assert - User should still exist in database but with IsDeleted = true
+            var deletedUser = await _context.Users.FindAsync(user.Id);
+            Assert.NotNull(deletedUser);
+            Assert.True(deletedUser.IsDeleted);
+        }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldPermanentlyRemoveUser()
+        {
+            var user = new User { Id = Guid.NewGuid(), Name = "ToDelete" };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            await _repository.HardDeleteAsync(user);
+            await _context.SaveChangesAsync();
+
+            // Assert - User should be completely removed from database
+            var deletedUser = await _context.Users.FindAsync(user.Id);
+            Assert.Null(deletedUser);
         }
 
         [Fact]

@@ -47,6 +47,21 @@ namespace Template.Service.Services
             _logger.LogInformation("User deleted successfully: {User}", entity);
         }
 
+        public async Task HardDeleteAsync(UserDto item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+
+            _logger.LogInformation("Hard deleting user (admin): {User}", item);
+
+            var entity = await _userRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"User with Id {item.Id} not found.");
+
+            await _userRepository.HardDeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("User permanently deleted: {User}", entity);
+        }
+
         public async Task<IEnumerable<UserDto>> FindAsync(Func<UserDto, bool> predicate, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Finding users with predicate...");
@@ -97,6 +112,31 @@ namespace Template.Service.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("User updated successfully: {User}", entity);
+        }
+
+        public async Task<IEnumerable<UserDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving all deleted users (admin)...");
+            var users = await _userRepository.GetAllDeletedAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} deleted users", users is ICollection<User> col ? col.Count : -1);
+
+            return users.Select(u => u.ToDto());
+        }
+
+        public async Task<UserDto?> FindDeletedAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Finding deleted user (admin): {Id}", id);
+            var user = await _userRepository.FindDeletedAsync(id, cancellationToken);
+
+            if (user == null)
+            {
+                _logger.LogWarning("No deleted user found with Id: {Id}", id);
+                return null;
+            }
+
+            _logger.LogInformation("Deleted user found: {User}", user);
+            return user.ToDto();
         }
     }
 }
