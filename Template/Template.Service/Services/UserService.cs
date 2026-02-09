@@ -47,6 +47,21 @@ namespace Template.Service.Services
             _logger.LogInformation("User deleted successfully: {User}", entity);
         }
 
+        public async Task HardDeleteAsync(UserDto item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+
+            _logger.LogInformation("Hard deleting user (admin): {User}", item);
+
+            var entity = await _userRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"User with Id {item.Id} not found.");
+
+            await _userRepository.HardDeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("User permanently deleted: {User}", entity);
+        }
+
         public async Task<IEnumerable<UserDto>> FindAsync(Func<UserDto, bool> predicate, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Finding users with predicate...");

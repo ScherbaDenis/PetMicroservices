@@ -44,6 +44,20 @@ namespace Template.Service.Services
             _logger.LogInformation("Template deleted successfully: {Template}", entity);
         }
 
+        public async Task HardDeleteAsync(TemplateDto item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            _logger.LogInformation("Hard deleting template (admin): {Template}", item);
+
+            var entity = await _templateRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Template with Id {item.Id} not found.");
+
+            await _templateRepository.HardDeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Template permanently deleted: {Template}", entity);
+        }
+
         public async Task<IEnumerable<TemplateDto>> FindAsync(
             Func<TemplateDto, bool> predicate,
             CancellationToken cancellationToken = default)

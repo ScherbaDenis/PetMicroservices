@@ -51,6 +51,25 @@ namespace Template.Service.Services
             _logger.LogInformation("Tag deleted successfully: {@Tag}", entity);
         }
 
+        public async Task HardDeleteAsync(TagDto item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+
+            _logger.LogInformation("Hard deleting tag (admin): {@Tag}", item);
+
+            var entity = await _tagRepository.FindAsync(item.Id, cancellationToken);
+            if (entity == null)
+            {
+                _logger.LogWarning("Tag with ID {TagId} not found for hard deletion.", item.Id);
+                throw new InvalidOperationException($"Tag with ID {item.Id} not found.");
+            }
+
+            await _tagRepository.HardDeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Tag permanently deleted: {@Tag}", entity);
+        }
+
         public async Task<IEnumerable<TagDto>> FindAsync(Func<TagDto, bool> predicate, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Finding tags with predicate...");

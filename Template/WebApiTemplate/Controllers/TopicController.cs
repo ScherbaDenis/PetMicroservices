@@ -88,5 +88,20 @@ namespace WebApiTemplate.Controllers
             await _topicService.DeleteAsync(topic, cancellationToken);
             return NoContent();
         }
+
+        // DELETE: api/topic/admin/{id} (Hard delete - for admin use only)
+        [HttpDelete("admin/{id}")]
+        public async Task<ActionResult> HardDelete(int id, CancellationToken cancellationToken = default)
+        {
+            var topic = await _topicService.FindAsync(id, cancellationToken);
+            
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            await _topicService.HardDeleteAsync(topic, cancellationToken);
+            return NoContent();
+        }
     }
 }

@@ -46,6 +46,21 @@ namespace Template.Service.Services
             _logger.LogInformation("Topic deleted successfully: {Topic}", entity);
         }
 
+        public async Task HardDeleteAsync(TopicDto item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+
+            _logger.LogInformation("Hard deleting topic (admin): {Topic}", item);
+
+            var entity = await _topicRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Topic with Id {item.Id} not found.");
+
+            await _topicRepository.HardDeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Topic permanently deleted: {Topic}", entity);
+        }
+
         public async Task<IEnumerable<TopicDto>> FindAsync(Func<TopicDto, bool> predicate, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Finding topics with predicate...");

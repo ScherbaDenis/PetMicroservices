@@ -56,6 +56,19 @@ namespace Template.Service.Services
             _logger.LogInformation("Question deleted successfully: {Question}", entity);
         }
 
+        public async Task HardDeleteAsync(QuestionDto item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            _logger.LogInformation("Hard deleting question (admin): {Question}", item);
+
+            var entity = await _questionRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Question with Id {item.Id} not found.");
+
+            await _questionRepository.HardDeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Question permanently deleted: {Question}", entity);
+        }
+
         public async Task<IEnumerable<QuestionDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Retrieving all questions...");

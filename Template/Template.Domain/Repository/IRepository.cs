@@ -19,12 +19,21 @@ namespace Template.Domain.Repository
         Task AddAsync(Item item, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Asynchronously deletes an entity from the repository.
+        /// Asynchronously soft deletes an entity from the repository (sets IsDeleted = true).
         /// Changes will be saved to the database when <see cref="IUnitOfWork.SaveChangesAsync(CancellationToken)" /> is called.
         /// </summary>
-        /// <param name="item">The entity to delete.</param>
+        /// <param name="item">The entity to soft delete.</param>
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         Task DeleteAsync(Item item, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Asynchronously hard deletes an entity from the repository (permanently removes from database).
+        /// This is intended for admin use only.
+        /// Changes will be saved to the database when <see cref="IUnitOfWork.SaveChangesAsync(CancellationToken)" /> is called.
+        /// </summary>
+        /// <param name="item">The entity to permanently delete.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        Task HardDeleteAsync(Item item, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Asynchronously finds an entity by its identifier.

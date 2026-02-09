@@ -34,11 +34,24 @@ namespace Comment.DataAccess.MsSql.Repositories
         public virtual async Task AddAsync(TEntity item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
+            item.DateCreated = DateTime.UtcNow;
+            item.DateUpdated = DateTime.UtcNow;
+            item.IsDeleted = false;
             await _dbSet.AddAsync(item, cancellationToken);
         }
 
         /// <inheritdoc/>
         public virtual async Task DeleteAsync(TEntity item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            item.IsDeleted = true;
+            item.DateUpdated = DateTime.UtcNow;
+            _dbSet.Update(item);
+            await Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task HardDeleteAsync(TEntity item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
             _dbSet.Remove(item);
@@ -54,13 +67,14 @@ namespace Comment.DataAccess.MsSql.Repositories
         /// <inheritdoc/>
         public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await _dbSet.ToListAsync(cancellationToken);
+            return await _dbSet.Where(e => !e.IsDeleted).ToListAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
         public virtual async Task UpdateAsync(TEntity item, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(item);
+            item.DateUpdated = DateTime.UtcNow;
             _dbSet.Update(item);
             await Task.CompletedTask;
         }
@@ -70,7 +84,7 @@ namespace Comment.DataAccess.MsSql.Repositories
             Expression<Func<TEntity, bool>> predicate,
             CancellationToken cancellationToken = default)
         {
-            return await _dbSet.Where(predicate).ToListAsync(cancellationToken);
+            return await _dbSet.Where(e => !e.IsDeleted).Where(predicate).ToListAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -80,7 +94,7 @@ namespace Comment.DataAccess.MsSql.Repositories
             Expression<Func<TEntity, bool>>? predicate = null,
             CancellationToken cancellationToken = default)
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = _dbSet.Where(e => !e.IsDeleted);
             if (predicate != null)
                 query = query.Where(predicate);
 

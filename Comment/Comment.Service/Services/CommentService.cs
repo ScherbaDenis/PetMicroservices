@@ -39,6 +39,20 @@ namespace Comment.Service.Services
             _logger.LogInformation("Comment deleted successfully: {Comment}", entity);
         }
 
+        public async Task HardDeleteAsync(CommentDto item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            _logger.LogInformation("Hard deleting comment (admin): {Comment}", item);
+
+            var entity = await _commentRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Comment with Id {item.Id} not found.");
+
+            await _commentRepository.HardDeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Comment permanently deleted: {Comment}", entity);
+        }
+
         public async Task<IEnumerable<CommentDto>> FindAsync(
             Expression<Func<CommentDto, bool>> predicate,
             CancellationToken cancellationToken = default)

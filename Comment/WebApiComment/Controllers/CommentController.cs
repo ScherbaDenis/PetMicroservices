@@ -96,5 +96,20 @@ namespace WebApiComment.Controllers
             await _commentService.DeleteAsync(comment, cancellationToken);
             return NoContent();
         }
+
+        // DELETE: api/comment/admin/{id} (Hard delete - for admin use only)
+        [HttpDelete("admin/{id}")]
+        public async Task<ActionResult> HardDelete(Guid id, CancellationToken cancellationToken = default)
+        {
+            var comment = await _commentService.FindAsync(id, cancellationToken);
+            
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            await _commentService.HardDeleteAsync(comment, cancellationToken);
+            return NoContent();
+        }
     }
 }
