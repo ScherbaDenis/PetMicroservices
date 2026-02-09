@@ -41,7 +41,6 @@ namespace Template.Service.Services
             var entity = await _tagRepository.FindAsync(item.Id, cancellationToken);
             if (entity == null)
             {
-                _logger.LogWarning("Tag with ID {TagId} not found for deletion.", item.Id);
                 throw new InvalidOperationException($"Tag with ID {item.Id} not found.");
             }
 
@@ -60,7 +59,6 @@ namespace Template.Service.Services
             var entity = await _tagRepository.FindAsync(item.Id, cancellationToken);
             if (entity == null)
             {
-                _logger.LogWarning("Tag with ID {TagId} not found for hard deletion.", item.Id);
                 throw new InvalidOperationException($"Tag with ID {item.Id} not found.");
             }
 
@@ -116,7 +114,6 @@ namespace Template.Service.Services
             var entity = await _tagRepository.FindAsync(item.Id, cancellationToken);
             if (entity == null)
             {
-                _logger.LogWarning("Tag with ID {TagId} not found for update.", item.Id);
                 throw new InvalidOperationException($"Tag with ID {item.Id} not found.");
             }
 
