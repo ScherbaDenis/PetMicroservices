@@ -129,5 +129,30 @@ namespace Comment.Service.Services
             var dtos = entitiesPaged.Items.Select(e => e.ToDto());
             return (dtos, entitiesPaged.TotalCount);
         }
+
+        public async Task<IEnumerable<CommentDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving all deleted comments (admin)...");
+            var comments = await _commentRepository.GetAllDeletedAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} deleted comments", comments is ICollection<Domain.Models.Comment> col ? col.Count : -1);
+
+            return comments.Select(t => t.ToDto());
+        }
+
+        public async Task<CommentDto?> FindDeletedAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Finding deleted comment (admin): {Id}", id);
+            var comment = await _commentRepository.FindDeletedAsync(id, cancellationToken);
+
+            if (comment == null)
+            {
+                _logger.LogWarning("No deleted comment found with Id: {Id}", id);
+                return null;
+            }
+
+            _logger.LogInformation("Deleted comment found: {Comment}", comment);
+            return comment.ToDto();
+        }
     }
 }

@@ -113,5 +113,30 @@ namespace Template.Service.Services
 
             _logger.LogInformation("User updated successfully: {User}", entity);
         }
+
+        public async Task<IEnumerable<UserDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving all deleted users (admin)...");
+            var users = await _userRepository.GetAllDeletedAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} deleted users", users is ICollection<User> col ? col.Count : -1);
+
+            return users.Select(u => u.ToDto());
+        }
+
+        public async Task<UserDto?> FindDeletedAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Finding deleted user (admin): {Id}", id);
+            var user = await _userRepository.FindDeletedAsync(id, cancellationToken);
+
+            if (user == null)
+            {
+                _logger.LogWarning("No deleted user found with Id: {Id}", id);
+                return null;
+            }
+
+            _logger.LogInformation("Deleted user found: {User}", user);
+            return user.ToDto();
+        }
     }
 }

@@ -83,5 +83,22 @@ namespace Comment.Domain.Repositories
             int pageSize,
             Expression<Func<Item, bool>>? predicate = null,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Asynchronously retrieves all soft-deleted entities from the repository (where IsDeleted = true).
+        /// This is intended for admin use only.
+        /// </summary>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>A collection of all soft-deleted entities.</returns>
+        Task<IEnumerable<Item>> GetAllDeletedAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Asynchronously finds a soft-deleted entity by its identifier (where IsDeleted = true).
+        /// This is intended for admin use only.
+        /// </summary>
+        /// <param name="id">The identifier of the entity.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>The soft-deleted entity if found; otherwise, null.</returns>
+        Task<Item?> FindDeletedAsync(ID id, CancellationToken cancellationToken = default);
     }
 }

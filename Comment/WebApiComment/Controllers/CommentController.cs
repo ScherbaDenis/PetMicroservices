@@ -111,5 +111,27 @@ namespace WebApiComment.Controllers
             await _commentService.HardDeleteAsync(comment, cancellationToken);
             return NoContent();
         }
+
+        // GET: api/comment/admin/deleted (Get all deleted comments - for admin use only)
+        [HttpGet("admin/deleted")]
+        public async Task<ActionResult<IEnumerable<CommentDto>>> GetAllDeleted(CancellationToken cancellationToken = default)
+        {
+            var deletedComments = await _commentService.GetAllDeletedAsync(cancellationToken);
+            return Ok(deletedComments);
+        }
+
+        // GET: api/comment/admin/deleted/{id} (Get specific deleted comment - for admin use only)
+        [HttpGet("admin/deleted/{id}")]
+        public async Task<ActionResult<CommentDto>> GetDeletedById(Guid id, CancellationToken cancellationToken = default)
+        {
+            var comment = await _commentService.FindDeletedAsync(id, cancellationToken);
+            
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(comment);
+        }
     }
 }

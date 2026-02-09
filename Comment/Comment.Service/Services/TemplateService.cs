@@ -125,5 +125,30 @@ namespace Comment.Service.Services
 
             return (items.Select(t => t.ToDto()), totalCount);
         }
+
+        public async Task<IEnumerable<TemplateDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving all deleted templates (admin)...");
+            var templates = await _templateRepository.GetAllDeletedAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} deleted templates", templates is ICollection<Domain.Models.Template> col ? col.Count : -1);
+
+            return templates.Select(t => t.ToDto());
+        }
+
+        public async Task<TemplateDto?> FindDeletedAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Finding deleted template (admin): {Id}", id);
+            var template = await _templateRepository.FindDeletedAsync(id, cancellationToken);
+
+            if (template == null)
+            {
+                _logger.LogWarning("No deleted template found with Id: {Id}", id);
+                return null;
+            }
+
+            _logger.LogInformation("Deleted template found: {Template}", template);
+            return template.ToDto();
+        }
     }
 }

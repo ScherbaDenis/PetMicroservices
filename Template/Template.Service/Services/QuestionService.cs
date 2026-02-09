@@ -97,5 +97,30 @@ namespace Template.Service.Services
             var dtos = entities.Select(e => e.ToDto()).Where(predicate);
             return dtos;
         }
+
+        public async Task<IEnumerable<QuestionDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving all deleted questions (admin)...");
+            var questions = await _questionRepository.GetAllDeletedAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} deleted questions", questions is ICollection<Question> col ? col.Count : -1);
+
+            return questions.Select(q => q.ToDto());
+        }
+
+        public async Task<QuestionDto?> FindDeletedAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Finding deleted question (admin): {Id}", id);
+            var question = await _questionRepository.FindDeletedAsync(id, cancellationToken);
+
+            if (question == null)
+            {
+                _logger.LogWarning("No deleted question found with Id: {Id}", id);
+                return null;
+            }
+
+            _logger.LogInformation("Deleted question found: {Question}", question);
+            return question.ToDto();
+        }
     }
 }

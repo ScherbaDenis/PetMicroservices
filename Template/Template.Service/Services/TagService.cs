@@ -125,5 +125,30 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Tag updated successfully: {@Tag}", entity);
         }
+
+        public async Task<IEnumerable<TagDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving all deleted tags (admin)...");
+            var tags = await _tagRepository.GetAllDeletedAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} deleted tags", tags is ICollection<Tag> col ? col.Count : -1);
+
+            return tags.Select(t => t.ToDto());
+        }
+
+        public async Task<TagDto?> FindDeletedAsync(int id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Finding deleted tag (admin): {Id}", id);
+            var tag = await _tagRepository.FindDeletedAsync(id, cancellationToken);
+
+            if (tag == null)
+            {
+                _logger.LogWarning("No deleted tag found with Id: {Id}", id);
+                return null;
+            }
+
+            _logger.LogInformation("Deleted tag found: {@Tag}", tag);
+            return tag.ToDto();
+        }
     }
 }

@@ -103,5 +103,27 @@ namespace WebApiTemplate.Controllers
             await _userService.HardDeleteAsync(user, cancellationToken);
             return NoContent();
         }
+
+        // GET: api/user/admin/deleted (Get all deleted users - for admin use only)
+        [HttpGet("admin/deleted")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetAllDeleted(CancellationToken cancellationToken = default)
+        {
+            var deletedUsers = await _userService.GetAllDeletedAsync(cancellationToken);
+            return Ok(deletedUsers);
+        }
+
+        // GET: api/user/admin/deleted/{id} (Get specific deleted user - for admin use only)
+        [HttpGet("admin/deleted/{id}")]
+        public async Task<ActionResult<UserDto>> GetDeletedById(Guid id, CancellationToken cancellationToken = default)
+        {
+            var user = await _userService.FindDeletedAsync(id, cancellationToken);
+            
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
     }
 }

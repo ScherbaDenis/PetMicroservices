@@ -79,5 +79,22 @@ namespace Comment.Domain.Services
             int pageSize,
             Expression<Func<TDto, bool>>? predicate = null,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Asynchronously retrieves all soft-deleted DTOs (where IsDeleted = true).
+        /// This is intended for admin use only.
+        /// </summary>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>A collection of all soft-deleted DTOs.</returns>
+        Task<IEnumerable<TDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Asynchronously finds a soft-deleted DTO by its identifier (where IsDeleted = true).
+        /// This is intended for admin use only.
+        /// </summary>
+        /// <param name="id">The identifier of the DTO.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>The soft-deleted DTO if found; otherwise, null.</returns>
+        Task<TDto?> FindDeletedAsync(TId id, CancellationToken cancellationToken = default);
     }
 }

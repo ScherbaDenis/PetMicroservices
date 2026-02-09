@@ -110,5 +110,30 @@ namespace Template.Service.Services
 
             _logger.LogInformation("Topic updated successfully: {Topic}", item);
         }
+
+        public async Task<IEnumerable<TopicDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving all deleted topics (admin)...");
+            var topics = await _topicRepository.GetAllDeletedAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} deleted topics", topics is ICollection<Topic> col ? col.Count : -1);
+
+            return topics.Select(t => t.ToDto());
+        }
+
+        public async Task<TopicDto?> FindDeletedAsync(int id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Finding deleted topic (admin): {Id}", id);
+            var topic = await _topicRepository.FindDeletedAsync(id, cancellationToken);
+
+            if (topic == null)
+            {
+                _logger.LogWarning("No deleted topic found with Id: {Id}", id);
+                return null;
+            }
+
+            _logger.LogInformation("Deleted topic found: {Topic}", topic);
+            return topic.ToDto();
+        }
     }
 }

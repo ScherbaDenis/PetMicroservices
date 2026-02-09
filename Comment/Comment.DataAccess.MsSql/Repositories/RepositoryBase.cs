@@ -108,5 +108,22 @@ namespace Comment.DataAccess.MsSql.Repositories
 
             return (items, totalCount);
         }
+
+        /// <inheritdoc/>
+        public virtual async Task<IEnumerable<TEntity>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            return await _dbSet.Where(e => e.IsDeleted).ToListAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<TEntity?> FindDeletedAsync(ID id, CancellationToken cancellationToken = default)
+        {
+            var entity = await _dbSet.FindAsync(new object[] { id }, cancellationToken);
+            if (entity != null && entity.IsDeleted)
+            {
+                return entity;
+            }
+            return null;
+        }
     }
 }
