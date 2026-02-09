@@ -37,7 +37,7 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveTag()
+        public async Task DeleteAsync_ShouldSoftDeleteTag()
         {
             var tag = new Tag { Id = 2, Name = "ToDelete" };
             _context.Tags.Add(tag);
@@ -46,7 +46,25 @@ namespace Template.Tests.Repositories
             await _repository.DeleteAsync(tag);
             await _context.SaveChangesAsync();
 
-            Assert.Empty(_context.Tags);
+            // Assert - Tag should still exist in database but with IsDeleted = true
+            var deletedTag = await _context.Tags.FindAsync(tag.Id);
+            Assert.NotNull(deletedTag);
+            Assert.True(deletedTag.IsDeleted);
+        }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldPermanentlyRemoveTag()
+        {
+            var tag = new Tag { Id = 2, Name = "ToDelete" };
+            _context.Tags.Add(tag);
+            await _context.SaveChangesAsync();
+
+            await _repository.HardDeleteAsync(tag);
+            await _context.SaveChangesAsync();
+
+            // Assert - Tag should be completely removed from database
+            var deletedTag = await _context.Tags.FindAsync(tag.Id);
+            Assert.Null(deletedTag);
         }
 
         [Fact]

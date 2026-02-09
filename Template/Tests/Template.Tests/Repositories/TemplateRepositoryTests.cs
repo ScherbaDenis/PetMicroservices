@@ -37,7 +37,7 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveTemplate()
+        public async Task DeleteAsync_ShouldSoftDeleteTemplate()
         {
             var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title  = "ToDelete" };
             _context.Templates.Add(template);
@@ -46,7 +46,25 @@ namespace Template.Tests.Repositories
             await _repository.DeleteAsync(template);
             await _context.SaveChangesAsync();
 
-            Assert.Empty(_context.Templates);
+            // Assert - Template should still exist in database but with IsDeleted = true
+            var deletedTemplate = await _context.Templates.FindAsync(template.Id);
+            Assert.NotNull(deletedTemplate);
+            Assert.True(deletedTemplate.IsDeleted);
+        }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldPermanentlyRemoveTemplate()
+        {
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title  = "ToDelete" };
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            await _repository.HardDeleteAsync(template);
+            await _context.SaveChangesAsync();
+
+            // Assert - Template should be completely removed from database
+            var deletedTemplate = await _context.Templates.FindAsync(template.Id);
+            Assert.Null(deletedTemplate);
         }
 
         [Fact]

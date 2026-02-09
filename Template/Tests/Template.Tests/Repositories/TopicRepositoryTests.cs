@@ -37,7 +37,7 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveTopic()
+        public async Task DeleteAsync_ShouldSoftDeleteTopic()
         {
             var topic = new Topic { Id = 2, Name = "ToDelete" };
             _context.Topics.Add(topic);
@@ -46,7 +46,25 @@ namespace Template.Tests.Repositories
             await _repository.DeleteAsync(topic);
             await _context.SaveChangesAsync();
 
-            Assert.Empty(_context.Topics);
+            // Assert - Topic should still exist in database but with IsDeleted = true
+            var deletedTopic = await _context.Topics.FindAsync(topic.Id);
+            Assert.NotNull(deletedTopic);
+            Assert.True(deletedTopic.IsDeleted);
+        }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldPermanentlyRemoveTopic()
+        {
+            var topic = new Topic { Id = 2, Name = "ToDelete" };
+            _context.Topics.Add(topic);
+            await _context.SaveChangesAsync();
+
+            await _repository.HardDeleteAsync(topic);
+            await _context.SaveChangesAsync();
+
+            // Assert - Topic should be completely removed from database
+            var deletedTopic = await _context.Topics.FindAsync(topic.Id);
+            Assert.Null(deletedTopic);
         }
 
         [Fact]
