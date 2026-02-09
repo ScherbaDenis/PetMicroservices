@@ -243,5 +243,31 @@ namespace Comment.Tests.Services
             Assert.Equal(2, result.TotalCount);
             _mockRepo.Verify(r => r.GetPagedAsync(0, 10, It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Models.Comment, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
         }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldCallHardDeleteAndSaveChanges()
+        {
+            // Arrange
+            var templateDto = new TemplateDto { Id = Guid.NewGuid(), Title = "Test Template" };
+            var commentDto = new CommentDto { Id = Guid.NewGuid(), Text = "Test comment", TemplateDto = templateDto };
+
+            // Add mock for _commentRepository.FindAsync
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(new Domain.Models.Comment { Id = commentDto.Id, Text = commentDto.Text });
+
+            // Act
+            await _service.HardDeleteAsync(commentDto);
+
+            // Assert
+            _mockRepo.Verify(r => r.HardDeleteAsync(It.IsAny<Domain.Models.Comment>(), It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWork.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldThrow_WhenCommentIsNull()
+        {
+            // Arrange & Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _service.HardDeleteAsync((CommentDto?)null!));
+        }
     }
 }

@@ -44,7 +44,7 @@ namespace Comment.Tests.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveComment()
+        public async Task DeleteAsync_ShouldSoftDeleteComment()
         {
             // Arrange
             var template = new Template { Id = Guid.NewGuid(), Title = "Test Template" };
@@ -57,8 +57,29 @@ namespace Comment.Tests.Repositories
             await _repository.DeleteAsync(comment);
             await _context.SaveChangesAsync();
 
-            // Assert
-            Assert.Empty(_context.Comments);
+            // Assert - Comment should still exist in database but with IsDeleted = true
+            var deletedComment = await _context.Comments.FindAsync(comment.Id);
+            Assert.NotNull(deletedComment);
+            Assert.True(deletedComment.IsDeleted);
+        }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldPermanentlyRemoveComment()
+        {
+            // Arrange
+            var template = new Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            _context.Templates.Add(template);
+            var comment = new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "ToDelete", Template = template };
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            // Act
+            await _repository.HardDeleteAsync(comment);
+            await _context.SaveChangesAsync();
+
+            // Assert - Comment should be completely removed from database
+            var deletedComment = await _context.Comments.FindAsync(comment.Id);
+            Assert.Null(deletedComment);
         }
 
         [Fact]
@@ -148,6 +169,99 @@ namespace Comment.Tests.Repositories
             // Assert
             Assert.Single(result);
             Assert.Equal("Match", result.First().Text);
+        }
+
+        [Fact]
+        public async Task AddAsync_ShouldSetDateCreated()
+        {
+            // Arrange
+            var template = new Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            _context.Templates.Add(template);
+            var comment = new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "New comment", Template = template };
+
+            // Act
+            var beforeAdd = DateTime.UtcNow;
+            await _repository.AddAsync(comment);
+            await _context.SaveChangesAsync();
+            var afterAdd = DateTime.UtcNow;
+
+            // Assert
+            var savedComment = await _context.Comments.FindAsync(comment.Id);
+            Assert.NotNull(savedComment);
+            Assert.True(savedComment.DateCreated >= beforeAdd && savedComment.DateCreated <= afterAdd);
+            Assert.True(savedComment.DateUpdated >= beforeAdd && savedComment.DateUpdated <= afterAdd);
+            Assert.False(savedComment.IsDeleted);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ShouldSetDateUpdated()
+        {
+            // Arrange
+            var template = new Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            _context.Templates.Add(template);
+            var comment = new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Original", Template = template };
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+            
+            var originalDateUpdated = comment.DateUpdated;
+            await Task.Delay(10); // Small delay to ensure different timestamp
+
+            // Act
+            comment.Text = "Updated";
+            var beforeUpdate = DateTime.UtcNow;
+            await _repository.UpdateAsync(comment);
+            await _context.SaveChangesAsync();
+
+            // Assert
+            var updatedComment = await _context.Comments.FindAsync(comment.Id);
+            Assert.NotNull(updatedComment);
+            Assert.True(updatedComment.DateUpdated > originalDateUpdated);
+            Assert.True(updatedComment.DateUpdated >= beforeUpdate);
+        }
+
+        [Fact]
+        public async Task GetAllAsync_ShouldExcludeSoftDeletedComments()
+        {
+            // Arrange
+            var template = new Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            _context.Templates.Add(template);
+            var comment1 = new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Active", Template = template };
+            var comment2 = new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Deleted", Template = template };
+            _context.Comments.Add(comment1);
+            _context.Comments.Add(comment2);
+            await _context.SaveChangesAsync();
+
+            // Soft delete comment2
+            await _repository.DeleteAsync(comment2);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetAllAsync();
+
+            // Assert
+            Assert.Single(result);
+            Assert.Equal("Active", result.First().Text);
+        }
+
+        [Fact]
+        public async Task FindAsync_ShouldNotReturnSoftDeletedComment()
+        {
+            // Arrange
+            var template = new Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            _context.Templates.Add(template);
+            var comment = new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "ToDelete", Template = template };
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            // Soft delete the comment
+            await _repository.DeleteAsync(comment);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.FindAsync(comment.Id);
+
+            // Assert
+            Assert.Null(result);
         }
     }
 }

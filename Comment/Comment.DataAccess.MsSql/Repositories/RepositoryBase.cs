@@ -61,7 +61,12 @@ namespace Comment.DataAccess.MsSql.Repositories
         /// <inheritdoc/>
         public virtual async Task<TEntity?> FindAsync(ID id, CancellationToken cancellationToken = default)
         {
-            return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
+            var entity = await _dbSet.FindAsync(new object[] { id }, cancellationToken);
+            if (entity != null && entity.IsDeleted)
+            {
+                return null;
+            }
+            return entity;
         }
 
         /// <inheritdoc/>
