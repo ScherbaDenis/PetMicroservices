@@ -17,7 +17,7 @@ namespace Comment.DataAccess.MsSql.Migrations
                 table: "templates",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateUpdated",
@@ -25,7 +25,7 @@ namespace Comment.DataAccess.MsSql.Migrations
                 table: "templates",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
@@ -41,7 +41,7 @@ namespace Comment.DataAccess.MsSql.Migrations
                 table: "comments",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateUpdated",
@@ -49,7 +49,7 @@ namespace Comment.DataAccess.MsSql.Migrations
                 table: "comments",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",

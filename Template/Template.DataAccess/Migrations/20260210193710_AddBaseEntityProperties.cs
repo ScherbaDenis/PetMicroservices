@@ -17,7 +17,7 @@ namespace Template.DataAccess.MsSql.Migrations
                 table: "users",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateUpdated",
@@ -25,7 +25,7 @@ namespace Template.DataAccess.MsSql.Migrations
                 table: "users",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
@@ -41,7 +41,7 @@ namespace Template.DataAccess.MsSql.Migrations
                 table: "topics",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateUpdated",
@@ -49,7 +49,7 @@ namespace Template.DataAccess.MsSql.Migrations
                 table: "topics",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
@@ -65,7 +65,7 @@ namespace Template.DataAccess.MsSql.Migrations
                 table: "templates",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateUpdated",
@@ -73,7 +73,7 @@ namespace Template.DataAccess.MsSql.Migrations
                 table: "templates",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
@@ -89,7 +89,7 @@ namespace Template.DataAccess.MsSql.Migrations
                 table: "tags",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateUpdated",
@@ -97,7 +97,7 @@ namespace Template.DataAccess.MsSql.Migrations
                 table: "tags",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
@@ -113,7 +113,7 @@ namespace Template.DataAccess.MsSql.Migrations
                 table: "questions",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateUpdated",
@@ -121,7 +121,7 @@ namespace Template.DataAccess.MsSql.Migrations
                 table: "questions",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValueSql: "GETUTCDATE()");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
