@@ -4,6 +4,7 @@ using Comment.DataAccess.MsSql.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comment.DataAccess.MsSql.Migrations
 {
     [DbContext(typeof(CommentDbContext))]
-    partial class CommentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260210193701_AddBaseEntityProperties")]
+    partial class AddBaseEntityProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
