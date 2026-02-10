@@ -14,4 +14,10 @@
     <PackageReference Include="Yarp.ReverseProxy" Version="2.1.0" />
   </ItemGroup>
 
+  <!-- Compile TypeScript before build -->
+  <Target Name="CompileTypeScript" BeforeTargets="BeforeBuild">
+    <Exec Command="npm install" WorkingDirectory="$(ProjectDir)" Condition="!Exists('$(ProjectDir)node_modules')" />
+    <Exec Command="npm run build" WorkingDirectory="$(ProjectDir)" />
+  </Target>
+
 </Project>
