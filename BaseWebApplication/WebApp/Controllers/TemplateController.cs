@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using WebApp.Services;
 using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class TemplateController(ITemplateService service, IUserService userService, ITopicService topicService) : Controller
+    public class TemplateController(ITemplateService service) : Controller
     {
         private readonly ITemplateService _service = service;
-        private readonly IUserService _userService = userService;
-        private readonly ITopicService _topicService = topicService;
 
         // GET: /Templates
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -27,22 +24,14 @@ namespace WebApp.Controllers
         }
 
         // GET: /Templates/Create
-        public async Task<IActionResult> Create(CancellationToken cancellationToken)
-        {
-            await PopulateDropdownsAsync(cancellationToken);
-            return View();
-        }
+        public IActionResult Create() => View();
 
         // POST: /Templates/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TemplateDto dto, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-            {
-                await PopulateDropdownsAsync(cancellationToken);
-                return View(dto);
-            }
+            if (!ModelState.IsValid) return View(dto);
             await _service.CreateAsync(dto, cancellationToken);
             return RedirectToAction(nameof(Index));
         }
@@ -52,7 +41,6 @@ namespace WebApp.Controllers
         {
             var item = await _service.GetByIdAsync(id, cancellationToken);
             if (item == null) return NotFound();
-            await PopulateDropdownsAsync(cancellationToken);
             return View(item);
         }
 
@@ -62,11 +50,7 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Edit(Guid id, TemplateDto dto, CancellationToken cancellationToken)
         {
             if (id != dto.Id) return BadRequest();
-            if (!ModelState.IsValid)
-            {
-                await PopulateDropdownsAsync(cancellationToken);
-                return View(dto);
-            }
+            if (!ModelState.IsValid) return View(dto);
 
             await _service.UpdateAsync(dto, cancellationToken);
             return RedirectToAction(nameof(Index));
@@ -90,18 +74,6 @@ namespace WebApp.Controllers
 
             await _service.DeleteAsync(item.Id, cancellationToken);
             return RedirectToAction(nameof(Index));
-        }
-
-        /// <summary>
-        /// Populates ViewBag with dropdown options for Owner and Topic
-        /// </summary>
-        private async Task PopulateDropdownsAsync(CancellationToken cancellationToken)
-        {
-            var users = await _userService.GetAllAsync(cancellationToken);
-            var topics = await _topicService.GetAllAsync(cancellationToken);
-
-            ViewBag.OwnerId = new SelectList(users, "Id", "Name");
-            ViewBag.TopicId = new SelectList(topics, "Id", "Name");
         }
     }
 }
