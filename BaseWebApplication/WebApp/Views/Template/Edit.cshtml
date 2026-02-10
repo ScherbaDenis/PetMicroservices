@@ -21,14 +21,28 @@
     <div>
         <label>Owner</label>
         <select id="Owner_Id" name="Owner.Id" class="form-control">
-            <option value="@Model.Owner?.Id" selected>@(Model.Owner?.Name ?? "Loading...")</option>
+            @if (Model.Owner?.Id != null)
+            {
+                <option value="@Model.Owner.Id" selected>@Model.Owner.Name</option>
+            }
+            else
+            {
+                <option value="">Loading...</option>
+            }
         </select>
     </div>
 
     <div>
         <label>Topic</label>
         <select id="Topic_Id" name="Topic.Id" class="form-control">
-            <option value="@Model.Topic?.Id" selected>@(Model.Topic?.Name ?? "Loading...")</option>
+            @if (Model.Topic?.Id != null)
+            {
+                <option value="@Model.Topic.Id" selected>@Model.Topic.Name</option>
+            }
+            else
+            {
+                <option value="">Loading...</option>
+            }
         </select>
     </div>
 

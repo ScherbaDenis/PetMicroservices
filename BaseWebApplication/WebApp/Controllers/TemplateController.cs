@@ -31,7 +31,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TemplateDto dto, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid) return View(dto);
+            if (!ModelState.IsValid)
+            {
+                return View(dto);
+            }
             await _service.CreateAsync(dto, cancellationToken);
             return RedirectToAction(nameof(Index));
         }
@@ -50,7 +53,10 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Edit(Guid id, TemplateDto dto, CancellationToken cancellationToken)
         {
             if (id != dto.Id) return BadRequest();
-            if (!ModelState.IsValid) return View(dto);
+            if (!ModelState.IsValid)
+            {
+                return View(dto);
+            }
 
             await _service.UpdateAsync(dto, cancellationToken);
             return RedirectToAction(nameof(Index));

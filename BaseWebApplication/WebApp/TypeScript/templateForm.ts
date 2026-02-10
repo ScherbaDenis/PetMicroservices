@@ -32,7 +32,7 @@ class TemplateFormManager {
             this.currentOwnerId = this.ownerSelectElement.value;
         }
         if (this.topicSelectElement && this.topicSelectElement.value) {
-            this.currentTopicId = parseInt(this.topicSelectElement.value);
+            this.currentTopicId = parseInt(this.topicSelectElement.value, 10);
         }
     }
 
