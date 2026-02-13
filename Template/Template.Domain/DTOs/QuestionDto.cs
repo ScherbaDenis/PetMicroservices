@@ -23,6 +23,7 @@ namespace Template.Domain.DTOs
 
     public record CheckboxQuestionDto : QuestionDto
     {
+        public IEnumerable<string>? Options { get; init; }
     }
 
     public record BooleanQuestionDto : QuestionDto

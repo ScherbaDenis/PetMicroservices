@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Template.Domain.Model;
@@ -38,6 +42,21 @@ namespace Template.DataAccess.MsSql.Configurations
                 .WithMany(t => t.Questions)
                 .HasForeignKey("TemplateId")
                 .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
+    // Separate configuration for CheckboxQuestion
+    public class CheckboxQuestionEntityConfiguration : IEntityTypeConfiguration<CheckboxQuestion>
+    {
+        public void Configure(EntityTypeBuilder<CheckboxQuestion> builder)
+        {
+            // Configure CheckboxQuestion specific properties - store Options as JSON
+            builder.Property(q => q.Options)
+                .HasMaxLength(128)
+                .HasConversion(
+                    v => v == null ? null : JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                    v => v == null ? null : JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions?)null)
+                );
         }
     }
 }

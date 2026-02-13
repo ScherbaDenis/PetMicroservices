@@ -30,11 +30,12 @@ namespace Template.Service.Mappers
                     Title = q.Title,
                     Description = q.Description
                 },
-                CheckboxQuestion => new CheckboxQuestionDto
+                CheckboxQuestion cbq => new CheckboxQuestionDto
                 {
-                    Id = q.Id,
-                    Title = q.Title,
-                    Description = q.Description
+                    Id = cbq.Id,
+                    Title = cbq.Title,
+                    Description = cbq.Description,
+                    Options = cbq.Options
                 },
                 BooleanQuestion => new BooleanQuestionDto
                 {
@@ -74,7 +75,8 @@ namespace Template.Service.Mappers
                 {
                     Id = dto.Id,
                     Title = dto.Title,
-                    Description = dto.Description
+                    Description = dto.Description,
+                    Options = dto.Options
                 },
                 BooleanQuestionDto dto => new BooleanQuestion
                 {

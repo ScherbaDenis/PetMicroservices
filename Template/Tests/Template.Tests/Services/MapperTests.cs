@@ -120,6 +120,55 @@ namespace Template.Tests.Services
         }
 
         [Fact]
+        public void QuestionMapper_ShouldMapCheckboxQuestionWithOptions()
+        {
+            var options = new List<string> { "Option A", "Option B", "Option C" };
+            var entity = new CheckboxQuestion 
+            { 
+                Id = Guid.NewGuid(), 
+                Title = "Choose Items",
+                Options = options
+            };
+            var dto = entity.ToDto();
+
+            Assert.IsType<CheckboxQuestionDto>(dto);
+            var checkboxDto = dto as CheckboxQuestionDto;
+            Assert.NotNull(checkboxDto);
+            Assert.Equal(entity.Id, checkboxDto.Id);
+            Assert.Equal(entity.Title, checkboxDto.Title);
+            Assert.NotNull(checkboxDto.Options);
+            Assert.Equal(3, checkboxDto.Options.Count());
+            Assert.Equal("Option A", checkboxDto.Options.First());
+        }
+
+        [Fact]
+        public void QuestionMapper_RoundtripCheckboxQuestionWithOptions()
+        {
+            var options = new List<string> { "Red", "Green", "Blue" };
+            var entity = new CheckboxQuestion 
+            { 
+                Id = Guid.NewGuid(), 
+                Title = "Select Colors",
+                Description = "Pick your favorite colors",
+                Options = options
+            };
+            
+            var dto = entity.ToDto() as CheckboxQuestionDto;
+            Assert.NotNull(dto);
+            
+            var backToEntity = dto.ToEntity() as CheckboxQuestion;
+            Assert.NotNull(backToEntity);
+            Assert.Equal(entity.Id, backToEntity.Id);
+            Assert.Equal(entity.Title, backToEntity.Title);
+            Assert.Equal(entity.Description, backToEntity.Description);
+            Assert.NotNull(backToEntity.Options);
+            Assert.Equal(3, backToEntity.Options.Count());
+            Assert.Contains("Red", backToEntity.Options);
+            Assert.Contains("Green", backToEntity.Options);
+            Assert.Contains("Blue", backToEntity.Options);
+        }
+
+        [Fact]
         public void TemplateMapper_Roundtrip_PreservesFields()
         {
             var owner = new User { Id = Guid.NewGuid(), Name = "Owner" };

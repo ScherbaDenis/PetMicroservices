@@ -22,6 +22,7 @@ namespace Template.Domain.Model
 
     public class CheckboxQuestion : Question
     {
+        public IEnumerable<string>? Options { get; set; }
     }
 
     public class BooleanQuestion : Question

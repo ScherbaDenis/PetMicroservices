@@ -178,6 +178,27 @@ namespace Template.Tests.Services
         }
 
         [Fact]
+        public async Task CreateAsync_ShouldWorkWithCheckboxQuestionWithOptions()
+        {
+            var options = new List<string> { "Option 1", "Option 2", "Option 3" };
+            var dto = new CheckboxQuestionDto 
+            { 
+                Id = Guid.NewGuid(), 
+                Title = "Select Items", 
+                Description = "Choose from options",
+                Options = options
+            };
+
+            await _service.CreateAsync(dto);
+
+            _mockRepo.Verify(r => r.AddAsync(It.Is<CheckboxQuestion>(q => 
+                q.Title == "Select Items" && 
+                q.Options != null && 
+                q.Options.Count() == 3), 
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
         public async Task CreateAsync_ShouldWorkWithBooleanQuestion()
         {
             var dto = new BooleanQuestionDto { Id = Guid.NewGuid(), Title = "Agree", Description = "Do you agree?" };
