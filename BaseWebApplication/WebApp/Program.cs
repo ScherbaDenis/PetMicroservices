@@ -31,6 +31,7 @@ builder.Services.AddHttpClient<IUserService, UserService>();
 
 builder.Services.AddHttpClient<ITagService, TagService>();
 builder.Services.AddHttpClient<ICommentService, CommentService>();
+builder.Services.AddHttpClient<IQuestionService, QuestionService>();
 
 var app = builder.Build();
 
