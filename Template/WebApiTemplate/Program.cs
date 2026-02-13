@@ -149,12 +149,14 @@ builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 
 // Services
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 
 var app = builder.Build();
