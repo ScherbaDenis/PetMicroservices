@@ -22,6 +22,14 @@ namespace Template.DataAccess.MsSql.Configurations
             builder.Property(q => q.Description)
                 .HasMaxLength(2000);
 
+            // Configure Table Per Hierarchy (TPH) inheritance
+            builder.HasDiscriminator<string>("QuestionType")
+                .HasValue<SingleLineStringQuestion>("SingleLineString")
+                .HasValue<MultiLineTextQuestion>("MultiLineText")
+                .HasValue<PositiveIntegerQuestion>("PositiveInteger")
+                .HasValue<CheckboxQuestion>("Checkbox")
+                .HasValue<BooleanQuestion>("Boolean");
+
             // If Question is related to Template via TemplateId
             builder.Property<Guid?>("TemplateId");
             builder.HasIndex("TemplateId");

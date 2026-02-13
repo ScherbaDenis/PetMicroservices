@@ -55,7 +55,7 @@ namespace Template.Tests.Services
         [Fact]
         public void QuestionMapper_Roundtrip_PreservesFields()
         {
-            var entity = new Question { Id = Guid.NewGuid(), Title = "Question Title", Description = "Question Description" };
+            var entity = new SingleLineStringQuestion { Id = Guid.NewGuid(), Title = "Question Title", Description = "Question Description" };
             var dto = entity.ToDto();
 
             Assert.Equal(entity.Id, dto.Id);
@@ -76,8 +76,8 @@ namespace Template.Tests.Services
             var tags = new List<Tag> { new Tag { Id = 1, Name = "t1" }, new Tag { Id = 2, Name = "t2" } };
             var questions = new List<Question> 
             { 
-                new Question { Id = Guid.NewGuid(), Title = "Question 1", Description = "Desc 1" },
-                new Question { Id = Guid.NewGuid(), Title = "Question 2", Description = "Desc 2" }
+                new SingleLineStringQuestion { Id = Guid.NewGuid(), Title = "Question 1", Description = "Desc 1" },
+                new BooleanQuestion { Id = Guid.NewGuid(), Title = "Question 2", Description = "Desc 2" }
             };
 
             var entity = new Domain.Model.Template

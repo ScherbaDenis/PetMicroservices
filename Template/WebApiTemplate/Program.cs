@@ -106,19 +106,19 @@ if (!builder.Environment.IsEnvironment("Testing"))
                        {
                            // Seed Questions
                            context.Set<Question>().AddRange(
-                               new Question
+                               new SingleLineStringQuestion
                                {
                                    Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
                                    Title = "What is your name?",
                                    Description = "Please provide your full name"
                                },
-                               new Question
+                               new SingleLineStringQuestion
                                {
                                    Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
                                    Title = "What is your email?",
                                    Description = "Please provide a valid email address"
                                },
-                               new Question
+                               new PositiveIntegerQuestion
                                {
                                    Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
                                    Title = "How satisfied are you?",

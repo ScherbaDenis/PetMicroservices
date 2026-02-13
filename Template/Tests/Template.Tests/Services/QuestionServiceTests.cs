@@ -33,7 +33,7 @@ namespace Template.Tests.Services
         [Fact]
         public async Task CreateAsync_ShouldCallAddAndSaveChanges()
         {
-            var dto = new QuestionDto { Id = Guid.NewGuid(), Title = "title", Description = "desc" };
+            var dto = new SingleLineStringQuestionDto { Id = Guid.NewGuid(), Title = "title", Description = "desc" };
 
             await _service.CreateAsync(dto);
 
@@ -50,10 +50,10 @@ namespace Template.Tests.Services
         [Fact]
         public async Task DeleteAsync_ShouldCallDeleteAndSaveChanges()
         {
-            var dto = new QuestionDto { Id = Guid.NewGuid(), Title = "title", Description = "desc" };
+            var dto = new SingleLineStringQuestionDto { Id = Guid.NewGuid(), Title = "title", Description = "desc" };
 
             _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-             .ReturnsAsync(new Question { Id = dto.Id });
+             .ReturnsAsync(new SingleLineStringQuestion { Id = dto.Id });
 
             await _service.DeleteAsync(dto);
 
@@ -70,7 +70,7 @@ namespace Template.Tests.Services
         [Fact]
         public async Task Find_ShouldCallRepositoryFind()
         {
-            var expected = new List<Question> { new Question { Id = Guid.NewGuid(), Title = "title" } };
+            var expected = new List<Question> { new SingleLineStringQuestion { Id = Guid.NewGuid(), Title = "title" } };
             _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(expected);
 
             var result = await _service.FindAsync(q => true);
@@ -82,7 +82,7 @@ namespace Template.Tests.Services
         [Fact]
         public async Task FindAsync_ShouldReturnQuestion_WhenFound()
         {
-            var expected = new Question { Id = Guid.NewGuid(), Title = "title", Description = "desc" };
+            var expected = new SingleLineStringQuestion { Id = Guid.NewGuid(), Title = "title", Description = "desc" };
             _mockRepo.Setup(r => r.FindAsync(expected.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expected);
 
@@ -107,8 +107,8 @@ namespace Template.Tests.Services
         {
             var expected = new List<Question>
             {
-                new Question { Id = Guid.NewGuid(), Title = "One" },
-                new Question { Id = Guid.NewGuid(), Title = "Two" }
+                new SingleLineStringQuestion { Id = Guid.NewGuid(), Title = "One" },
+                new BooleanQuestion { Id = Guid.NewGuid(), Title = "Two" }
             };
             _mockRepo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(expected);
 
@@ -121,9 +121,9 @@ namespace Template.Tests.Services
         [Fact]
         public async Task UpdateAsync_ShouldCallUpdateAndSaveChanges()
         {
-            var dto = new QuestionDto { Id = Guid.NewGuid(), Title = "title" };
+            var dto = new SingleLineStringQuestionDto { Id = Guid.NewGuid(), Title = "title" };
             _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-             .ReturnsAsync(new Question { Id = dto.Id });
+             .ReturnsAsync(new SingleLineStringQuestion { Id = dto.Id });
 
             await _service.UpdateAsync(dto);
 
