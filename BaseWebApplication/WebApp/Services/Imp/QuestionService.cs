@@ -18,9 +18,9 @@ namespace WebApp.Services.Imp
                 PropertyNameCaseInsensitive = true,
                 Converters = { new QuestionDtoJsonConverter() }
             };
-            _baseUrl = configuration["ApiEndpoints:QuestionService"] 
-                ?? configuration["ApiEndpoints:TemplateService"]?.TrimEnd('/') + "/questions"
-                ?? throw new InvalidOperationException("QuestionService endpoint not configured.");
+
+            _baseUrl = configuration["ApiEndpoints:CommentService"]
+                ?? throw new InvalidOperationException("CommentService endpoint not configured.");
         }
 
         public async Task<QuestionDto> CreateAsync(QuestionDto questionDto, CancellationToken cancellationToken)
