@@ -12,14 +12,12 @@ namespace Template.DataAccess.MsSql.Repositories
     public class TemplateRepository(TemplateDbContext context, ILogger<TemplateRepository> logger) 
         : RepositoryBase<Domain.Model.Template, Guid>(context, logger), ITemplateRepository
     {
-        private readonly TemplateDbContext _templateContext = context;
-
         /// <summary>
         /// Finds a template by id including its related entities, excluding soft-deleted items.
         /// </summary>
         public override async Task<Domain.Model.Template?> FindAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _templateContext.Templates
+            return await _dbSet
                 .Include(t => t.Owner)
                 .Include(t => t.Topic)
                 .Include(t => t.Tags)
@@ -36,7 +34,7 @@ namespace Template.DataAccess.MsSql.Repositories
             System.Linq.Expressions.Expression<Func<Domain.Model.Template, bool>> predicate,
             CancellationToken cancellationToken = default)
         {
-            return await _templateContext.Templates
+            return await _dbSet
                 .Include(t => t.Owner)
                 .Include(t => t.Topic)
                 .Include(t => t.Tags)
