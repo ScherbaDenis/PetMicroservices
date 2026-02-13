@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using WebApp.Services.DTOs;
 
 namespace WebApp.Services.Imp
@@ -15,12 +14,12 @@ namespace WebApp.Services.Imp
             _httpClient = httpClient;
             _jsonOptions = new JsonSerializerOptions 
             { 
-                PropertyNameCaseInsensitive = true,
-                Converters = { new QuestionDtoJsonConverter() }
+                PropertyNameCaseInsensitive = true
             };
 
-            _baseUrl = configuration["ApiEndpoints:CommentService"]
-                ?? throw new InvalidOperationException("CommentService endpoint not configured.");
+            _baseUrl = configuration["ApiEndpoints:QuestionService"]
+                ?? configuration["ApiEndpoints:TemplateService"]?.TrimEnd('/') + "/questions"
+                ?? throw new InvalidOperationException("QuestionService endpoint not configured.");
         }
 
         public async Task<QuestionDto> CreateAsync(QuestionDto questionDto, CancellationToken cancellationToken)
@@ -60,40 +59,6 @@ namespace WebApp.Services.Imp
         {
             var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{questionDto.Id}", questionDto, _jsonOptions, cancellationToken);
             response.EnsureSuccessStatusCode();
-        }
-    }
-
-    // Custom JSON converter to handle Question polymorphism
-    public class QuestionDtoJsonConverter : JsonConverter<QuestionDto>
-    {
-        public override QuestionDto? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            using var doc = JsonDocument.ParseValue(ref reader);
-            var root = doc.RootElement;
-
-            if (!root.TryGetProperty("questionType", out var typeProperty) &&
-                !root.TryGetProperty("QuestionType", out typeProperty))
-            {
-                throw new JsonException("QuestionType property not found");
-            }
-
-            var questionType = typeProperty.GetString();
-            var json = root.GetRawText();
-
-            return questionType switch
-            {
-                "SingleLineString" => JsonSerializer.Deserialize<SingleLineStringQuestionDto>(json, options),
-                "MultiLineText" => JsonSerializer.Deserialize<MultiLineTextQuestionDto>(json, options),
-                "PositiveInteger" => JsonSerializer.Deserialize<PositiveIntegerQuestionDto>(json, options),
-                "Checkbox" => JsonSerializer.Deserialize<CheckboxQuestionDto>(json, options),
-                "Boolean" => JsonSerializer.Deserialize<BooleanQuestionDto>(json, options),
-                _ => throw new JsonException($"Unknown question type: {questionType}")
-            };
-        }
-
-        public override void Write(Utf8JsonWriter writer, QuestionDto value, JsonSerializerOptions options)
-        {
-            JsonSerializer.Serialize(writer, value, value.GetType(), options);
         }
     }
 }

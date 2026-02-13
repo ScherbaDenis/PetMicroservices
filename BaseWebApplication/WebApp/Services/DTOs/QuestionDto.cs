@@ -1,5 +1,13 @@
+using System.Text.Json.Serialization;
+
 namespace WebApp.Services.DTOs
 {
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "questionType")]
+    [JsonDerivedType(typeof(SingleLineStringQuestionDto), typeDiscriminator: "SingleLineString")]
+    [JsonDerivedType(typeof(MultiLineTextQuestionDto), typeDiscriminator: "MultiLineText")]
+    [JsonDerivedType(typeof(PositiveIntegerQuestionDto), typeDiscriminator: "PositiveInteger")]
+    [JsonDerivedType(typeof(CheckboxQuestionDto), typeDiscriminator: "Checkbox")]
+    [JsonDerivedType(typeof(BooleanQuestionDto), typeDiscriminator: "Boolean")]
     public abstract class QuestionDto
     {
         public Guid Id { get; init; }
