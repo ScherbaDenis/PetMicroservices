@@ -51,8 +51,9 @@ namespace Template.DataAccess.MsSql.Configurations
         public void Configure(EntityTypeBuilder<CheckboxQuestion> builder)
         {
             // Configure CheckboxQuestion specific properties - store Options as JSON
+            // MaxLength applies to the entire JSON string containing all options
             builder.Property(q => q.Options)
-                .HasMaxLength(128)
+                .HasMaxLength(4000)
                 .HasConversion(
                     v => v == null ? null : JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
                     v => v == null ? null : JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions?)null)
