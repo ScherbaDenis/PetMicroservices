@@ -136,5 +136,55 @@ namespace Template.Tests.Services
         {
             await Assert.ThrowsAsync<ArgumentNullException>(() => _service.UpdateAsync((QuestionDto?)null!));
         }
+
+        [Fact]
+        public async Task CreateAsync_ShouldWorkWithSingleLineStringQuestion()
+        {
+            var dto = new SingleLineStringQuestionDto { Id = Guid.NewGuid(), Title = "Name", Description = "Enter your name" };
+
+            await _service.CreateAsync(dto);
+
+            _mockRepo.Verify(r => r.AddAsync(It.Is<SingleLineStringQuestion>(q => q.Title == "Name"), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAsync_ShouldWorkWithMultiLineTextQuestion()
+        {
+            var dto = new MultiLineTextQuestionDto { Id = Guid.NewGuid(), Title = "Comments", Description = "Enter your comments" };
+
+            await _service.CreateAsync(dto);
+
+            _mockRepo.Verify(r => r.AddAsync(It.Is<MultiLineTextQuestion>(q => q.Title == "Comments"), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAsync_ShouldWorkWithPositiveIntegerQuestion()
+        {
+            var dto = new PositiveIntegerQuestionDto { Id = Guid.NewGuid(), Title = "Age", Description = "Enter your age" };
+
+            await _service.CreateAsync(dto);
+
+            _mockRepo.Verify(r => r.AddAsync(It.Is<PositiveIntegerQuestion>(q => q.Title == "Age"), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAsync_ShouldWorkWithCheckboxQuestion()
+        {
+            var dto = new CheckboxQuestionDto { Id = Guid.NewGuid(), Title = "Options", Description = "Select options" };
+
+            await _service.CreateAsync(dto);
+
+            _mockRepo.Verify(r => r.AddAsync(It.Is<CheckboxQuestion>(q => q.Title == "Options"), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAsync_ShouldWorkWithBooleanQuestion()
+        {
+            var dto = new BooleanQuestionDto { Id = Guid.NewGuid(), Title = "Agree", Description = "Do you agree?" };
+
+            await _service.CreateAsync(dto);
+
+            _mockRepo.Verify(r => r.AddAsync(It.Is<BooleanQuestion>(q => q.Title == "Agree"), It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

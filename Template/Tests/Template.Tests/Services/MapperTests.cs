@@ -69,6 +69,57 @@ namespace Template.Tests.Services
         }
 
         [Fact]
+        public void QuestionMapper_ShouldMapSingleLineStringQuestion()
+        {
+            var entity = new SingleLineStringQuestion { Id = Guid.NewGuid(), Title = "Name" };
+            var dto = entity.ToDto();
+
+            Assert.IsType<SingleLineStringQuestionDto>(dto);
+            Assert.Equal(entity.Id, dto.Id);
+            Assert.Equal(entity.Title, dto.Title);
+        }
+
+        [Fact]
+        public void QuestionMapper_ShouldMapMultiLineTextQuestion()
+        {
+            var entity = new MultiLineTextQuestion { Id = Guid.NewGuid(), Title = "Comments" };
+            var dto = entity.ToDto();
+
+            Assert.IsType<MultiLineTextQuestionDto>(dto);
+            Assert.Equal(entity.Id, dto.Id);
+        }
+
+        [Fact]
+        public void QuestionMapper_ShouldMapPositiveIntegerQuestion()
+        {
+            var entity = new PositiveIntegerQuestion { Id = Guid.NewGuid(), Title = "Age" };
+            var dto = entity.ToDto();
+
+            Assert.IsType<PositiveIntegerQuestionDto>(dto);
+            Assert.Equal(entity.Id, dto.Id);
+        }
+
+        [Fact]
+        public void QuestionMapper_ShouldMapCheckboxQuestion()
+        {
+            var entity = new CheckboxQuestion { Id = Guid.NewGuid(), Title = "Options" };
+            var dto = entity.ToDto();
+
+            Assert.IsType<CheckboxQuestionDto>(dto);
+            Assert.Equal(entity.Id, dto.Id);
+        }
+
+        [Fact]
+        public void QuestionMapper_ShouldMapBooleanQuestion()
+        {
+            var entity = new BooleanQuestion { Id = Guid.NewGuid(), Title = "Agree" };
+            var dto = entity.ToDto();
+
+            Assert.IsType<BooleanQuestionDto>(dto);
+            Assert.Equal(entity.Id, dto.Id);
+        }
+
+        [Fact]
         public void TemplateMapper_Roundtrip_PreservesFields()
         {
             var owner = new User { Id = Guid.NewGuid(), Name = "Owner" };
