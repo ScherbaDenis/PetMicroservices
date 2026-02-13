@@ -19,7 +19,7 @@ namespace WebApp.Services.Imp
 
         public async Task<CommentDto> CreateAsync(CommentDto commentDto, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PostAsJsonAsync(_baseUrl, commentDto, cancellationToken);
+            var response = await _httpClient.PostAsJsonAsync(_baseUrl, commentDto, _jsonOptions, cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<CommentDto>(_jsonOptions, cancellationToken)
                    ?? throw new InvalidOperationException("Failed to deserialize CommentDto.");
@@ -57,7 +57,7 @@ namespace WebApp.Services.Imp
 
         public async Task UpdateAsync(CommentDto commentDto, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{commentDto.Id}", commentDto, cancellationToken);
+            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{commentDto.Id}", commentDto, _jsonOptions, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
     }
