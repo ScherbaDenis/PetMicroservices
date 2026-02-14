@@ -97,12 +97,6 @@ namespace Template.Tests.Integration
             response.EnsureSuccessStatusCode();
             
             var jsonString = await response.Content.ReadAsStringAsync();
-            
-            // Output the full JSON for debugging
-            Console.WriteLine("=== FULL JSON RESPONSE ===");
-            Console.WriteLine(jsonString);
-            Console.WriteLine("==========================");
-            
             Assert.Contains("\"questionType\"", jsonString, StringComparison.OrdinalIgnoreCase);
             Assert.Contains("\"Checkbox\"", jsonString);
 

@@ -2,12 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace WebApp.Services.DTOs
 {
-    [JsonPolymorphic(TypeDiscriminatorPropertyName = "questionType")]
-    [JsonDerivedType(typeof(SingleLineStringQuestionDto), typeDiscriminator: "SingleLineString")]
-    [JsonDerivedType(typeof(MultiLineTextQuestionDto), typeDiscriminator: "MultiLineText")]
-    [JsonDerivedType(typeof(PositiveIntegerQuestionDto), typeDiscriminator: "PositiveInteger")]
-    [JsonDerivedType(typeof(CheckboxQuestionDto), typeDiscriminator: "Checkbox")]
-    [JsonDerivedType(typeof(BooleanQuestionDto), typeDiscriminator: "Boolean")]
+    // Use custom JsonConverter for polymorphic deserialization
+    [JsonConverter(typeof(QuestionDtoJsonConverter))]
     public abstract class QuestionDto
     {
         public QuestionDto()
@@ -17,13 +13,16 @@ namespace WebApp.Services.DTOs
         public Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public string QuestionType { get; set; } = string.Empty; // For UI rendering
+        
+        [JsonPropertyName("questionType")]
+        public string QuestionType { get; set; } = string.Empty;
     }
 
     public class SingleLineStringQuestionDto : QuestionDto
     {
         public SingleLineStringQuestionDto()
         {
+            QuestionType = "SingleLineString";
         }
     }
 
@@ -31,6 +30,7 @@ namespace WebApp.Services.DTOs
     {
         public MultiLineTextQuestionDto()
         {
+            QuestionType = "MultiLineText";
         }
     }
 
@@ -38,6 +38,7 @@ namespace WebApp.Services.DTOs
     {
         public PositiveIntegerQuestionDto()
         {
+            QuestionType = "PositiveInteger";
         }
     }
 
@@ -45,6 +46,7 @@ namespace WebApp.Services.DTOs
     {
         public CheckboxQuestionDto()
         {
+            QuestionType = "Checkbox";
         }
 
         public IEnumerable<string>? Options { get; set; }
@@ -54,6 +56,7 @@ namespace WebApp.Services.DTOs
     {
         public BooleanQuestionDto()
         {
+            QuestionType = "Boolean";
         }
     }
 }
