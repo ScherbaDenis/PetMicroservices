@@ -18,22 +18,38 @@ namespace WebApp.Services.DTOs
 
     public class SingleLineStringQuestionDto : QuestionDto
     {
+        public SingleLineStringQuestionDto()
+        {
+        }
     }
 
     public class MultiLineTextQuestionDto : QuestionDto
     {
+        public MultiLineTextQuestionDto()
+        {
+        }
     }
 
     public class PositiveIntegerQuestionDto : QuestionDto
     {
+        public PositiveIntegerQuestionDto()
+        {
+        }
     }
 
     public class CheckboxQuestionDto : QuestionDto
     {
+        public CheckboxQuestionDto()
+        {
+        }
+
         public IEnumerable<string>? Options { get; init; }
     }
 
     public class BooleanQuestionDto : QuestionDto
     {
+        public BooleanQuestionDto()
+        {
+        }
     }
 }
