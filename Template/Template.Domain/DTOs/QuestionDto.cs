@@ -9,31 +9,51 @@ namespace Template.Domain.DTOs
     [JsonDerivedType(typeof(PositiveIntegerQuestionDto), typeDiscriminator: "PositiveInteger")]
     [JsonDerivedType(typeof(CheckboxQuestionDto), typeDiscriminator: "Checkbox")]
     [JsonDerivedType(typeof(BooleanQuestionDto), typeDiscriminator: "Boolean")]
-    public abstract record QuestionDto
+    public abstract class QuestionDto
     {
-        public Guid Id { get; init; }
-        public string Title { get; init; } = string.Empty;
-        public string? Description { get; init; }
+        public QuestionDto()
+        {
+        }
+
+        public Guid Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string? Description { get; set; }
     }
 
-    public record SingleLineStringQuestionDto : QuestionDto
+    public class SingleLineStringQuestionDto : QuestionDto
     {
+        public SingleLineStringQuestionDto()
+        {
+        }
     }
 
-    public record MultiLineTextQuestionDto : QuestionDto
+    public class MultiLineTextQuestionDto : QuestionDto
     {
+        public MultiLineTextQuestionDto()
+        {
+        }
     }
 
-    public record PositiveIntegerQuestionDto : QuestionDto
+    public class PositiveIntegerQuestionDto : QuestionDto
     {
+        public PositiveIntegerQuestionDto()
+        {
+        }
     }
 
-    public record CheckboxQuestionDto : QuestionDto
+    public class CheckboxQuestionDto : QuestionDto
     {
-        public IEnumerable<string>? Options { get; init; }
+        public CheckboxQuestionDto()
+        {
+        }
+
+        public IEnumerable<string>? Options { get; set; }
     }
 
-    public record BooleanQuestionDto : QuestionDto
+    public class BooleanQuestionDto : QuestionDto
     {
+        public BooleanQuestionDto()
+        {
+        }
     }
 }

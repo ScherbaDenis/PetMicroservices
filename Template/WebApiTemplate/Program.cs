@@ -4,6 +4,8 @@ using Template.Domain.Repository;
 using Template.Domain.Services;
 using Template.Service.Services;
 using Template.Domain.Model;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +15,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-        // JsonPolymorphic attributes automatically add type discriminators in .NET 7+
-        // This configuration ensures proper serialization of polymorphic Question types
+        // JsonPolymorphic attributes automatically handle discriminators in .NET 7+
     });
 
 // Configure CORS
