@@ -184,7 +184,6 @@ namespace Template.Tests.Integration
         // a NEW entity from DTO (line 39), causing an EF Core tracking conflict.
         // Fix needed: Update the existing entity's properties instead of creating a new one.
         
-        /*
         [Fact]
         public async Task Update_ShouldReturnSuccessAndSubsequentGetShouldIncludeDiscriminator()
         {
@@ -212,15 +211,6 @@ namespace Template.Tests.Integration
             Assert.Contains("\"questionType\"", jsonString, StringComparison.OrdinalIgnoreCase);
             Assert.Contains("\"SingleLineString\"", jsonString);
             Assert.Contains("\"Updated title\"", jsonString);
-        }
-        */
-
-        [Fact]
-        public async Task Update_TestDisabled_DueToBugInQuestionService()
-        {
-            // This is a placeholder test documenting the known issue
-            // See comments above for details
-            Assert.True(true, "Update functionality has a known bug with EF Core tracking conflicts");
         }
 
         [Fact]
