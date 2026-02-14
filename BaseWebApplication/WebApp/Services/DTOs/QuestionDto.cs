@@ -10,6 +10,10 @@ namespace WebApp.Services.DTOs
     [JsonDerivedType(typeof(BooleanQuestionDto), typeDiscriminator: "Boolean")]
     public abstract class QuestionDto
     {
+        protected QuestionDto()
+        {
+        }
+
         public Guid Id { get; init; }
         public string Title { get; init; } = string.Empty;
         public string? Description { get; init; }
