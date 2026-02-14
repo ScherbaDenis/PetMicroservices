@@ -4,12 +4,19 @@ using Template.Domain.Repository;
 using Template.Domain.Services;
 using Template.Service.Services;
 using Template.Domain.Model;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        // JsonPolymorphic attributes automatically handle discriminators in .NET 7+
+    });
 
 // Configure CORS
 builder.Services.AddCors(options =>
@@ -106,19 +113,19 @@ if (!builder.Environment.IsEnvironment("Testing"))
                        {
                            // Seed Questions
                            context.Set<Question>().AddRange(
-                               new Question
+                               new SingleLineStringQuestion
                                {
                                    Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
                                    Title = "What is your name?",
                                    Description = "Please provide your full name"
                                },
-                               new Question
+                               new SingleLineStringQuestion
                                {
                                    Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
                                    Title = "What is your email?",
                                    Description = "Please provide a valid email address"
                                },
-                               new Question
+                               new PositiveIntegerQuestion
                                {
                                    Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
                                    Title = "How satisfied are you?",
@@ -149,12 +156,14 @@ builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 
 // Services
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 
 var app = builder.Build();

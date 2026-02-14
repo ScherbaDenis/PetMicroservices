@@ -1,0 +1,63 @@
+@model WebApp.Services.DTOs.QuestionDto
+
+@{
+    ViewData["Title"] = "Delete Question";
+}
+
+<h1>Delete Question</h1>
+
+<h3>Are you sure you want to delete this question?</h3>
+<div>
+    <h4>
+        @if (Model is WebApp.Services.DTOs.SingleLineStringQuestionDto)
+        {
+            <span class="badge bg-primary">Single Line String</span>
+        }
+        else if (Model is WebApp.Services.DTOs.MultiLineTextQuestionDto)
+        {
+            <span class="badge bg-info">Multi Line Text</span>
+        }
+        else if (Model is WebApp.Services.DTOs.PositiveIntegerQuestionDto)
+        {
+            <span class="badge bg-success">Positive Integer</span>
+        }
+        else if (Model is WebApp.Services.DTOs.CheckboxQuestionDto)
+        {
+            <span class="badge bg-warning">Checkbox</span>
+        }
+        else if (Model is WebApp.Services.DTOs.BooleanQuestionDto)
+        {
+            <span class="badge bg-secondary">Boolean (Yes/No)</span>
+        }
+    </h4>
+    <hr />
+    
+    <dl class="row">
+        <dt class="col-sm-3">Title</dt>
+        <dd class="col-sm-9">@Model.Title</dd>
+        
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">@(Model.Description ?? "-")</dd>
+        
+        @if (Model is WebApp.Services.DTOs.CheckboxQuestionDto checkboxQuestion)
+        {
+            <dt class="col-sm-3">Options</dt>
+            <dd class="col-sm-9">
+                @if (checkboxQuestion.Options != null && checkboxQuestion.Options.Any())
+                {
+                    <span>@string.Join(", ", checkboxQuestion.Options)</span>
+                }
+                else
+                {
+                    <span class="text-muted">No options</span>
+                }
+            </dd>
+        }
+    </dl>
+    
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

@@ -19,7 +19,7 @@ namespace WebApp.Services.Imp
 
         public async Task<TemplateDto> CreateAsync(TemplateDto templateDto, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PostAsJsonAsync(_baseUrl, templateDto, cancellationToken);
+            var response = await _httpClient.PostAsJsonAsync(_baseUrl, templateDto, _jsonOptions, cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<TemplateDto>(_jsonOptions, cancellationToken)
                    ?? throw new InvalidOperationException("Failed to deserialize TemplateDto.");
@@ -49,7 +49,7 @@ namespace WebApp.Services.Imp
 
         public async Task UpdateAsync(TemplateDto templateDto, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{templateDto.Id}", templateDto, cancellationToken);
+            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{templateDto.Id}", templateDto, _jsonOptions, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
     }
