@@ -10,7 +10,7 @@ namespace WebApp.Services.DTOs
     [JsonDerivedType(typeof(BooleanQuestionDto), typeDiscriminator: "Boolean")]
     public abstract class QuestionDto
     {
-        protected QuestionDto()
+        public QuestionDto()
         {
         }
 
