@@ -1,11 +1,16 @@
 
 using WebApp.Services;
 using WebApp.Services.Imp;
+using WebApp.ModelBinders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // Insert custom model binder provider at the beginning
+    options.ModelBinderProviders.Insert(0, new QuestionDtoModelBinderProvider());
+});
 
 // Configure CORS
 // Note: In production, consider restricting allowed origins to specific trusted domains
