@@ -14,10 +14,10 @@ namespace WebApp.Services.DTOs
         {
         }
 
-        public Guid Id { get; init; }
-        public string Title { get; init; } = string.Empty;
-        public string? Description { get; init; }
-        public string QuestionType { get; init; } = string.Empty; // For UI rendering
+        public Guid Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string QuestionType { get; set; } = string.Empty; // For UI rendering
     }
 
     public class SingleLineStringQuestionDto : QuestionDto
@@ -47,7 +47,7 @@ namespace WebApp.Services.DTOs
         {
         }
 
-        public IEnumerable<string>? Options { get; init; }
+        public IEnumerable<string>? Options { get; set; }
     }
 
     public class BooleanQuestionDto : QuestionDto
