@@ -9,7 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        // JsonPolymorphic attributes automatically add type discriminators in .NET 7+
+        // This configuration ensures proper serialization of polymorphic Question types
+    });
 
 // Configure CORS
 builder.Services.AddCors(options =>
