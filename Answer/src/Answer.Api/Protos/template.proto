@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+option csharp_namespace = "Answer.Api.Protos";
+
+package template;
+
+import "google/api/annotations.proto";
+
+service TemplateService {
+  rpc GetTemplate (GetTemplateRequest) returns (TemplateResponse) {
+    option (google.api.http) = {
+      get: "/api/templates/{id}"
+    };
+  }
+  
+  rpc ListTemplates (ListTemplatesRequest) returns (ListTemplatesResponse) {
+    option (google.api.http) = {
+      get: "/api/templates"
+    };
+  }
+  
+  rpc CreateTemplate (CreateTemplateRequest) returns (TemplateResponse) {
+    option (google.api.http) = {
+      post: "/api/templates"
+      body: "*"
+    };
+  }
+  
+  rpc UpdateTemplate (UpdateTemplateRequest) returns (TemplateResponse) {
+    option (google.api.http) = {
+      put: "/api/templates/{id}"
+      body: "*"
+    };
+  }
+  
+  rpc DeleteTemplate (DeleteTemplateRequest) returns (DeleteTemplateResponse) {
+    option (google.api.http) = {
+      delete: "/api/templates/{id}"
+    };
+  }
+}
+
+message GetTemplateRequest {
+  string id = 1;
+}
+
+message ListTemplatesRequest {
+}
+
+message ListTemplatesResponse {
+  repeated TemplateResponse templates = 1;
+}
+
+message CreateTemplateRequest {
+  string title = 1;
+}
+
+message UpdateTemplateRequest {
+  string id = 1;
+  string title = 2;
+}
+
+message DeleteTemplateRequest {
+  string id = 1;
+}
+
+message DeleteTemplateResponse {
+  bool success = 1;
+}
+
+message TemplateResponse {
+  string id = 1;
+  string title = 2;
+}
