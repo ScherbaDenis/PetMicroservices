@@ -36,8 +36,17 @@ namespace Template.Service.Services
             _logger.LogInformation("Updating question: {Question}", item);
 
             var entity = await _questionRepository.FindAsync(item.Id, cancellationToken);
-            entity = item.ToEntity();
             ArgumentNullException.ThrowIfNull(entity, $"Question with Id {item.Id} not found.");
+
+            // Update properties on the tracked entity instead of creating a new instance
+            entity.Title = item.Title;
+            entity.Description = item.Description;
+            
+            // Handle CheckboxQuestion-specific properties
+            if (entity is CheckboxQuestion checkboxEntity && item is CheckboxQuestionDto checkboxDto)
+            {
+                checkboxEntity.Options = checkboxDto.Options;
+            }
 
             await _questionRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
