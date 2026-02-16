@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+option csharp_namespace = "Answer.Api.Protos";
+
+package answer;
+
+import "google/api/annotations.proto";
+
+service AnswerService {
+  rpc GetAnswer (GetAnswerRequest) returns (AnswerResponse) {
+    option (google.api.http) = {
+      get: "/api/answers/{id}"
+    };
+  }
+  
+  rpc ListAnswers (ListAnswersRequest) returns (ListAnswersResponse) {
+    option (google.api.http) = {
+      get: "/api/answers"
+    };
+  }
+  
+  rpc CreateAnswer (CreateAnswerRequest) returns (AnswerResponse) {
+    option (google.api.http) = {
+      post: "/api/answers"
+      body: "*"
+    };
+  }
+  
+  rpc UpdateAnswer (UpdateAnswerRequest) returns (AnswerResponse) {
+    option (google.api.http) = {
+      put: "/api/answers/{id}"
+      body: "*"
+    };
+  }
+  
+  rpc DeleteAnswer (DeleteAnswerRequest) returns (DeleteAnswerResponse) {
+    option (google.api.http) = {
+      delete: "/api/answers/{id}"
+    };
+  }
+}
+
+message GetAnswerRequest {
+  string id = 1;
+}
+
+message ListAnswersRequest {
+}
+
+message ListAnswersResponse {
+  repeated AnswerResponse answers = 1;
+}
+
+message CreateAnswerRequest {
+  string user_id = 1;
+  string question_id = 2;
+  string template_id = 3;
+  AnswerType answer_type = 4;
+  string answer_value = 5;
+}
+
+message UpdateAnswerRequest {
+  string id = 1;
+  AnswerType answer_type = 2;
+  string answer_value = 3;
+}
+
+message DeleteAnswerRequest {
+  string id = 1;
+}
+
+message DeleteAnswerResponse {
+  bool success = 1;
+}
+
+message AnswerResponse {
+  string id = 1;
+  string user_id = 2;
+  string user_name = 3;
+  string question_id = 4;
+  string question_title = 5;
+  string template_id = 6;
+  string template_title = 7;
+  AnswerType answer_type = 8;
+  string answer_value = 9;
+}
+
+enum AnswerType {
+  SINGLE_LINE_STRING = 0;
+  MULTI_LINE_TEXT = 1;
+  POSITIVE_INTEGER = 2;
+  CHECKBOX = 3;
+  BOOLEAN = 4;
+}
