@@ -94,7 +94,7 @@ namespace Template.Tests.Repositories
             var user = new User { Id = userId, Name = "Test User" };
             var topic = new Topic { Id = topicId, Name = "Test Topic" };
             var tag = new Tag { Id = tagId, Name = "Test Tag" };
-            var question = new Question { Id = questionId, Title = "Test Question" };
+            var question = new SingleLineStringQuestion { Id = questionId, Title = "Test Question" };
 
             var template = new Domain.Model.Template 
             { 

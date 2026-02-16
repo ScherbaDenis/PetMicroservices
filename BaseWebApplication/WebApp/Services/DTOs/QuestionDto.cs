@@ -1,7 +1,6 @@
-using System;
 using System.Text.Json.Serialization;
 
-namespace Template.Domain.DTOs
+namespace WebApp.Services.DTOs
 {
     // Use custom JsonConverter for polymorphic deserialization
     [JsonConverter(typeof(QuestionDtoJsonConverter))]
@@ -15,7 +14,6 @@ namespace Template.Domain.DTOs
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
         
-        // Explicit discriminator property for JSON serialization
         [JsonPropertyName("questionType")]
         public string QuestionType { get; set; } = string.Empty;
     }

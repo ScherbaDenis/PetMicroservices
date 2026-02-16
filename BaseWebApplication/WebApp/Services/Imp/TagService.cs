@@ -19,7 +19,7 @@ namespace WebApp.Services.Imp
 
         public async Task<TagDto> CreateAsync(TagDto item, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PostAsJsonAsync(_baseUrl, item, cancellationToken);
+            var response = await _httpClient.PostAsJsonAsync(_baseUrl, item, _jsonOptions, cancellationToken);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<TagDto>(_jsonOptions, cancellationToken)
                    ?? throw new InvalidOperationException("Failed to deserialize TagDto.");
@@ -49,7 +49,7 @@ namespace WebApp.Services.Imp
 
         public async Task UpdateAsync(TagDto item, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{item.Id}", item, cancellationToken);
+            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{item.Id}", item, _jsonOptions, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
     }

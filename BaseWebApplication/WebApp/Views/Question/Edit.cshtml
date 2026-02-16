@@ -1,0 +1,100 @@
+@model WebApp.Services.DTOs.QuestionDto
+
+@{
+    ViewData["Title"] = "Edit Question";
+    var isCheckbox = Model is WebApp.Services.DTOs.CheckboxQuestionDto;
+    var checkboxQuestion = Model as WebApp.Services.DTOs.CheckboxQuestionDto;
+}
+
+<h1>Edit Question</h1>
+
+<h4>
+    @if (Model is WebApp.Services.DTOs.SingleLineStringQuestionDto)
+    {
+        <span class="badge bg-primary">Single Line String</span>
+    }
+    else if (Model is WebApp.Services.DTOs.MultiLineTextQuestionDto)
+    {
+        <span class="badge bg-info">Multi Line Text</span>
+    }
+    else if (Model is WebApp.Services.DTOs.PositiveIntegerQuestionDto)
+    {
+        <span class="badge bg-success">Positive Integer</span>
+    }
+    else if (Model is WebApp.Services.DTOs.CheckboxQuestionDto)
+    {
+        <span class="badge bg-warning">Checkbox</span>
+    }
+    else if (Model is WebApp.Services.DTOs.BooleanQuestionDto)
+    {
+        <span class="badge bg-secondary">Boolean (Yes/No)</span>
+    }
+</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" method="post" id="questionForm">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" name="QuestionType" value="@Model.QuestionType" />
+            <input type="hidden" name="$type" value="@Model.GetType().FullName, WebApp" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" required />
+            </div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            </div>
+            
+            @if (isCheckbox && checkboxQuestion != null)
+            {
+                <div class="form-group mb-3">
+                    <label for="OptionsText" class="control-label">Options (one per line)</label>
+                    <textarea class="form-control" id="OptionsText" rows="5">@(checkboxQuestion.Options != null ? string.Join("\n", checkboxQuestion.Options) : "")</textarea>
+                    <small class="form-text text-muted">Enter each option on a new line</small>
+                </div>
+            }
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var isCheckbox = @(isCheckbox ? "true" : "false");
+        if (isCheckbox) {
+            document.getElementById('questionForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get options from textarea
+                var optionsText = document.getElementById('OptionsText').value;
+                var options = optionsText.split('\n')
+                    .map(opt => opt.trim())
+                    .filter(opt => opt.length > 0);
+                
+                // Clear previous hidden inputs
+                document.querySelectorAll('input[name^="Options"]').forEach(input => input.remove());
+                
+                // Add hidden inputs for each option
+                var form = this;
+                options.forEach(function(option, index) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'Options[' + index + ']';
+                    input.value = option;
+                    form.appendChild(input);
+                });
+                
+                // Submit the form
+                form.submit();
+            });
+        }
+    </script>
+}

@@ -1,5 +1,88 @@
+@model IEnumerable<WebApp.Services.DTOs.QuestionDto>
+
 @{
     ViewData["Title"] = "Questions";
 }
+
 <h1>Questions</h1>
-<p>Questions functionality coming soon...</p>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Question</a>
+</p>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        <div class="btn-group" role="group" aria-label="Question Type Filter">
+            <a asp-action="Create" asp-route-questionType="SingleLineString" class="btn btn-outline-secondary">Single Line</a>
+            <a asp-action="Create" asp-route-questionType="MultiLineText" class="btn btn-outline-secondary">Multi Line</a>
+            <a asp-action="Create" asp-route-questionType="PositiveInteger" class="btn btn-outline-secondary">Number</a>
+            <a asp-action="Create" asp-route-questionType="Checkbox" class="btn btn-outline-secondary">Checkbox</a>
+            <a asp-action="Create" asp-route-questionType="Boolean" class="btn btn-outline-secondary">Yes/No</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Options</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (item is WebApp.Services.DTOs.SingleLineStringQuestionDto)
+                    {
+                        <span class="badge bg-primary">Single Line</span>
+                    }
+                    else if (item is WebApp.Services.DTOs.MultiLineTextQuestionDto)
+                    {
+                        <span class="badge bg-info">Multi Line</span>
+                    }
+                    else if (item is WebApp.Services.DTOs.PositiveIntegerQuestionDto)
+                    {
+                        <span class="badge bg-success">Number</span>
+                    }
+                    else if (item is WebApp.Services.DTOs.CheckboxQuestionDto)
+                    {
+                        <span class="badge bg-warning">Checkbox</span>
+                    }
+                    else if (item is WebApp.Services.DTOs.BooleanQuestionDto)
+                    {
+                        <span class="badge bg-secondary">Yes/No</span>
+                    }
+                </td>
+                <td>@item.Title</td>
+                <td>@item.Description</td>
+                <td>
+                    @if (item is WebApp.Services.DTOs.CheckboxQuestionDto checkboxQuestion && checkboxQuestion.Options != null)
+                    {
+                        <small>@string.Join(", ", checkboxQuestion.Options.Take(3))@(checkboxQuestion.Options.Count() > 3 ? "..." : "")</small>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No questions found. <a asp-action="Create">Create your first question</a>.
+    </div>
+}
