@@ -1,4 +1,4 @@
-name: BaseWebApplication Test
+name: Main Tests
 
 on:
   pull_request:
@@ -14,7 +14,9 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: | 
+          8.0.x
+          9.0.x
     - name: Restore dependencies
       run: dotnet restore BaseWebApplication/BaseWebApplication.sln
     - name: Build
@@ -23,3 +25,9 @@ jobs:
       run: dotnet test --no-build --verbosity normal Template/Tests/Template.Tests/Template.Tests.csproj
     - name: Test Comment Project
       run: dotnet test --no-build --verbosity normal Comment/Tests/Comment.Tests/Comment.Tests.csproj
+    - name: Test Answer.Domain.Tests
+      run: dotnet test --no-build --verbosity normal Answer/tests/Answer.Domain.Tests/Answer.Domain.Tests.csproj
+    - name: Test Answer.Infrastructure.Tests
+      run: dotnet test --no-build --verbosity normal Answer/tests/Answer.Infrastructure.Tests/Answer.Infrastructure.Tests.csproj
+    - name: Test Answer.Api.IntegrationTests
+      run: dotnet test --no-build --verbosity normal Answer/tests/Answer.Api.IntegrationTests/Answer.Api.IntegrationTests.csproj
