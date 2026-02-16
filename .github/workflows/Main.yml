@@ -23,6 +23,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore BaseWebApplication/BaseWebApplication.sln
     - name: Build
+      run: dotnet build --no-restore BaseWebApplication/BaseWebApplication.sln
+    - name: Test Template Project
       run: dotnet test --no-build --verbosity normal Template/Tests/Template.Tests/Template.Tests.csproj
     - name: Test Comment Project
       run: dotnet test --no-build --verbosity normal Comment/Tests/Comment.Tests/Comment.Tests.csproj
