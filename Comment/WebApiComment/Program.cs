@@ -122,7 +122,11 @@ if (!builder.Environment.IsEnvironment("Testing"))
 }
 // Configure the HTTP request pipeline.
 
-app.UseHttpsRedirection();
+// Only use HTTPS redirection if not in Testing environment
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 

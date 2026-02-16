@@ -5,6 +5,7 @@ using Template.Domain.DTOs;
 using Microsoft.Extensions.DependencyInjection;
 using Template.DataAccess.MsSql.Repositories;
 using Template.Domain.Model;
+using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Template.Tests.Integration
 {
@@ -16,7 +17,10 @@ namespace Template.Tests.Integration
         public QuestionControllerIntegrationTests(WebApiTemplateFactory factory)
         {
             _factory = factory;
-            _client = factory.CreateClient();
+            _client = factory.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = false
+            });
         }
 
         [Fact]
