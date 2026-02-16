@@ -117,8 +117,7 @@ namespace Template.Service.Services
                 throw new InvalidOperationException($"Tag with ID {item.Id} not found.");
             }
 
-            // Update properties
-            entity.Name = item.Name;
+            entity.UpdateFromDto(item);
 
             await _tagRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

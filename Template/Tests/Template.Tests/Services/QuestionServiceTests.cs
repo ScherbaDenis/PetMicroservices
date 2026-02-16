@@ -280,18 +280,16 @@ namespace Template.Tests.Services
         [Fact]
         public async Task UpdateAsync_WithNotFoundQuestion_ShouldThrow()
         {
-            // NOTE: Current implementation has a bug - it checks if ToEntity() returns null
-            // instead of checking if FindAsync returns null. This test reflects actual behavior.
+            // Now that we use UpdateFromDto mapper, this correctly throws when question is not found
             var dto = new SingleLineStringQuestionDto { Id = Guid.NewGuid(), Title = "title", QuestionType = "SingleLineString" };
             _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
              .ReturnsAsync((Question?)null);
 
-            // The current implementation will create an entity from DTO (which succeeds)
-            // So this won't actually throw unless ToEntity() returns null
-            await _service.UpdateAsync(dto);
+            // Should throw ArgumentNullException when question is not found
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _service.UpdateAsync(dto));
 
-            // Verify UpdateAsync was called even though FindAsync returned null
-            _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<Question>(), It.IsAny<CancellationToken>()), Times.Once);
+            // Verify UpdateAsync was NOT called since the question was not found
+            _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<Question>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Fact]
