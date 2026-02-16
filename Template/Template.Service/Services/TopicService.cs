@@ -103,7 +103,8 @@ namespace Template.Service.Services
 
             var entity = await _topicRepository.FindAsync(item.Id, cancellationToken);
             ArgumentNullException.ThrowIfNull(entity, $"Topic with Id {item.Id} not found.");
-            entity.Name = item.Name; // Todo: Use AutoMapper or similar for complex mappings
+            
+            entity.UpdateFromDto(item);
 
             await _topicRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

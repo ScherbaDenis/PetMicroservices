@@ -106,7 +106,8 @@ namespace Template.Service.Services
 
             var entity = await _userRepository.FindAsync(item.Id, cancellationToken);
             ArgumentNullException.ThrowIfNull(entity, $"User with Id {item.Id} not found.");
-            entity.Name = item.Name; // Todo Update other properties as needed
+            
+            entity.UpdateFromDto(item);
 
             await _userRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

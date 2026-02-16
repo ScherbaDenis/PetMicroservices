@@ -1,4 +1,4 @@
-
+using System;
 using Comment.Domain.DTOs;
 
 namespace Comment.Domain.Mappers
@@ -22,5 +22,14 @@ namespace Comment.Domain.Mappers
                 Text = d.Text,
                 Template = d.TemplateDto?.ToEntity()
             };
+
+        public static void UpdateFromDto(this Models.Comment entity, CommentDto dto)
+        {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            
+            entity.Text = dto.Text;
+            // Note: Template navigation property is typically not updated to avoid EF tracking issues
+        }
     }
 }

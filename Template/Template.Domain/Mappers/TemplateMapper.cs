@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Template.Domain.DTOs;
 using Template.Domain.Model;
@@ -36,6 +37,17 @@ namespace Template.Service.Mappers
                 Questions = d.Questions?.Select(q => q.ToEntity()).ToList() ?? new System.Collections.Generic.List<Question>(),
                 UsersAccess = d.UsersAccess?.Select(u => u.ToEntity()).ToList() ?? new System.Collections.Generic.List<User>()
             };
+        }
+
+        public static void UpdateFromDto(this Domain.Model.Template entity, TemplateDto dto)
+        {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            
+            entity.Title = dto.Title;
+            entity.Description = dto.Description;
+            // Note: Complex navigation properties (Owner, Topic, Tags, Questions, UsersAccess) 
+            // are typically not updated via this method to avoid EF tracking issues
         }
     }
 }

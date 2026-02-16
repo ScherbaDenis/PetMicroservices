@@ -108,7 +108,7 @@ namespace Comment.Service.Services
             var dbEntity = await _commentRepository.FindAsync(item.Id, cancellationToken);
             ArgumentNullException.ThrowIfNull(dbEntity, $"Comment with Id {item.Id} not found.");  
             
-            dbEntity.Text = item.Text; // Todo: Map other properties as needed
+            dbEntity.UpdateFromDto(item);
             await _commentRepository.UpdateAsync(dbEntity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

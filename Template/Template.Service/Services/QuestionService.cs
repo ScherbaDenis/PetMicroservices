@@ -36,8 +36,9 @@ namespace Template.Service.Services
             _logger.LogInformation("Updating question: {Question}", item);
 
             var entity = await _questionRepository.FindAsync(item.Id, cancellationToken);
-            entity = item.ToEntity();
             ArgumentNullException.ThrowIfNull(entity, $"Question with Id {item.Id} not found.");
+
+            entity.UpdateFromDto(item);
 
             await _questionRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -101,8 +101,7 @@ namespace Template.Service.Services
             var entity = await _templateRepository.FindAsync(item.Id, cancellationToken);
             ArgumentNullException.ThrowIfNull(entity, $"Template with Id {item.Id} not found.");
 
-            entity.Title = item.Title; //TODO: Map other properties as needed
-            entity.Description = item.Description;
+            entity.UpdateFromDto(item);
 
             await _templateRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -87,5 +87,22 @@ namespace Template.Service.Mappers
                 _ => throw new ArgumentException($"Unknown question DTO type: {d.GetType().Name}")
             };
         }
+
+        public static void UpdateFromDto(this Question entity, QuestionDto dto)
+        {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            
+            // Update common properties shared by all question types
+            entity.Title = dto.Title;
+            entity.Description = dto.Description;
+            
+            // Update type-specific properties
+            // Note: Only CheckboxQuestion has additional properties beyond the base Question class
+            if (entity is CheckboxQuestion checkboxEntity && dto is CheckboxQuestionDto checkboxDto)
+            {
+                checkboxEntity.Options = checkboxDto.Options;
+            }
+        }
     }
 }
