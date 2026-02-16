@@ -6,7 +6,7 @@ PetMicroservices is a learning project for microservices architecture built with
 
 ## Technology Stack
 
-- **Framework**: .NET 8.0 (legacy services) and .NET 9.0 (Answer service)
+- **Framework**: .NET 9.0
 - **Language**: C# with nullable reference types enabled and implicit usings
 - **Database**: SQL Server with Entity Framework Core 9.0.12 (with in-memory option for Answer service)
 - **API Protocols**: REST (Comment, Template) and gRPC with JSON transcoding (Answer)
@@ -122,7 +122,7 @@ The repository contains microservices using two different architectural approach
 
 ### General Guidelines
 
-- Use modern C# features supported by .NET 8.0 with nullable reference types enabled
+- Use modern C# features supported by .NET 9.0 with nullable reference types enabled
 - Use implicit usings where appropriate
 - Follow standard .NET naming conventions (PascalCase for classes/methods, camelCase for parameters)
 - Keep controllers thin - business logic belongs in services
@@ -295,15 +295,15 @@ newman run Answer_API_Tests.postman_collection.json \
 1. **Main.yml** - Runs on pull requests to main
    - Builds the solution
    - Runs all tests (Template, Comment, and Answer)
-   - Supports both .NET 8.0.x and .NET 9.0.x
+   - Uses .NET 9.0.x
 
 2. **Comment.yml** - Runs on push when Comment folder changes
    - Builds and tests Comment microservice
-   - Uses .NET 8.0.x
+   - Uses .NET 9.0.x
 
 3. **Template.yml** - Runs on push when Template folder changes
    - Builds and tests Template microservice
-   - Uses .NET 8.0.x
+   - Uses .NET 9.0.x
 
 4. **Answer.yml** - Runs on push when Answer folder changes
    - Builds and tests Answer microservice (all three test projects)
@@ -313,7 +313,7 @@ newman run Answer_API_Tests.postman_collection.json \
 
 **Legacy Services (Comment, Template):**
 1. Checkout code
-2. Setup .NET 8.0.x
+2. Setup .NET 9.0.x
 3. Restore dependencies from BaseWebApplication.sln
 4. Build with `--no-restore`
 5. Test with `--no-build --verbosity normal`

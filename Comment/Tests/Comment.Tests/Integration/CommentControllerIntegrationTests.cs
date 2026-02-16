@@ -4,6 +4,7 @@ using Comment.Domain.DTOs;
 using Microsoft.Extensions.DependencyInjection;
 using Comment.DataAccess.MsSql.Repositories;
 using Comment.Domain.Models;
+using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Comment.Tests.Integration
 {
@@ -15,7 +16,10 @@ namespace Comment.Tests.Integration
         public CommentControllerIntegrationTests(WebApiCommentFactory factory)
         {
             _factory = factory;
-            _client = factory.CreateClient();
+            _client = factory.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = false
+            });
         }
 
         [Fact]
