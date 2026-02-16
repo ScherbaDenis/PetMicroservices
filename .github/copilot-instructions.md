@@ -74,7 +74,7 @@ PetMicroservices/
 
 ### General Guidelines
 
-- Use modern C# features (.NET 8.0 supports C# 12) with nullable reference types enabled
+- Use modern C# features supported by .NET 8.0 with nullable reference types enabled
 - Use implicit usings where appropriate
 - Follow standard .NET naming conventions (PascalCase for classes/methods, camelCase for parameters)
 - Keep controllers thin - business logic belongs in services
