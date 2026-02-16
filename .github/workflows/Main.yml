@@ -1,9 +1,3 @@
-name: Main Tests
-
-on:
-  pull_request:
-    branches: [ "main" ]
-
 jobs:
   build:
     permissions:
@@ -16,6 +10,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
+        dotnet-version: 8.0.x
         dotnet-version: |
           8.0.x
           9.0.x
@@ -24,6 +19,10 @@ jobs:
       run: dotnet restore BaseWebApplication/BaseWebApplication.sln
     - name: Build
       run: dotnet build --no-restore BaseWebApplication/BaseWebApplication.sln
+    - name: Test Template Project
+      run: dotnet test --no-build --verbosity normal Template/Tests/Template.Tests/Template.Tests.csproj
+    - name: Test Comment Project
+      run: dotnet test --no-build --verbosity normal Comment/Tests/Comment.Tests/Comment.Tests.csproj
     - name: Test Answer.Domain.Tests
       run: dotnet test --no-build --verbosity normal Answer/tests/Answer.Domain.Tests/Answer.Domain.Tests.csproj
     - name: Test Answer.Infrastructure.Tests
