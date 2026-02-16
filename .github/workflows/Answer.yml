@@ -7,6 +7,8 @@ on:
       - 'Answer/**'          # Only run if files in Answer folder change
 jobs:
   build:
+    permissions:
+      contents: read
 
     runs-on: ubuntu-latest
 
