@@ -1,4 +1,4 @@
-name: BaseWebApplication Test
+name: Main Tests
 
 on:
   pull_request:
