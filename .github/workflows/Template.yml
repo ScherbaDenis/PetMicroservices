@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "*" ]
     paths:
-      - 'Template/**'          # Only run if files in Comment folder change
+      - 'Template/**'          # Only run if files in Template folder change
 jobs:
   build:
 
