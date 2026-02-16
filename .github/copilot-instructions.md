@@ -260,8 +260,8 @@ public partial class Program { }
 ### Unique IDs Across Services
 
 Use different GUID prefixes for different services to avoid conflicts:
-- Comment service: `10000000-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
-- Template service: Different prefix
+- Comment service: `10000000-0000-0000-0000-000000000001`, `10000000-0000-0000-0000-000000000002`, etc.
+- Template service: Use different prefixes (e.g., `20000000-xxxx-xxxx-xxxx-xxxxxxxxxxxx`)
 
 ## Project Goals
 
