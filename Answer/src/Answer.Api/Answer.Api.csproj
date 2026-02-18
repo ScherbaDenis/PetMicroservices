@@ -10,6 +10,7 @@
     <PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
     <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.76.0" />
     <PackageReference Include="Grpc.AspNetCore.Web" Version="2.76.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.76.0" />
     <PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -18,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\user.proto" GrpcServices="Server" AdditionalImportDirs="$(NuGetPackageRoot)google.api.commonprotos/2.17.0/content/protos" />
-    <Protobuf Include="Protos\question.proto" GrpcServices="Server" AdditionalImportDirs="$(NuGetPackageRoot)google.api.commonprotos/2.17.0/content/protos" />
-    <Protobuf Include="Protos\template.proto" GrpcServices="Server" AdditionalImportDirs="$(NuGetPackageRoot)google.api.commonprotos/2.17.0/content/protos" />
+    <Protobuf Include="Protos\user.proto" GrpcServices="Both" AdditionalImportDirs="$(NuGetPackageRoot)google.api.commonprotos/2.17.0/content/protos" />
+    <Protobuf Include="Protos\question.proto" GrpcServices="Both" AdditionalImportDirs="$(NuGetPackageRoot)google.api.commonprotos/2.17.0/content/protos" />
+    <Protobuf Include="Protos\template.proto" GrpcServices="Both" AdditionalImportDirs="$(NuGetPackageRoot)google.api.commonprotos/2.17.0/content/protos" />
     <Protobuf Include="Protos\answer.proto" GrpcServices="Server" AdditionalImportDirs="$(NuGetPackageRoot)google.api.commonprotos/2.17.0/content/protos" />
   </ItemGroup>
 
