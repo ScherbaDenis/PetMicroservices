@@ -1,0 +1,37 @@
+@model AnswerDto
+@using WebApp.Services.DTOs
+
+@{
+    ViewData["Title"] = "Answer Details";
+}
+
+<h1>Answer Details</h1>
+
+<div>
+    <h4>Answer Information</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Id</dt>
+        <dd class="col-sm-10">@Model.Id</dd>
+
+        <dt class="col-sm-2">User</dt>
+        <dd class="col-sm-10">@Model.UserName</dd>
+
+        <dt class="col-sm-2">Question</dt>
+        <dd class="col-sm-10">@Model.QuestionTitle</dd>
+
+        <dt class="col-sm-2">Template</dt>
+        <dd class="col-sm-10">@Model.TemplateTitle</dd>
+
+        <dt class="col-sm-2">Answer Type</dt>
+        <dd class="col-sm-10">@Model.AnswerType</dd>
+
+        <dt class="col-sm-2">Answer Value</dt>
+        <dd class="col-sm-10">@Model.AnswerValue</dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
