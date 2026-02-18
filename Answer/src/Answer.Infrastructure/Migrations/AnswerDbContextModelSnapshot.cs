@@ -28,9 +28,6 @@ namespace Answer.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AnswerType")
-                        .HasColumnType("int");
-
                     b.Property<string>("AnswerValue")
                         .IsRequired()
                         .HasMaxLength(4000)

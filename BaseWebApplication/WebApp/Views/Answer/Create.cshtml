@@ -5,7 +5,7 @@
 
 <form asp-action="Create" method="post">
     <div class="form-group">
-        <label asp-for="UserId"></label>
+        <label asp-for="UserId">User</label>
         <select id="UserId" name="UserId" class="form-control">
             <option value="">Loading...</option>
         </select>
@@ -13,38 +13,31 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="QuestionId"></label>
-        <select id="QuestionId" name="QuestionId" class="form-control">
-            <option value="">Loading...</option>
-        </select>
-        <span asp-validation-for="QuestionId" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="TemplateId"></label>
+        <label asp-for="TemplateId">Template</label>
         <select id="TemplateId" name="TemplateId" class="form-control">
-            <option value="">Loading...</option>
+            <option value="">-- Select User First --</option>
         </select>
         <span asp-validation-for="TemplateId" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="AnswerType"></label>
-        <select asp-for="AnswerType" class="form-control">
-            <option value="0">Single Line String</option>
-            <option value="1">Multi Line Text</option>
-            <option value="2">Positive Integer</option>
-            <option value="3">Checkbox</option>
-            <option value="4">Boolean</option>
+        <label asp-for="QuestionId">Question</label>
+        <select id="QuestionId" name="QuestionId" class="form-control">
+            <option value="">-- Select Template First --</option>
         </select>
-        <span asp-validation-for="AnswerType" class="text-danger"></span>
+        <span asp-validation-for="QuestionId" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="AnswerValue"></label>
-        <textarea asp-for="AnswerValue" class="form-control" rows="4"></textarea>
+    <div id="answerContainer" class="form-group" style="display: none;">
+        <label>Answer</label>
+        <div class="answer-input-container">
+            <!-- Dynamic input will be inserted here based on question type -->
+        </div>
         <span asp-validation-for="AnswerValue" class="text-danger"></span>
     </div>
+
+    <!-- Hidden field for AnswerType - will be set automatically by JavaScript based on QuestionType -->
+    <input type="hidden" id="AnswerType" name="AnswerType" value="0" />
 
     <button type="submit" class="btn btn-primary">Create</button>
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
