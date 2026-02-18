@@ -4,36 +4,9 @@ using WebApp.Services.DTOs;
 
 namespace WebApp.Controllers
 {
-    public class AnswerController(IAnswerService service, IUserService userService, IQuestionService questionService, ITemplateService templateService) : Controller
+    public class AnswerController(IAnswerService service) : Controller
     {
         private readonly IAnswerService _service = service;
-        private readonly IUserService _userService = userService;
-        private readonly IQuestionService _questionService = questionService;
-        private readonly ITemplateService _templateService = templateService;
-
-        private async Task PopulateViewBagAsync(CancellationToken cancellationToken)
-        {
-            var users = await _userService.GetAllAsync(cancellationToken);
-            ViewBag.Users = users.Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-            {
-                Value = u.Id.ToString(),
-                Text = u.Name
-            }).ToList();
-
-            var questions = await _questionService.GetAllAsync(cancellationToken);
-            ViewBag.Questions = questions.Select(q => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-            {
-                Value = q.Id.ToString(),
-                Text = q.Title
-            }).ToList();
-
-            var templates = await _templateService.GetAllAsync(cancellationToken);
-            ViewBag.Templates = templates.Select(t => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-            {
-                Value = t.Id.ToString(),
-                Text = t.Title
-            }).ToList();
-        }
 
         // GET: /Answer
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -51,9 +24,8 @@ namespace WebApp.Controllers
         }
 
         // GET: /Answer/Create
-        public async Task<IActionResult> Create(CancellationToken cancellationToken)
+        public IActionResult Create()
         {
-            await PopulateViewBagAsync(cancellationToken);
             return View();
         }
 
@@ -64,7 +36,6 @@ namespace WebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                await PopulateViewBagAsync(cancellationToken);
                 return View(dto);
             }
             await _service.CreateAsync(dto, cancellationToken);
