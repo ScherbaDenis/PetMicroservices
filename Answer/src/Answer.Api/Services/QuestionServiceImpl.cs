@@ -34,18 +34,21 @@ public class QuestionServiceImpl : QuestionService.QuestionServiceBase
         };
     }
 
-    public override async Task ListQuestions(ListQuestionsRequest request, IServerStreamWriter<QuestionResponse> responseStream, ServerCallContext context)
+    public override async Task<ListQuestionsResponse> ListQuestions(ListQuestionsRequest request, ServerCallContext context)
     {
         var questions = await _questionRepository.GetAllAsync();
+        var response = new ListQuestionsResponse();
         
         foreach (var question in questions)
         {
-            await responseStream.WriteAsync(new QuestionResponse
+            response.Questions.Add(new QuestionResponse
             {
                 Id = question.Id.ToString(),
                 Title = question.Title
             });
         }
+
+        return response;
     }
 
     public override async Task<QuestionResponse> CreateQuestion(CreateQuestionRequest request, ServerCallContext context)

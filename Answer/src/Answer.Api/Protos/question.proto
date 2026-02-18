@@ -13,10 +13,9 @@ service QuestionService {
     };
   }
   
-  rpc ListQuestions (ListQuestionsRequest) returns (stream QuestionResponse) {
-    option (google.api.http) = {
-      get: "/api/questions"
-    };
+  // ListQuestions is not exposed via HTTP/REST, only via gRPC
+  // Use the Minimal API endpoint in Program.cs for REST access
+  rpc ListQuestions (ListQuestionsRequest) returns (ListQuestionsResponse) {
   }
   
   rpc CreateQuestion (CreateQuestionRequest) returns (QuestionResponse) {
@@ -45,6 +44,10 @@ message GetQuestionRequest {
 }
 
 message ListQuestionsRequest {
+}
+
+message ListQuestionsResponse {
+  repeated QuestionResponse questions = 1;
 }
 
 message CreateQuestionRequest {

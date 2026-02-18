@@ -13,10 +13,9 @@ service UserService {
     };
   }
   
-  rpc ListUsers (ListUsersRequest) returns (stream UserResponse) {
-    option (google.api.http) = {
-      get: "/api/users"
-    };
+  // ListUsers is not exposed via HTTP/REST, only via gRPC
+  // Use the Minimal API endpoint in Program.cs for REST access
+  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
   }
   
   rpc CreateUser (CreateUserRequest) returns (UserResponse) {
@@ -45,6 +44,10 @@ message GetUserRequest {
 }
 
 message ListUsersRequest {
+}
+
+message ListUsersResponse {
+  repeated UserResponse users = 1;
 }
 
 message CreateUserRequest {

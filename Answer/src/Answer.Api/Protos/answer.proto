@@ -13,10 +13,9 @@ service AnswerService {
     };
   }
   
-  rpc ListAnswers (ListAnswersRequest) returns (stream AnswerResponse) {
-    option (google.api.http) = {
-      get: "/api/answers"
-    };
+  // ListAnswers is not exposed via HTTP/REST, only via gRPC
+  // Use the Minimal API endpoint in Program.cs for REST access
+  rpc ListAnswers (ListAnswersRequest) returns (ListAnswersResponse) {
   }
   
   rpc CreateAnswer (CreateAnswerRequest) returns (AnswerResponse) {
@@ -45,6 +44,10 @@ message GetAnswerRequest {
 }
 
 message ListAnswersRequest {
+}
+
+message ListAnswersResponse {
+  repeated AnswerResponse answers = 1;
 }
 
 message CreateAnswerRequest {

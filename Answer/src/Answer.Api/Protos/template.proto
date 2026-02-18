@@ -13,10 +13,9 @@ service TemplateService {
     };
   }
   
-  rpc ListTemplates (ListTemplatesRequest) returns (stream TemplateResponse) {
-    option (google.api.http) = {
-      get: "/api/templates"
-    };
+  // ListTemplates is not exposed via HTTP/REST, only via gRPC  
+  // Use the Minimal API endpoint in Program.cs for REST access
+  rpc ListTemplates (ListTemplatesRequest) returns (ListTemplatesResponse) {
   }
   
   rpc CreateTemplate (CreateTemplateRequest) returns (TemplateResponse) {
@@ -45,6 +44,10 @@ message GetTemplateRequest {
 }
 
 message ListTemplatesRequest {
+}
+
+message ListTemplatesResponse {
+  repeated TemplateResponse templates = 1;
 }
 
 message CreateTemplateRequest {

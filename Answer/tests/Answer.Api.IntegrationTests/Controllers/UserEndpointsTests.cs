@@ -42,7 +42,7 @@ public class UserEndpointsTests : IClassFixture<AnswerApiFactory>
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var content = await response.Content.ReadAsStringAsync();
-        content.Should().Contain("\"users\":");
+        content.Should().Be("[]"); // Expecting direct empty array
     }
 
     [Fact]
