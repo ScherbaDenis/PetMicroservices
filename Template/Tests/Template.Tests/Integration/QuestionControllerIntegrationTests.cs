@@ -183,11 +183,6 @@ namespace Template.Tests.Integration
             Assert.IsType<CheckboxQuestionDto>(createdQuestion);
         }
 
-        // NOTE: The following Update tests are disabled due to a bug in QuestionService.UpdateAsync
-        // The service fetches an entity (line 38) which gets tracked by EF Core, then creates
-        // a NEW entity from DTO (line 39), causing an EF Core tracking conflict.
-        // Fix needed: Update the existing entity's properties instead of creating a new one.
-        
         [Fact]
         public async Task Update_ShouldReturnSuccessAndSubsequentGetShouldIncludeDiscriminator()
         {
@@ -344,7 +339,6 @@ namespace Template.Tests.Integration
             }
         }
 
-        /*
         [Fact]
         public async Task Update_CheckboxQuestion_ShouldUpdateOptions()
         {
@@ -377,7 +371,6 @@ namespace Template.Tests.Integration
             Assert.Contains("New1", checkboxQuestion.Options);
             Assert.Contains("New4", checkboxQuestion.Options);
         }
-        */
 
         // Helper methods to seed different question types
         private async Task<Guid> SeedSingleLineStringQuestionAsync()
