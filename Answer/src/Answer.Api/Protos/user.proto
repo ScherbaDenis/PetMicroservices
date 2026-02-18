@@ -13,9 +13,10 @@ service UserService {
     };
   }
   
-  // ListUsers is not exposed via HTTP/REST, only via gRPC
-  // Use the Minimal API endpoint in Program.cs for REST access
   rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+      get: "/api/users"
+    };
   }
   
   rpc CreateUser (CreateUserRequest) returns (UserResponse) {

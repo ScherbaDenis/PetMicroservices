@@ -13,9 +13,10 @@ service QuestionService {
     };
   }
   
-  // ListQuestions is not exposed via HTTP/REST, only via gRPC
-  // Use the Minimal API endpoint in Program.cs for REST access
   rpc ListQuestions (ListQuestionsRequest) returns (ListQuestionsResponse) {
+    option (google.api.http) = {
+      get: "/api/questions"
+    };
   }
   
   rpc CreateQuestion (CreateQuestionRequest) returns (QuestionResponse) {
