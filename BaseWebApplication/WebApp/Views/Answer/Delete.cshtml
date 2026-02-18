@@ -1,0 +1,36 @@
+@model AnswerDto
+@using WebApp.Services.DTOs
+
+@{
+    ViewData["Title"] = "Delete Answer";
+}
+
+<h1>Delete Answer</h1>
+
+<h3>Are you sure you want to delete this answer?</h3>
+<div>
+    <h4>Answer Information</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">User</dt>
+        <dd class="col-sm-10">@Model.UserName</dd>
+
+        <dt class="col-sm-2">Question</dt>
+        <dd class="col-sm-10">@Model.QuestionTitle</dd>
+
+        <dt class="col-sm-2">Template</dt>
+        <dd class="col-sm-10">@Model.TemplateTitle</dd>
+
+        <dt class="col-sm-2">Answer Type</dt>
+        <dd class="col-sm-10">@Model.AnswerType</dd>
+
+        <dt class="col-sm-2">Answer Value</dt>
+        <dd class="col-sm-10">@Model.AnswerValue</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
