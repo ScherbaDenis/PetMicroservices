@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using WebApp.Services.DTOs;
 
 namespace WebApp.Services.Imp
@@ -14,7 +15,9 @@ namespace WebApp.Services.Imp
             _httpClient = httpClient;
             _jsonOptions = new JsonSerializerOptions 
             { 
-                PropertyNameCaseInsensitive = true
+                PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters = { new JsonStringEnumConverter() }
             };
 
             _baseUrl = configuration["ApiEndpoints:AnswerService"]
