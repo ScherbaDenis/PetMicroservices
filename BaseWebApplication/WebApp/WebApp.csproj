@@ -12,6 +12,19 @@
 
   <ItemGroup>
     <PackageReference Include="Yarp.ReverseProxy" Version="2.1.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.70.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.31.1" />
+    <PackageReference Include="Google.Api.CommonProtos" Version="2.17.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.70.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\..\Answer\src\Answer.Api\Protos\question.proto" GrpcServices="Client" AdditionalImportDirs="$(NuGetPackageRoot)google.api.commonprotos/2.17.0/content/protos">
+      <Link>Protos\question.proto</Link>
+    </Protobuf>
   </ItemGroup>
 
   <!-- Compile TypeScript before build -->

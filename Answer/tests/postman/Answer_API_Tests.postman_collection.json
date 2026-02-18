@@ -75,10 +75,9 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response contains users array\", function () {",
+									"pm.test(\"Response is an array\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('users');",
-									"    pm.expect(jsonData.users).to.be.an('array');",
+									"    pm.expect(jsonData).to.be.an('array');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -257,10 +256,9 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response contains questions array\", function () {",
+									"pm.test(\"Response is an array\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('questions');",
-									"    pm.expect(jsonData.questions).to.be.an('array');",
+									"    pm.expect(jsonData).to.be.an('array');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -439,10 +437,9 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response contains templates array\", function () {",
+									"pm.test(\"Response is an array\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('templates');",
-									"    pm.expect(jsonData.templates).to.be.an('array');",
+									"    pm.expect(jsonData).to.be.an('array');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -723,10 +720,9 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response contains answers array\", function () {",
+									"pm.test(\"Response is an array\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('answers');",
-									"    pm.expect(jsonData.answers).to.be.an('array');",
+									"    pm.expect(jsonData).to.be.an('array');",
 									"});"
 								],
 								"type": "text/javascript"
