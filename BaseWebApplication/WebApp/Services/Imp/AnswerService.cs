@@ -1,66 +1,127 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Answer.Api.Protos;
+using Grpc.Net.Client;
 using WebApp.Services.DTOs;
 
 namespace WebApp.Services.Imp
 {
     public class AnswerService : IAnswerService
     {
-        private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions _jsonOptions;
-        private readonly string _baseUrl;
+        private readonly GrpcChannel _channel;
+        private readonly Answer.Api.Protos.AnswerService.AnswerServiceClient _client;
 
-        public AnswerService(HttpClient httpClient, IConfiguration configuration)
+        public AnswerService(IConfiguration configuration)
         {
-            _httpClient = httpClient;
-            _jsonOptions = new JsonSerializerOptions 
-            { 
-                PropertyNameCaseInsensitive = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters = { new JsonStringEnumConverter() }
-            };
-
-            _baseUrl = configuration["ApiEndpoints:AnswerService"]
+            var address = configuration["ApiEndpoints:AnswerService"]
                 ?? throw new InvalidOperationException("AnswerService endpoint not configured.");
+
+            _channel = GrpcChannel.ForAddress(address);
+            _client = new Answer.Api.Protos.AnswerService.AnswerServiceClient(_channel);
         }
 
         public async Task<AnswerDto> CreateAsync(CreateAnswerDto answerDto, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PostAsJsonAsync(_baseUrl, answerDto, _jsonOptions, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<AnswerDto>(_jsonOptions, cancellationToken)
-                   ?? throw new InvalidOperationException("Failed to deserialize AnswerDto.");
+            var request = new CreateAnswerRequest
+            {
+                UserId = answerDto.UserId.ToString(),
+                QuestionId = answerDto.QuestionId.ToString(),
+                TemplateId = answerDto.TemplateId.ToString(),
+                AnswerType = MapAnswerType(answerDto.AnswerType),
+                AnswerValue = answerDto.AnswerValue
+            };
+
+            var response = await _client.CreateAnswerAsync(request, cancellationToken: cancellationToken);
+
+            return MapToDto(response);
         }
 
         public async Task DeleteAsync(Guid answerId, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.DeleteAsync($"{_baseUrl}/{answerId}", cancellationToken);
-            response.EnsureSuccessStatusCode();
+            var request = new DeleteAnswerRequest
+            {
+                Id = answerId.ToString()
+            };
+
+            await _client.DeleteAnswerAsync(request, cancellationToken: cancellationToken);
         }
 
         public async Task<IEnumerable<AnswerDto>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var response = await _httpClient.GetAsync(_baseUrl, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<IEnumerable<AnswerDto>>(_jsonOptions, cancellationToken)
-                   ?? Enumerable.Empty<AnswerDto>();
+            var request = new ListAnswersRequest();
+            var response = await _client.ListAnswersAsync(request, cancellationToken: cancellationToken);
+
+            return response.Answers.Select(MapToDto);
         }
 
         public async Task<AnswerDto?> GetByIdAsync(Guid answerId, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/{answerId}", cancellationToken);
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            try
+            {
+                var request = new GetAnswerRequest
+                {
+                    Id = answerId.ToString()
+                };
+
+                var response = await _client.GetAnswerAsync(request, cancellationToken: cancellationToken);
+                return MapToDto(response);
+            }
+            catch (Grpc.Core.RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.NotFound)
             {
                 return null;
             }
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<AnswerDto>(_jsonOptions, cancellationToken);
         }
 
         public async Task UpdateAsync(UpdateAnswerDto answerDto, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{answerDto.Id}", answerDto, _jsonOptions, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            var request = new UpdateAnswerRequest
+            {
+                Id = answerDto.Id.ToString(),
+                AnswerType = MapAnswerType(answerDto.AnswerType),
+                AnswerValue = answerDto.AnswerValue
+            };
+
+            await _client.UpdateAnswerAsync(request, cancellationToken: cancellationToken);
+        }
+
+        private static AnswerDto MapToDto(AnswerResponse response)
+        {
+            return new AnswerDto
+            {
+                Id = Guid.Parse(response.Id),
+                UserId = Guid.Parse(response.UserId),
+                UserName = response.UserName,
+                QuestionId = Guid.Parse(response.QuestionId),
+                QuestionTitle = response.QuestionTitle,
+                TemplateId = Guid.Parse(response.TemplateId),
+                TemplateTitle = response.TemplateTitle,
+                AnswerType = MapAnswerType(response.AnswerType),
+                AnswerValue = response.AnswerValue
+            };
+        }
+
+        private static Answer.Api.Protos.AnswerType MapAnswerType(DTOs.AnswerType dtoType)
+        {
+            return dtoType switch
+            {
+                DTOs.AnswerType.SingleLineString => Answer.Api.Protos.AnswerType.SingleLineString,
+                DTOs.AnswerType.MultiLineText => Answer.Api.Protos.AnswerType.MultiLineText,
+                DTOs.AnswerType.PositiveInteger => Answer.Api.Protos.AnswerType.PositiveInteger,
+                DTOs.AnswerType.Checkbox => Answer.Api.Protos.AnswerType.Checkbox,
+                DTOs.AnswerType.Boolean => Answer.Api.Protos.AnswerType.Boolean,
+                _ => throw new ArgumentException("Unknown answer type")
+            };
+        }
+
+        private static DTOs.AnswerType MapAnswerType(Answer.Api.Protos.AnswerType protoType)
+        {
+            return protoType switch
+            {
+                Answer.Api.Protos.AnswerType.SingleLineString => DTOs.AnswerType.SingleLineString,
+                Answer.Api.Protos.AnswerType.MultiLineText => DTOs.AnswerType.MultiLineText,
+                Answer.Api.Protos.AnswerType.PositiveInteger => DTOs.AnswerType.PositiveInteger,
+                Answer.Api.Protos.AnswerType.Checkbox => DTOs.AnswerType.Checkbox,
+                Answer.Api.Protos.AnswerType.Boolean => DTOs.AnswerType.Boolean,
+                _ => throw new ArgumentException("Unknown answer type")
+            };
         }
     }
 }

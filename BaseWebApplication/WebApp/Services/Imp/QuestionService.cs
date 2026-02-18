@@ -1,91 +1,59 @@
-using Answer.Api.Protos;
-using Grpc.Net.Client;
+using System.Text.Json;
 using WebApp.Services.DTOs;
 
 namespace WebApp.Services.Imp
 {
     public class QuestionService : IQuestionService
     {
-        private readonly GrpcChannel _channel;
-        private readonly Answer.Api.Protos.QuestionService.QuestionServiceClient _client;
+        private readonly HttpClient _httpClient;
+        private readonly JsonSerializerOptions _jsonOptions;
+        private readonly string _baseUrl;
 
-        public QuestionService(IConfiguration configuration)
+        public QuestionService(HttpClient httpClient, IConfiguration configuration)
         {
-            var address = configuration["ApiEndpoints:QuestionService"]
-                ?? configuration["ApiEndpoints:AnswerService"]
-                ?? throw new InvalidOperationException("QuestionService or AnswerService endpoint not configured.");
-
-            _channel = GrpcChannel.ForAddress(address);
-            _client = new Answer.Api.Protos.QuestionService.QuestionServiceClient(_channel);
+            _httpClient = httpClient;
+            _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            _baseUrl = configuration["ApiEndpoints:QuestionService"] 
+                ?? throw new InvalidOperationException("QuestionService endpoint not configured.");
         }
 
         public async Task<QuestionDto> CreateAsync(QuestionDto questionDto, CancellationToken cancellationToken)
         {
-            var request = new CreateQuestionRequest
-            {
-                Title = questionDto.Title
-            };
-
-            var response = await _client.CreateQuestionAsync(request, cancellationToken: cancellationToken);
-
-            return MapToDto(response);
+            var response = await _httpClient.PostAsJsonAsync(_baseUrl, questionDto, _jsonOptions, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<QuestionDto>(_jsonOptions, cancellationToken)
+                   ?? throw new InvalidOperationException("Failed to deserialize QuestionDto.");
         }
 
         public async Task DeleteAsync(Guid questionId, CancellationToken cancellationToken)
         {
-            var request = new DeleteQuestionRequest
-            {
-                Id = questionId.ToString()
-            };
-
-            await _client.DeleteQuestionAsync(request, cancellationToken: cancellationToken);
+            var response = await _httpClient.DeleteAsync($"{_baseUrl}/{questionId}", cancellationToken);
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task<IEnumerable<QuestionDto>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var request = new ListQuestionsRequest();
-            var response = await _client.ListQuestionsAsync(request, cancellationToken: cancellationToken);
-
-            return response.Questions.Select(MapToDto);
+            var response = await _httpClient.GetAsync(_baseUrl, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<IEnumerable<QuestionDto>>(_jsonOptions, cancellationToken)
+                   ?? Enumerable.Empty<QuestionDto>();
         }
 
         public async Task<QuestionDto?> GetByIdAsync(Guid questionId, CancellationToken cancellationToken)
         {
-            try
-            {
-                var request = new GetQuestionRequest
-                {
-                    Id = questionId.ToString()
-                };
-
-                var response = await _client.GetQuestionAsync(request, cancellationToken: cancellationToken);
-                return MapToDto(response);
-            }
-            catch (Grpc.Core.RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.NotFound)
+            var response = await _httpClient.GetAsync($"{_baseUrl}/{questionId}", cancellationToken);
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 return null;
             }
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<QuestionDto>(_jsonOptions, cancellationToken);
         }
 
         public async Task UpdateAsync(QuestionDto questionDto, CancellationToken cancellationToken)
         {
-            var request = new UpdateQuestionRequest
-            {
-                Id = questionDto.Id.ToString(),
-                Title = questionDto.Title
-            };
-
-            await _client.UpdateQuestionAsync(request, cancellationToken: cancellationToken);
-        }
-
-        private static QuestionDto MapToDto(QuestionResponse response)
-        {
-            // Default to SingleLineString type if not specified
-            return new SingleLineStringQuestionDto
-            {
-                Id = Guid.Parse(response.Id),
-                Title = response.Title
-            };
+            var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{questionDto.Id}", questionDto, _jsonOptions, cancellationToken);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

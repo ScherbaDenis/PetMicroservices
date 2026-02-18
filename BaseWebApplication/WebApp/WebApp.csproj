@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\..\Answer\src\Answer.Api\Protos\question.proto" GrpcServices="Client" AdditionalImportDirs="$(NuGetPackageRoot)google.api.commonprotos/2.17.0/content/protos">
-      <Link>Protos\question.proto</Link>
+    <Protobuf Include="..\..\Answer\src\Answer.Api\Protos\answer.proto" GrpcServices="Client" AdditionalImportDirs="$(NuGetPackageRoot)google.api.commonprotos/2.17.0/content/protos">
+      <Link>Protos\answer.proto</Link>
     </Protobuf>
   </ItemGroup>
 
