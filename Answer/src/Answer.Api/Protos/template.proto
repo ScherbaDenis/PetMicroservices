@@ -13,7 +13,7 @@ service TemplateService {
     };
   }
   
-  rpc ListTemplates (ListTemplatesRequest) returns (ListTemplatesResponse) {
+  rpc ListTemplates (ListTemplatesRequest) returns (stream TemplateResponse) {
     option (google.api.http) = {
       get: "/api/templates"
     };
@@ -45,10 +45,6 @@ message GetTemplateRequest {
 }
 
 message ListTemplatesRequest {
-}
-
-message ListTemplatesResponse {
-  repeated TemplateResponse templates = 1;
 }
 
 message CreateTemplateRequest {

@@ -34,21 +34,18 @@ public class UserServiceImpl : UserService.UserServiceBase
         };
     }
 
-    public override async Task<ListUsersResponse> ListUsers(ListUsersRequest request, ServerCallContext context)
+    public override async Task ListUsers(ListUsersRequest request, IServerStreamWriter<UserResponse> responseStream, ServerCallContext context)
     {
         var users = await _userRepository.GetAllAsync();
-        var response = new ListUsersResponse();
         
         foreach (var user in users)
         {
-            response.Users.Add(new UserResponse
+            await responseStream.WriteAsync(new UserResponse
             {
                 Id = user.Id.ToString(),
                 Name = user.Name
             });
         }
-
-        return response;
     }
 
     public override async Task<UserResponse> CreateUser(CreateUserRequest request, ServerCallContext context)

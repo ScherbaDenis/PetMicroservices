@@ -34,21 +34,18 @@ public class TemplateServiceImpl : TemplateService.TemplateServiceBase
         };
     }
 
-    public override async Task<ListTemplatesResponse> ListTemplates(ListTemplatesRequest request, ServerCallContext context)
+    public override async Task ListTemplates(ListTemplatesRequest request, IServerStreamWriter<TemplateResponse> responseStream, ServerCallContext context)
     {
         var templates = await _templateRepository.GetAllAsync();
-        var response = new ListTemplatesResponse();
         
         foreach (var template in templates)
         {
-            response.Templates.Add(new TemplateResponse
+            await responseStream.WriteAsync(new TemplateResponse
             {
                 Id = template.Id.ToString(),
                 Title = template.Title
             });
         }
-
-        return response;
     }
 
     public override async Task<TemplateResponse> CreateTemplate(CreateTemplateRequest request, ServerCallContext context)

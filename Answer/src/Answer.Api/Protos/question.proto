@@ -13,7 +13,7 @@ service QuestionService {
     };
   }
   
-  rpc ListQuestions (ListQuestionsRequest) returns (ListQuestionsResponse) {
+  rpc ListQuestions (ListQuestionsRequest) returns (stream QuestionResponse) {
     option (google.api.http) = {
       get: "/api/questions"
     };
@@ -45,10 +45,6 @@ message GetQuestionRequest {
 }
 
 message ListQuestionsRequest {
-}
-
-message ListQuestionsResponse {
-  repeated QuestionResponse questions = 1;
 }
 
 message CreateQuestionRequest {

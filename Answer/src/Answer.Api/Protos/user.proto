@@ -13,7 +13,7 @@ service UserService {
     };
   }
   
-  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
+  rpc ListUsers (ListUsersRequest) returns (stream UserResponse) {
     option (google.api.http) = {
       get: "/api/users"
     };
@@ -45,10 +45,6 @@ message GetUserRequest {
 }
 
 message ListUsersRequest {
-}
-
-message ListUsersResponse {
-  repeated UserResponse users = 1;
 }
 
 message CreateUserRequest {

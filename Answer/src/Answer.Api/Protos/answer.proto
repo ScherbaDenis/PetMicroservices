@@ -13,7 +13,7 @@ service AnswerService {
     };
   }
   
-  rpc ListAnswers (ListAnswersRequest) returns (ListAnswersResponse) {
+  rpc ListAnswers (ListAnswersRequest) returns (stream AnswerResponse) {
     option (google.api.http) = {
       get: "/api/answers"
     };
@@ -45,10 +45,6 @@ message GetAnswerRequest {
 }
 
 message ListAnswersRequest {
-}
-
-message ListAnswersResponse {
-  repeated AnswerResponse answers = 1;
 }
 
 message CreateAnswerRequest {

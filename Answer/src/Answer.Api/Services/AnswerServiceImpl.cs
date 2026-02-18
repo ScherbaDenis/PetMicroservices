@@ -54,10 +54,9 @@ public class AnswerServiceImpl : AnswerService.AnswerServiceBase
         };
     }
 
-    public override async Task<ListAnswersResponse> ListAnswers(ListAnswersRequest request, ServerCallContext context)
+    public override async Task ListAnswers(ListAnswersRequest request, IServerStreamWriter<AnswerResponse> responseStream, ServerCallContext context)
     {
         var answers = await _answerRepository.GetAllAsync();
-        var response = new ListAnswersResponse();
         
         // Note: This has an N+1 query pattern. For a production scenario with a real database,
         // consider implementing eager loading or batch fetching of related entities.
@@ -68,7 +67,7 @@ public class AnswerServiceImpl : AnswerService.AnswerServiceBase
             var question = await _questionRepository.GetByIdAsync(answer.QuestionId);
             var template = await _templateRepository.GetByIdAsync(answer.TemplateId);
 
-            response.Answers.Add(new AnswerResponse
+            await responseStream.WriteAsync(new AnswerResponse
             {
                 Id = answer.Id.ToString(),
                 UserId = answer.UserId.ToString(),
@@ -81,8 +80,6 @@ public class AnswerServiceImpl : AnswerService.AnswerServiceBase
                 AnswerValue = answer.AnswerValue
             });
         }
-
-        return response;
     }
 
     public override async Task<AnswerResponse> CreateAnswer(CreateAnswerRequest request, ServerCallContext context)
