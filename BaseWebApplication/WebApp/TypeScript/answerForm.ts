@@ -7,47 +7,62 @@ interface UserDto {
 }
 
 /**
- * Question data transfer object interface
+ * Question data transfer object interface with questionType
  */
 interface QuestionDto {
     id: string;
     title: string;
+    description?: string;
+    questionType: string;
+    options?: string[];
 }
 
 /**
- * Template data transfer object interface
+ * Template data transfer object interface with questions
  */
 interface TemplateDto {
     id: string;
     title: string;
+    description?: string;
+    questions?: QuestionDto[];
 }
 
 /**
  * AnswerFormManager - Handles dynamic loading of dropdown data for Answer Create/Edit forms
+ * with cascading dropdown logic
  */
 class AnswerFormManager {
     private userSelectElement: HTMLSelectElement | null;
-    private questionSelectElement: HTMLSelectElement | null;
     private templateSelectElement: HTMLSelectElement | null;
+    private questionSelectElement: HTMLSelectElement | null;
+    private answerContainerElement: HTMLElement | null;
+    private answerInputElement: HTMLElement | null;
     private currentUserId: string | null = null;
-    private currentQuestionId: string | null = null;
     private currentTemplateId: string | null = null;
+    private currentQuestionId: string | null = null;
+    private templates: TemplateDto[] = [];
+    private questions: QuestionDto[] = [];
 
     constructor() {
         this.userSelectElement = document.getElementById('UserId') as HTMLSelectElement;
-        this.questionSelectElement = document.getElementById('QuestionId') as HTMLSelectElement;
         this.templateSelectElement = document.getElementById('TemplateId') as HTMLSelectElement;
+        this.questionSelectElement = document.getElementById('QuestionId') as HTMLSelectElement;
+        this.answerContainerElement = document.getElementById('answerContainer') as HTMLElement;
+        this.answerInputElement = document.getElementById('AnswerValue') as HTMLElement;
         
         // Get current values from the select elements (for Edit mode)
         if (this.userSelectElement && this.userSelectElement.value) {
             this.currentUserId = this.userSelectElement.value;
         }
-        if (this.questionSelectElement && this.questionSelectElement.value) {
-            this.currentQuestionId = this.questionSelectElement.value;
-        }
         if (this.templateSelectElement && this.templateSelectElement.value) {
             this.currentTemplateId = this.templateSelectElement.value;
         }
+        if (this.questionSelectElement && this.questionSelectElement.value) {
+            this.currentQuestionId = this.questionSelectElement.value;
+        }
+        
+        // Setup event listeners for cascading dropdowns
+        this.setupEventListeners();
     }
 
     /**
@@ -78,11 +93,11 @@ class AnswerFormManager {
 
     /**
      * Fetches all questions from the API
-     * Calls: GET /proxy/template/question
+     * Calls: GET /proxy/question
      */
     async fetchQuestions(): Promise<QuestionDto[]> {
         try {
-            const response = await fetch('/proxy/template/question', {
+            const response = await fetch('/proxy/question', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -126,6 +141,222 @@ class AnswerFormManager {
             console.error('Error fetching templates:', error);
             throw error;
         }
+    }
+
+    /**
+     * Fetches templates for a specific user
+     * Calls: GET /proxy/template/user/{userId}
+     */
+    async fetchTemplatesByUserId(userId: string): Promise<TemplateDto[]> {
+        try {
+            const response = await fetch(`/proxy/template/user/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                mode: 'cors',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const templates: TemplateDto[] = await response.json();
+            return templates;
+        } catch (error) {
+            console.error('Error fetching templates by user:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Setup event listeners for cascading dropdowns
+     */
+    setupEventListeners(): void {
+        // User selection change
+        if (this.userSelectElement) {
+            this.userSelectElement.addEventListener('change', async (e) => {
+                const userId = (e.target as HTMLSelectElement).value;
+                if (userId) {
+                    await this.populateTemplateDropdownForUser(userId);
+                } else {
+                    this.clearTemplateDropdown();
+                }
+                // Clear dependent dropdowns
+                this.clearQuestionDropdown();
+                this.hideAnswerInput();
+            });
+        }
+
+        // Template selection change
+        if (this.templateSelectElement) {
+            this.templateSelectElement.addEventListener('change', async (e) => {
+                const templateId = (e.target as HTMLSelectElement).value;
+                if (templateId) {
+                    await this.populateQuestionDropdownForTemplate(templateId);
+                } else {
+                    this.clearQuestionDropdown();
+                }
+                // Clear dependent dropdown
+                this.hideAnswerInput();
+            });
+        }
+
+        // Question selection change
+        if (this.questionSelectElement) {
+            this.questionSelectElement.addEventListener('change', (e) => {
+                const questionId = (e.target as HTMLSelectElement).value;
+                if (questionId) {
+                    this.showAnswerInputForQuestion(questionId);
+                } else {
+                    this.hideAnswerInput();
+                }
+            });
+        }
+    }
+
+    /**
+     * Clears the template dropdown
+     */
+    clearTemplateDropdown(): void {
+        if (this.templateSelectElement) {
+            while (this.templateSelectElement.options.length > 0) {
+                this.templateSelectElement.remove(0);
+            }
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = '-- Select User First --';
+            this.templateSelectElement.appendChild(emptyOption);
+        }
+    }
+
+    /**
+     * Clears the question dropdown
+     */
+    clearQuestionDropdown(): void {
+        if (this.questionSelectElement) {
+            while (this.questionSelectElement.options.length > 0) {
+                this.questionSelectElement.remove(0);
+            }
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = '-- Select Template First --';
+            this.questionSelectElement.appendChild(emptyOption);
+        }
+    }
+
+    /**
+     * Hides the answer input container
+     */
+    hideAnswerInput(): void {
+        if (this.answerContainerElement) {
+            this.answerContainerElement.style.display = 'none';
+        }
+    }
+
+    /**
+     * Maps QuestionType to AnswerType enum value
+     */
+    mapQuestionTypeToAnswerType(questionType: string): number {
+        switch (questionType) {
+            case 'SingleLineString':
+                return 0; // SingleLineString
+            case 'MultiLineText':
+                return 1; // MultiLineText
+            case 'PositiveInteger':
+                return 2; // PositiveInteger
+            case 'Checkbox':
+                return 3; // Checkbox
+            case 'Boolean':
+                return 4; // Boolean
+            default:
+                return 0; // Default to SingleLineString
+        }
+    }
+
+    /**
+     * Shows and configures the answer input based on question type
+     */
+    showAnswerInputForQuestion(questionId: string): void {
+        const question = this.questions.find(q => q.id === questionId);
+        if (!question || !this.answerContainerElement) {
+            return;
+        }
+
+        const questionType = question.questionType || '';
+        
+        // Set the hidden AnswerType field based on QuestionType
+        const answerTypeInput = document.getElementById('AnswerType') as HTMLInputElement;
+        if (answerTypeInput) {
+            answerTypeInput.value = this.mapQuestionTypeToAnswerType(questionType).toString();
+        }
+
+        let inputHtml = '';
+
+        switch (questionType) {
+            case 'SingleLineString':
+                inputHtml = '<input type="text" id="AnswerValue" name="AnswerValue" class="form-control" />';
+                break;
+            case 'MultiLineText':
+                inputHtml = '<textarea id="AnswerValue" name="AnswerValue" class="form-control" rows="4"></textarea>';
+                break;
+            case 'PositiveInteger':
+                inputHtml = '<input type="number" id="AnswerValue" name="AnswerValue" class="form-control" min="0" step="1" />';
+                break;
+            case 'Checkbox':
+                if (question.options && question.options.length > 0) {
+                    inputHtml = '<div class="checkbox-group">';
+                    question.options.forEach((option, index) => {
+                        inputHtml += `
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="option_${index}" name="AnswerOptions" value="${option}" />
+                                <label class="form-check-label" for="option_${index}">${option}</label>
+                            </div>`;
+                    });
+                    inputHtml += '</div>';
+                    inputHtml += '<input type="hidden" id="AnswerValue" name="AnswerValue" />';
+                } else {
+                    inputHtml = '<p class="text-warning">No options available for this checkbox question.</p>';
+                }
+                break;
+            case 'Boolean':
+                inputHtml = `
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="answer_true" name="AnswerValue" value="true" />
+                        <label class="form-check-label" for="answer_true">Yes</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="answer_false" name="AnswerValue" value="false" />
+                        <label class="form-check-label" for="answer_false">No</label>
+                    </div>`;
+                break;
+            default:
+                inputHtml = '<textarea id="AnswerValue" name="AnswerValue" class="form-control" rows="4"></textarea>';
+        }
+
+        // Find the input container within answerContainerElement
+        const inputContainer = this.answerContainerElement.querySelector('.answer-input-container');
+        if (inputContainer) {
+            inputContainer.innerHTML = inputHtml;
+
+            // Setup checkbox change handler if needed
+            if (questionType === 'Checkbox') {
+                const checkboxes = inputContainer.querySelectorAll('input[name="AnswerOptions"]') as NodeListOf<HTMLInputElement>;
+                const hiddenInput = inputContainer.querySelector('#AnswerValue') as HTMLInputElement;
+                checkboxes.forEach(cb => {
+                    cb.addEventListener('change', () => {
+                        const selected = Array.from(checkboxes)
+                            .filter(c => c.checked)
+                            .map(c => c.value);
+                        if (hiddenInput) {
+                            hiddenInput.value = JSON.stringify(selected);
+                        }
+                    });
+                });
+            }
+        }
+
+        this.answerContainerElement.style.display = 'block';
     }
 
     /**
@@ -175,62 +406,17 @@ class AnswerFormManager {
     }
 
     /**
-     * Populates the question dropdown
+     * Populates the template dropdown for a specific user
      */
-    async populateQuestionDropdown(): Promise<void> {
-        if (!this.questionSelectElement) {
-            console.error('Question select element not found');
-            return;
-        }
-
-        try {
-            const questions = await this.fetchQuestions();
-            
-            // Clear existing options
-            while (this.questionSelectElement.options.length > 0) {
-                this.questionSelectElement.remove(0);
-            }
-
-            // Add empty option
-            const emptyOption = document.createElement('option');
-            emptyOption.value = '';
-            emptyOption.textContent = '-- Select Question --';
-            this.questionSelectElement.appendChild(emptyOption);
-
-            // Add question options
-            questions.forEach(question => {
-                const option = document.createElement('option');
-                option.value = question.id;
-                option.textContent = question.title;
-                
-                // Select the current question if in Edit mode
-                if (this.currentQuestionId && question.id === this.currentQuestionId) {
-                    option.selected = true;
-                }
-                
-                this.questionSelectElement!.appendChild(option);
-            });
-
-            console.log('Question dropdown populated successfully with', questions.length, 'questions');
-        } catch (error) {
-            console.error('Error populating question dropdown:', error);
-            if (this.questionSelectElement) {
-                this.questionSelectElement.innerHTML = '<option value="">Error loading questions</option>';
-            }
-        }
-    }
-
-    /**
-     * Populates the template dropdown
-     */
-    async populateTemplateDropdown(): Promise<void> {
+    async populateTemplateDropdownForUser(userId: string): Promise<void> {
         if (!this.templateSelectElement) {
             console.error('Template select element not found');
             return;
         }
 
         try {
-            const templates = await this.fetchTemplates();
+            const templates = await this.fetchTemplatesByUserId(userId);
+            this.templates = templates; // Store for later use
             
             // Clear existing options
             while (this.templateSelectElement.options.length > 0) {
@@ -257,11 +443,72 @@ class AnswerFormManager {
                 this.templateSelectElement!.appendChild(option);
             });
 
-            console.log('Template dropdown populated successfully with', templates.length, 'templates');
+            console.log('Template dropdown populated successfully with', templates.length, 'templates for user', userId);
         } catch (error) {
-            console.error('Error populating template dropdown:', error);
+            console.error('Error populating template dropdown for user:', error);
             if (this.templateSelectElement) {
                 this.templateSelectElement.innerHTML = '<option value="">Error loading templates</option>';
+            }
+        }
+    }
+
+    /**
+     * Populates the question dropdown for a specific template
+     */
+    async populateQuestionDropdownForTemplate(templateId: string): Promise<void> {
+        if (!this.questionSelectElement) {
+            console.error('Question select element not found');
+            return;
+        }
+
+        try {
+            // Get the template to extract its questions
+            const response = await fetch(`/proxy/template/${templateId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                mode: 'cors',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const template: TemplateDto = await response.json();
+            const questions = template.questions || [];
+            this.questions = questions; // Store for later use
+            
+            // Clear existing options
+            while (this.questionSelectElement.options.length > 0) {
+                this.questionSelectElement.remove(0);
+            }
+
+            // Add empty option
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = '-- Select Question --';
+            this.questionSelectElement.appendChild(emptyOption);
+
+            // Add question options
+            questions.forEach(question => {
+                const option = document.createElement('option');
+                option.value = question.id;
+                option.textContent = question.title;
+                
+                // Select the current question if in Edit mode
+                if (this.currentQuestionId && question.id === this.currentQuestionId) {
+                    option.selected = true;
+                }
+                
+                this.questionSelectElement!.appendChild(option);
+            });
+
+            console.log('Question dropdown populated successfully with', questions.length, 'questions for template', templateId);
+        } catch (error) {
+            console.error('Error populating question dropdown for template:', error);
+            if (this.questionSelectElement) {
+                this.questionSelectElement.innerHTML = '<option value="">Error loading questions</option>';
             }
         }
     }
@@ -270,11 +517,28 @@ class AnswerFormManager {
      * Initializes all dropdowns
      */
     async initialize(): Promise<void> {
-        await Promise.all([
-            this.populateUserDropdown(),
-            this.populateQuestionDropdown(),
-            this.populateTemplateDropdown()
-        ]);
+        // Always populate users
+        await this.populateUserDropdown();
+        
+        // If we have a current user (Edit mode), populate templates for that user
+        if (this.currentUserId) {
+            await this.populateTemplateDropdownForUser(this.currentUserId);
+            
+            // If we have a current template (Edit mode), populate questions for that template
+            if (this.currentTemplateId) {
+                await this.populateQuestionDropdownForTemplate(this.currentTemplateId);
+                
+                // If we have a current question (Edit mode), show the answer input
+                if (this.currentQuestionId) {
+                    this.showAnswerInputForQuestion(this.currentQuestionId);
+                }
+            }
+        } else {
+            // Create mode: start with empty templates and questions
+            this.clearTemplateDropdown();
+            this.clearQuestionDropdown();
+            this.hideAnswerInput();
+        }
     }
 }
 
