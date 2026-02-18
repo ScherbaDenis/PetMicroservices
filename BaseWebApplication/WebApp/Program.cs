@@ -36,8 +36,8 @@ builder.Services.AddHttpClient<IUserService, UserService>();
 
 builder.Services.AddHttpClient<ITagService, TagService>();
 builder.Services.AddHttpClient<ICommentService, CommentService>();
-builder.Services.AddScoped<IQuestionService, QuestionService>(); // Using gRPC client
-builder.Services.AddHttpClient<IAnswerService, AnswerService>();
+builder.Services.AddHttpClient<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IAnswerService, AnswerService>(); // Using gRPC client
 
 var app = builder.Build();
 

@@ -7,20 +7,20 @@ namespace Answer.Api.Services;
 public class AnswerServiceImpl : AnswerService.AnswerServiceBase
 {
     private readonly IRepository<Domain.Entities.Answer> _answerRepository;
-    private readonly UserService.UserServiceClient _userServiceClient;
-    private readonly QuestionService.QuestionServiceClient _questionServiceClient;
-    private readonly TemplateService.TemplateServiceClient _templateServiceClient;
+    private readonly IRepository<Domain.Entities.User> _userRepository;
+    private readonly IRepository<Domain.Entities.Question> _questionRepository;
+    private readonly IRepository<Domain.Entities.Template> _templateRepository;
 
     public AnswerServiceImpl(
         IRepository<Domain.Entities.Answer> answerRepository,
-        UserService.UserServiceClient userServiceClient,
-        QuestionService.QuestionServiceClient questionServiceClient,
-        TemplateService.TemplateServiceClient templateServiceClient)
+        IRepository<Domain.Entities.User> userRepository,
+        IRepository<Domain.Entities.Question> questionRepository,
+        IRepository<Domain.Entities.Template> templateRepository)
     {
         _answerRepository = answerRepository;
-        _userServiceClient = userServiceClient;
-        _questionServiceClient = questionServiceClient;
-        _templateServiceClient = templateServiceClient;
+        _userRepository = userRepository;
+        _questionRepository = questionRepository;
+        _templateRepository = templateRepository;
     }
 
     public override async Task<AnswerResponse> GetAnswer(GetAnswerRequest request, ServerCallContext context)
@@ -36,50 +36,19 @@ public class AnswerServiceImpl : AnswerService.AnswerServiceBase
             throw new RpcException(new Status(StatusCode.NotFound, "Answer not found"));
         }
 
-        // Call gRPC services to get related entity information
-        var userName = string.Empty;
-        var questionTitle = string.Empty;
-        var templateTitle = string.Empty;
-
-        try
-        {
-            var userResponse = await _userServiceClient.GetUserAsync(new GetUserRequest { Id = answer.UserId.ToString() });
-            userName = userResponse.Name;
-        }
-        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-        {
-            // User not found, leave empty
-        }
-
-        try
-        {
-            var questionResponse = await _questionServiceClient.GetQuestionAsync(new GetQuestionRequest { Id = answer.QuestionId.ToString() });
-            questionTitle = questionResponse.Title;
-        }
-        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-        {
-            // Question not found, leave empty
-        }
-
-        try
-        {
-            var templateResponse = await _templateServiceClient.GetTemplateAsync(new GetTemplateRequest { Id = answer.TemplateId.ToString() });
-            templateTitle = templateResponse.Title;
-        }
-        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-        {
-            // Template not found, leave empty
-        }
+        var user = await _userRepository.GetByIdAsync(answer.UserId);
+        var question = await _questionRepository.GetByIdAsync(answer.QuestionId);
+        var template = await _templateRepository.GetByIdAsync(answer.TemplateId);
 
         return new AnswerResponse
         {
             Id = answer.Id.ToString(),
             UserId = answer.UserId.ToString(),
-            UserName = userName,
+            UserName = user?.Name ?? string.Empty,
             QuestionId = answer.QuestionId.ToString(),
-            QuestionTitle = questionTitle,
+            QuestionTitle = question?.Title ?? string.Empty,
             TemplateId = answer.TemplateId.ToString(),
-            TemplateTitle = templateTitle,
+            TemplateTitle = template?.Title ?? string.Empty,
             AnswerType = MapAnswerType(answer.AnswerType),
             AnswerValue = answer.AnswerValue
         };
@@ -90,54 +59,24 @@ public class AnswerServiceImpl : AnswerService.AnswerServiceBase
         var answers = await _answerRepository.GetAllAsync();
         var response = new ListAnswersResponse();
         
-        // Note: This makes multiple gRPC calls to retrieve related entity information.
-        // For a production scenario with high performance requirements, consider implementing
-        // caching, batch fetching, or returning only IDs and letting clients fetch related data.
+        // Note: This has an N+1 query pattern. For a production scenario with a real database,
+        // consider implementing eager loading or batch fetching of related entities.
+        // For this in-memory demonstration, the performance impact is negligible.
         foreach (var answer in answers)
         {
-            var userName = string.Empty;
-            var questionTitle = string.Empty;
-            var templateTitle = string.Empty;
-
-            try
-            {
-                var userResponse = await _userServiceClient.GetUserAsync(new GetUserRequest { Id = answer.UserId.ToString() });
-                userName = userResponse.Name;
-            }
-            catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-            {
-                // User not found, leave empty
-            }
-
-            try
-            {
-                var questionResponse = await _questionServiceClient.GetQuestionAsync(new GetQuestionRequest { Id = answer.QuestionId.ToString() });
-                questionTitle = questionResponse.Title;
-            }
-            catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-            {
-                // Question not found, leave empty
-            }
-
-            try
-            {
-                var templateResponse = await _templateServiceClient.GetTemplateAsync(new GetTemplateRequest { Id = answer.TemplateId.ToString() });
-                templateTitle = templateResponse.Title;
-            }
-            catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-            {
-                // Template not found, leave empty
-            }
+            var user = await _userRepository.GetByIdAsync(answer.UserId);
+            var question = await _questionRepository.GetByIdAsync(answer.QuestionId);
+            var template = await _templateRepository.GetByIdAsync(answer.TemplateId);
 
             response.Answers.Add(new AnswerResponse
             {
                 Id = answer.Id.ToString(),
                 UserId = answer.UserId.ToString(),
-                UserName = userName,
+                UserName = user?.Name ?? string.Empty,
                 QuestionId = answer.QuestionId.ToString(),
-                QuestionTitle = questionTitle,
+                QuestionTitle = question?.Title ?? string.Empty,
                 TemplateId = answer.TemplateId.ToString(),
-                TemplateTitle = templateTitle,
+                TemplateTitle = template?.Title ?? string.Empty,
                 AnswerType = MapAnswerType(answer.AnswerType),
                 AnswerValue = answer.AnswerValue
             });
@@ -174,50 +113,19 @@ public class AnswerServiceImpl : AnswerService.AnswerServiceBase
 
         await _answerRepository.AddAsync(answer);
 
-        // Call gRPC services to get related entity information
-        var userName = string.Empty;
-        var questionTitle = string.Empty;
-        var templateTitle = string.Empty;
-
-        try
-        {
-            var userResponse = await _userServiceClient.GetUserAsync(new GetUserRequest { Id = answer.UserId.ToString() });
-            userName = userResponse.Name;
-        }
-        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-        {
-            // User not found, leave empty
-        }
-
-        try
-        {
-            var questionResponse = await _questionServiceClient.GetQuestionAsync(new GetQuestionRequest { Id = answer.QuestionId.ToString() });
-            questionTitle = questionResponse.Title;
-        }
-        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-        {
-            // Question not found, leave empty
-        }
-
-        try
-        {
-            var templateResponse = await _templateServiceClient.GetTemplateAsync(new GetTemplateRequest { Id = answer.TemplateId.ToString() });
-            templateTitle = templateResponse.Title;
-        }
-        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-        {
-            // Template not found, leave empty
-        }
+        var user = await _userRepository.GetByIdAsync(answer.UserId);
+        var question = await _questionRepository.GetByIdAsync(answer.QuestionId);
+        var template = await _templateRepository.GetByIdAsync(answer.TemplateId);
 
         return new AnswerResponse
         {
             Id = answer.Id.ToString(),
             UserId = answer.UserId.ToString(),
-            UserName = userName,
+            UserName = user?.Name ?? string.Empty,
             QuestionId = answer.QuestionId.ToString(),
-            QuestionTitle = questionTitle,
+            QuestionTitle = question?.Title ?? string.Empty,
             TemplateId = answer.TemplateId.ToString(),
-            TemplateTitle = templateTitle,
+            TemplateTitle = template?.Title ?? string.Empty,
             AnswerType = MapAnswerType(answer.AnswerType),
             AnswerValue = answer.AnswerValue
         };
@@ -240,50 +148,19 @@ public class AnswerServiceImpl : AnswerService.AnswerServiceBase
         answer.AnswerValue = request.AnswerValue;
         await _answerRepository.UpdateAsync(answer);
 
-        // Call gRPC services to get related entity information
-        var userName = string.Empty;
-        var questionTitle = string.Empty;
-        var templateTitle = string.Empty;
-
-        try
-        {
-            var userResponse = await _userServiceClient.GetUserAsync(new GetUserRequest { Id = answer.UserId.ToString() });
-            userName = userResponse.Name;
-        }
-        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-        {
-            // User not found, leave empty
-        }
-
-        try
-        {
-            var questionResponse = await _questionServiceClient.GetQuestionAsync(new GetQuestionRequest { Id = answer.QuestionId.ToString() });
-            questionTitle = questionResponse.Title;
-        }
-        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-        {
-            // Question not found, leave empty
-        }
-
-        try
-        {
-            var templateResponse = await _templateServiceClient.GetTemplateAsync(new GetTemplateRequest { Id = answer.TemplateId.ToString() });
-            templateTitle = templateResponse.Title;
-        }
-        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-        {
-            // Template not found, leave empty
-        }
+        var user = await _userRepository.GetByIdAsync(answer.UserId);
+        var question = await _questionRepository.GetByIdAsync(answer.QuestionId);
+        var template = await _templateRepository.GetByIdAsync(answer.TemplateId);
 
         return new AnswerResponse
         {
             Id = answer.Id.ToString(),
             UserId = answer.UserId.ToString(),
-            UserName = userName,
+            UserName = user?.Name ?? string.Empty,
             QuestionId = answer.QuestionId.ToString(),
-            QuestionTitle = questionTitle,
+            QuestionTitle = question?.Title ?? string.Empty,
             TemplateId = answer.TemplateId.ToString(),
-            TemplateTitle = templateTitle,
+            TemplateTitle = template?.Title ?? string.Empty,
             AnswerType = MapAnswerType(answer.AnswerType),
             AnswerValue = answer.AnswerValue
         };
