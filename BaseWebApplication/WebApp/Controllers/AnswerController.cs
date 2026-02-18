@@ -51,7 +51,6 @@ namespace WebApp.Controllers
             var updateDto = new UpdateAnswerDto
             {
                 Id = item.Id,
-                AnswerType = item.AnswerType,
                 AnswerValue = item.AnswerValue
             };
             

@@ -18,14 +18,12 @@ namespace WebApp.Services.DTOs
         public Guid UserId { get; set; }
         public Guid QuestionId { get; set; }
         public Guid TemplateId { get; set; }
-        public AnswerType AnswerType { get; set; }
         public string AnswerValue { get; set; } = string.Empty;
     }
 
     public class UpdateAnswerDto
     {
         public Guid Id { get; set; }
-        public AnswerType AnswerType { get; set; }
         public string AnswerValue { get; set; } = string.Empty;
     }
 

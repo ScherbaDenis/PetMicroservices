@@ -25,7 +25,7 @@ namespace WebApp.Services.Imp
                 UserId = answerDto.UserId.ToString(),
                 QuestionId = answerDto.QuestionId.ToString(),
                 TemplateId = answerDto.TemplateId.ToString(),
-                AnswerType = MapAnswerType(answerDto.AnswerType),
+                AnswerType = Answer.Api.Protos.AnswerType.SingleLineString, // Temporary: will be derived from Question in backend
                 AnswerValue = answerDto.AnswerValue
             };
 
@@ -75,7 +75,7 @@ namespace WebApp.Services.Imp
             var request = new UpdateAnswerRequest
             {
                 Id = answerDto.Id.ToString(),
-                AnswerType = MapAnswerType(answerDto.AnswerType),
+                AnswerType = Answer.Api.Protos.AnswerType.SingleLineString, // Temporary: not actually used, kept for backward compatibility
                 AnswerValue = answerDto.AnswerValue
             };
 
