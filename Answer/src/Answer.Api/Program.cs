@@ -1,5 +1,7 @@
 using Answer.Api.Services;
 using Answer.Infrastructure;
+using Answer.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGet("/", () => "Answer API - gRPC with REST support");
+
+// Apply database migrations when using SQL Server
+var useInMemory = app.Configuration.GetValue<bool>("UseInMemoryDatabase", true);
+if (!useInMemory && !app.Environment.IsEnvironment("Testing"))
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AnswerDbContext>();
+    dbContext.Database.Migrate();
+}
 
 app.Run();
 
