@@ -11,8 +11,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc().AddJsonTranscoding();
 builder.Services.AddGrpcReflection();
 
-// Add Infrastructure services
-builder.Services.AddInfrastructure(builder.Configuration);
+// Add DbContext (skip in Testing environment - test factory provides its own)
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<AnswerDbContext>(options =>
+        options.UseSqlServer(connectionString));
+}
+
+// Add Infrastructure services (repositories)
+builder.Services.AddInfrastructure();
 
 // MassTransit with RabbitMQ
 builder.Services.AddMassTransit(x =>
@@ -52,9 +60,8 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/", () => "Answer API - gRPC with REST support");
 
-// Apply database migrations when using SQL Server
-var useInMemory = app.Configuration.GetValue<bool>("UseInMemoryDatabase", true);
-if (!useInMemory && !app.Environment.IsEnvironment("Testing"))
+// Apply database migrations on startup (skip in Testing environment)
+if (!app.Environment.IsEnvironment("Testing"))
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<AnswerDbContext>();
