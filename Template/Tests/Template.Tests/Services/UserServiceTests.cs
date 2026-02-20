@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Template.Domain.Model;
@@ -12,6 +13,7 @@ namespace Template.Tests.Services
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IUserRepository> _mockRepo;
         private readonly Mock<ILogger<UserService>> _mockLogger;
+        private readonly Mock<IPublishEndpoint> _mockPublishEndpoint;
         private readonly UserService _service;
 
         public UserServiceTests()
@@ -19,9 +21,10 @@ namespace Template.Tests.Services
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<IUserRepository>();
             _mockLogger = new Mock<ILogger<UserService>>();
+            _mockPublishEndpoint = new Mock<IPublishEndpoint>();
             _mockUnitOfWork.Setup(uow => uow.UserRepository).Returns(_mockRepo.Object);
 
-            _service = new UserService(_mockUnitOfWork.Object, _mockLogger.Object);
+            _service = new UserService(_mockUnitOfWork.Object, _mockLogger.Object, _mockPublishEndpoint.Object);
         }
 
         [Fact]
@@ -33,6 +36,10 @@ namespace Template.Tests.Services
 
             _mockRepo.Verify(r => r.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);
             _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockPublishEndpoint.Verify(
+                p => p.Publish(It.Is<Shared.Messaging.Events.UserCreatedEvent>(e => e.Name == userDto.Name),
+                               It.IsAny<CancellationToken>()),
+                Times.Once);
         }
 
         [Fact]

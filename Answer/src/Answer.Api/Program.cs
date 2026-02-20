@@ -26,6 +26,8 @@ builder.Services.AddInfrastructure();
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<TemplateCreatedEventConsumer>();
+    x.AddConsumer<UserCreatedEventConsumer>();
+    x.AddConsumer<QuestionCreatedEventConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {

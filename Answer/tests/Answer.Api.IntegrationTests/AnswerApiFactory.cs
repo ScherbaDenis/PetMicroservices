@@ -27,6 +27,8 @@ public class AnswerApiFactory : WebApplicationFactory<Program>
             services.AddMassTransitTestHarness(x =>
             {
                 x.AddConsumer<TemplateCreatedEventConsumer>();
+                x.AddConsumer<UserCreatedEventConsumer>();
+                x.AddConsumer<QuestionCreatedEventConsumer>();
             });
         });
     }

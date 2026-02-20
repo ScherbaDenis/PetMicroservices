@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using MassTransit;
 using Microsoft.Extensions.Logging;
 using Template.Domain.DTOs;
 using Template.Domain.Model;
@@ -18,6 +19,7 @@ namespace Template.Tests.Services
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IQuestionRepository> _mockRepo;
         private readonly Mock<ILogger<QuestionService>> _mockLogger;
+        private readonly Mock<IPublishEndpoint> _mockPublishEndpoint;
         private readonly QuestionService _service;
 
         public QuestionServiceTests()
@@ -25,9 +27,10 @@ namespace Template.Tests.Services
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<IQuestionRepository>();
             _mockLogger = new Mock<ILogger<QuestionService>>();
+            _mockPublishEndpoint = new Mock<IPublishEndpoint>();
             _mockUnitOfWork.Setup(uow => uow.QuestionRepository).Returns(_mockRepo.Object);
 
-            _service = new QuestionService(_mockUnitOfWork.Object, _mockLogger.Object);
+            _service = new QuestionService(_mockUnitOfWork.Object, _mockLogger.Object, _mockPublishEndpoint.Object);
         }
 
         [Fact]
@@ -39,6 +42,10 @@ namespace Template.Tests.Services
 
             _mockRepo.Verify(r => r.AddAsync(It.IsAny<Question>(), It.IsAny<CancellationToken>()), Times.Once);
             _mockUnitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockPublishEndpoint.Verify(
+                p => p.Publish(It.Is<Shared.Messaging.Events.QuestionCreatedEvent>(e => e.Title == dto.Title),
+                               It.IsAny<CancellationToken>()),
+                Times.Once);
         }
 
         [Fact]
