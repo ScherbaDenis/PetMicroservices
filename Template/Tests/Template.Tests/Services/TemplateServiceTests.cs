@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Template.Domain.DTOs;
@@ -12,6 +13,7 @@ namespace Template.Tests.Services
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<ITemplateRepository> _mockRepo;
         private readonly Mock<ILogger<TemplateService>> _mockLogger;
+        private readonly Mock<IPublishEndpoint> _mockPublishEndpoint;
         private readonly TemplateService _service;
 
         public TemplateServiceTests()
@@ -19,9 +21,10 @@ namespace Template.Tests.Services
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockRepo = new Mock<ITemplateRepository>();
             _mockLogger = new Mock<ILogger<TemplateService>>();
+            _mockPublishEndpoint = new Mock<IPublishEndpoint>();
             _mockUnitOfWork.Setup(uow => uow.TemplateRepository).Returns(_mockRepo.Object);
 
-            _service = new TemplateService(_mockUnitOfWork.Object, _mockLogger.Object);
+            _service = new TemplateService(_mockUnitOfWork.Object, _mockLogger.Object, _mockPublishEndpoint.Object);
         }
 
         [Fact]

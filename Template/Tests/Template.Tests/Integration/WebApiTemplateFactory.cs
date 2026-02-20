@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -22,6 +23,9 @@ namespace Template.Tests.Integration
                 {
                     options.UseInMemoryDatabase(_databaseName);
                 });
+
+                // Replace RabbitMQ transport with in-memory for tests
+                services.AddMassTransitTestHarness();
             });
         }
 

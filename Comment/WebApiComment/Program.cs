@@ -5,6 +5,8 @@ using Comment.Domain.Services;
 using Comment.Service.Services;
 using Comment.Domain.Models;
 using CommentEntity = Comment.Domain.Models.Comment;
+using MassTransit;
+using WebApiComment.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,6 +111,23 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 
 // Unit of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// MassTransit with RabbitMQ
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<TemplateCreatedEventConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(builder.Configuration["RabbitMQ:Host"] ?? "localhost", "/", h =>
+        {
+            h.Username(builder.Configuration["RabbitMQ:Username"] ?? "guest");
+            h.Password(builder.Configuration["RabbitMQ:Password"] ?? "guest");
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 var app = builder.Build();
 
