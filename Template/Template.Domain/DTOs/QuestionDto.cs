@@ -14,6 +14,7 @@ namespace Template.Domain.DTOs
         public Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
+        public Guid? TemplateId { get; set; }
         
         // Explicit discriminator property for JSON serialization
         [JsonPropertyName("questionType")]

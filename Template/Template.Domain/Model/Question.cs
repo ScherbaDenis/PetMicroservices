@@ -6,6 +6,7 @@ namespace Template.Domain.Model
     {
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
+        public Guid? TemplateId { get; set; }
     }
 
     public class SingleLineStringQuestion : Question

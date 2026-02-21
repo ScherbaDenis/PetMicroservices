@@ -35,12 +35,11 @@ namespace Template.DataAccess.MsSql.Configurations
                 .HasValue<BooleanQuestion>("Boolean");
 
             // If Question is related to Template via TemplateId
-            builder.Property<Guid?>("TemplateId");
-            builder.HasIndex("TemplateId");
+            builder.HasIndex(q => q.TemplateId);
 
             builder.HasOne<Domain.Model.Template>()
                 .WithMany(t => t.Questions)
-                .HasForeignKey("TemplateId")
+                .HasForeignKey(q => q.TemplateId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -16,32 +16,37 @@ namespace Template.Service.Mappers
                 {
                     Id = q.Id,
                     Title = q.Title,
-                    Description = q.Description
+                    Description = q.Description,
+                    TemplateId = q.TemplateId
                 },
                 MultiLineTextQuestion => new MultiLineTextQuestionDto
                 {
                     Id = q.Id,
                     Title = q.Title,
-                    Description = q.Description
+                    Description = q.Description,
+                    TemplateId = q.TemplateId
                 },
                 PositiveIntegerQuestion => new PositiveIntegerQuestionDto
                 {
                     Id = q.Id,
                     Title = q.Title,
-                    Description = q.Description
+                    Description = q.Description,
+                    TemplateId = q.TemplateId
                 },
                 CheckboxQuestion cbq => new CheckboxQuestionDto
                 {
                     Id = cbq.Id,
                     Title = cbq.Title,
                     Description = cbq.Description,
+                    TemplateId = cbq.TemplateId,
                     Options = cbq.Options
                 },
                 BooleanQuestion => new BooleanQuestionDto
                 {
                     Id = q.Id,
                     Title = q.Title,
-                    Description = q.Description
+                    Description = q.Description,
+                    TemplateId = q.TemplateId
                 },
                 _ => throw new ArgumentException($"Unknown question type: {q.GetType().Name}")
             };
@@ -57,32 +62,37 @@ namespace Template.Service.Mappers
                 {
                     Id = dto.Id,
                     Title = dto.Title,
-                    Description = dto.Description
+                    Description = dto.Description,
+                    TemplateId = dto.TemplateId
                 },
                 MultiLineTextQuestionDto dto => new MultiLineTextQuestion
                 {
                     Id = dto.Id,
                     Title = dto.Title,
-                    Description = dto.Description
+                    Description = dto.Description,
+                    TemplateId = dto.TemplateId
                 },
                 PositiveIntegerQuestionDto dto => new PositiveIntegerQuestion
                 {
                     Id = dto.Id,
                     Title = dto.Title,
-                    Description = dto.Description
+                    Description = dto.Description,
+                    TemplateId = dto.TemplateId
                 },
                 CheckboxQuestionDto dto => new CheckboxQuestion
                 {
                     Id = dto.Id,
                     Title = dto.Title,
                     Description = dto.Description,
+                    TemplateId = dto.TemplateId,
                     Options = dto.Options
                 },
                 BooleanQuestionDto dto => new BooleanQuestion
                 {
                     Id = dto.Id,
                     Title = dto.Title,
-                    Description = dto.Description
+                    Description = dto.Description,
+                    TemplateId = dto.TemplateId
                 },
                 _ => throw new ArgumentException($"Unknown question DTO type: {d.GetType().Name}")
             };

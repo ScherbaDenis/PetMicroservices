@@ -24,13 +24,13 @@ namespace Template.DataAccess.MsSql.EntityConfigurations
             // Owner (many templates to one user)
             builder.HasOne(x => x.Owner)
                 .WithMany()
-                .HasForeignKey("OwnerId")
+                .HasForeignKey(x => x.OwnerId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             // Topic (many templates to one topic)
             builder.HasOne(x => x.Topic)
                 .WithMany()
-                .HasForeignKey("TopicId")
+                .HasForeignKey(x => x.TopicId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             // Tags (many-to-many)

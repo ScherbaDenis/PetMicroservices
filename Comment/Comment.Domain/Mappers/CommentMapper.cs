@@ -10,7 +10,8 @@ namespace Comment.Domain.Mappers
             ? null! 
             : new CommentDto { 
                 Id = e.Id,  
-                Text = e.Text, 
+                Text = e.Text,
+                TemplateId = e.TemplateId,
                 TemplateDto = e.Template?.ToDto()
                 };
 
@@ -20,6 +21,7 @@ namespace Comment.Domain.Mappers
             : new Models.Comment { 
                 Id = d.Id, 
                 Text = d.Text,
+                TemplateId = d.TemplateId,
                 Template = d.TemplateDto?.ToEntity()
             };
 
