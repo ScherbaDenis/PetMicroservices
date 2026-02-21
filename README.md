@@ -22,5 +22,6 @@ The WebApiComment microservice includes comprehensive Postman test collections f
    newman run Comment/WebApiComment/WebApiComment.postman_collection.json \
      -e Comment/WebApiComment/WebApiComment.postman_environment.json
    ```
-
+#### rabbitmq
+docker run -d --name rabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management
 For detailed instructions, see [POSTMAN_TESTS_README.md](Comment/WebApiComment/POSTMAN_TESTS_README.md).

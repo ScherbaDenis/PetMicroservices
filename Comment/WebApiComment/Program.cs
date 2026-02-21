@@ -115,6 +115,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // MassTransit with RabbitMQ
 builder.Services.AddMassTransit(x =>
 {
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("comment-service", false));
     x.AddConsumer<TemplateCreatedEventConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>

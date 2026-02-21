@@ -25,6 +25,7 @@ builder.Services.AddInfrastructure();
 // MassTransit with RabbitMQ
 builder.Services.AddMassTransit(x =>
 {
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("answer-service", false));
     x.AddConsumer<TemplateCreatedEventConsumer>();
     x.AddConsumer<UserCreatedEventConsumer>();
     x.AddConsumer<QuestionCreatedEventConsumer>();
