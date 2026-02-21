@@ -9,13 +9,16 @@ using Template.Domain.Model;
 using Template.Domain.Repository;
 using Template.Domain.Services;
 using Template.Service.Mappers;
+using MassTransit;
+using Shared.Messaging.Events;
 
 namespace Template.Service.Services
 {
-    public class QuestionService(IUnitOfWork unitOfWork, ILogger<QuestionService> logger) : IQuestionService
+    public class QuestionService(IUnitOfWork unitOfWork, ILogger<QuestionService> logger, IPublishEndpoint publishEndpoint) : IQuestionService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         private readonly ILogger<QuestionService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly IPublishEndpoint _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         private readonly IQuestionRepository _questionRepository = unitOfWork.QuestionRepository;
 
         public async Task<QuestionDto> CreateAsync(QuestionDto item, CancellationToken cancellationToken = default)
@@ -26,6 +29,14 @@ namespace Template.Service.Services
             await _questionRepository.AddAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Question created successfully: {Question}", entity);
+
+            await _publishEndpoint.Publish(new QuestionCreatedEvent
+            {
+                Id = entity.Id,
+                Title = entity.Title
+            }, cancellationToken);
+
+            _logger.LogInformation("Published QuestionCreatedEvent for question: {QuestionId}", entity.Id);
             
             return entity.ToDto();
         }

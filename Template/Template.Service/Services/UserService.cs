@@ -5,17 +5,19 @@ using Template.Domain.Model;
 using Template.Service.Mappers;
 using Template.Domain.Repository;
 using Template.Domain.Services;
+using MassTransit;
+using Shared.Messaging.Events;
 
 namespace Template.Service.Services
 {
-    public class UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger) : IUserService
+    public class UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger, IPublishEndpoint publishEndpoint) : IUserService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         private readonly ILogger<UserService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    private readonly IUserRepository _userRepository = unitOfWork.UserRepository;
+        private readonly IPublishEndpoint _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
+        private readonly IUserRepository _userRepository = unitOfWork.UserRepository;
 
-    // Use centralized mappers
-    
+        // Use centralized mappers
 
         public async Task<UserDto> CreateAsync(UserDto item, CancellationToken cancellationToken = default)
         {
@@ -28,7 +30,15 @@ namespace Template.Service.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("User created successfully: {User}", entity);
-            
+
+            await _publishEndpoint.Publish(new UserCreatedEvent
+            {
+                Id = entity.Id,
+                Name = entity.Name
+            }, cancellationToken);
+
+            _logger.LogInformation("Published UserCreatedEvent for user: {UserId}", entity.Id);
+
             return entity.ToDto();
         }
 

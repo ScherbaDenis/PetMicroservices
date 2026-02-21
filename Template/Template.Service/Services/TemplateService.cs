@@ -5,13 +5,16 @@ using Template.Service.Mappers;
 using Template.Domain.Repository;
 using Template.Domain.Services;
 using Microsoft.Extensions.Logging;
+using MassTransit;
+using Shared.Messaging.Events;
 
 namespace Template.Service.Services
 {
-    public class TemplateService(IUnitOfWork unitOfWork, ILogger<TemplateService> logger) : ITemplateService
+    public class TemplateService(IUnitOfWork unitOfWork, ILogger<TemplateService> logger, IPublishEndpoint publishEndpoint) : ITemplateService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         private readonly ILogger<TemplateService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly IPublishEndpoint _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         private readonly ITemplateRepository _templateRepository = unitOfWork.TemplateRepository;
 
         // use centralized TemplateMapper
@@ -26,6 +29,14 @@ namespace Template.Service.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Template created successfully: {Template}", entity);
+
+            await _publishEndpoint.Publish(new TemplateCreatedEvent
+            {
+                Id = entity.Id,
+                Title = entity.Title
+            }, cancellationToken);
+
+            _logger.LogInformation("Published TemplateCreatedEvent for template: {TemplateId}", entity.Id);
             
             return entity.ToDto();
         }

@@ -1,35 +1,35 @@
+using Answer.Api.Consumers;
+using Answer.Infrastructure.Data;
+using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using Answer.Infrastructure.Data;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Answer.Api.IntegrationTests;
 
 public class AnswerApiFactory : WebApplicationFactory<Program>
 {
+    private readonly string _databaseName = Guid.NewGuid().ToString();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureAppConfiguration((context, config) =>
-        {
-            // Override with test configuration
-            config.AddInMemoryCollection(new Dictionary<string, string>
-            {
-                ["UseInMemoryDatabase"] = "true"
-            }!);
-        });
+        builder.UseEnvironment("Testing");
 
-        builder.ConfigureServices(services =>
+        builder.ConfigureTestServices(services =>
         {
-            // Remove existing DbContext configuration
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<AnswerDbContext>));
-            
-            if (descriptor != null)
+            // Provide EF Core in-memory database for testing
+            services.AddDbContext<AnswerDbContext>(options =>
+                options.UseInMemoryDatabase(_databaseName));
+
+            // Replace RabbitMQ transport with in-memory for tests
+            services.AddMassTransitTestHarness(x =>
             {
-                services.Remove(descriptor);
-            }
+                x.AddConsumer<TemplateCreatedEventConsumer>();
+                x.AddConsumer<UserCreatedEventConsumer>();
+                x.AddConsumer<QuestionCreatedEventConsumer>();
+            });
         });
     }
 }

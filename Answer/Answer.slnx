@@ -10,4 +10,5 @@
     <Project Path="tests/Answer.Domain.Tests/Answer.Domain.Tests.csproj" />
     <Project Path="tests/Answer.Infrastructure.Tests/Answer.Infrastructure.Tests.csproj" />
   </Folder>
+  <Project Path="../Shared/Shared.Messaging/Shared.Messaging.csproj" />
 </Solution>

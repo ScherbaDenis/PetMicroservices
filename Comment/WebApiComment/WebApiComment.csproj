@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.12" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Comment.DataAccess.MsSql\Comment.DataAccess.MsSql.csproj" />
     <ProjectReference Include="..\Comment.Service\Comment.Service.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Messaging\Shared.Messaging.csproj" />
   </ItemGroup>
 
 </Project>
