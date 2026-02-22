@@ -95,5 +95,23 @@ services:
       - template-service
       - answer-service
 
+  webapp:
+    build:
+      context: .
+      dockerfile: BaseWebApplication/WebApp/Dockerfile
+    ports:
+      - "5177:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ApiEndpoints__UserService=http://api-gateway:8080/user
+      - ApiEndpoints__TopicService=http://api-gateway:8080/topic
+      - ApiEndpoints__TemplateService=http://api-gateway:8080/template
+      - ApiEndpoints__QuestionService=http://api-gateway:8080/question
+      - ApiEndpoints__TagService=http://api-gateway:8080/tag
+      - ApiEndpoints__CommentService=http://api-gateway:8080/comment
+      - ApiEndpoints__AnswerService=http://api-gateway:8080
+    depends_on:
+      - api-gateway
+
 volumes:
   sqlserver-data:
