@@ -11,6 +11,31 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc().AddJsonTranscoding();
 builder.Services.AddGrpcReflection();
 
+// Configure CORS for gRPC-Web
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
+        }
+        else
+        {
+            var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
+                ?? new[] { "https://localhost:7200", "http://localhost:5000" };
+            
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
+        }
+    });
+});
+
 // Add DbContext (skip in Testing environment - test factory provides its own)
 if (!builder.Environment.IsEnvironment("Testing"))
 {
@@ -46,6 +71,9 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline
 app.UseRouting();
+
+// Enable CORS
+app.UseCors("AllowAll");
 
 app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 
