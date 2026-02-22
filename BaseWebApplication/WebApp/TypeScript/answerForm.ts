@@ -67,11 +67,11 @@ class AnswerFormManager {
 
     /**
      * Fetches all users from the API
-     * Calls: GET /proxy/user
+     * Calls: GET http://localhost:5000/user
      */
     async fetchUsers(): Promise<UserDto[]> {
         try {
-            const response = await fetch('/proxy/user', {
+            const response = await fetch('http://localhost:5000/user', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,11 +92,11 @@ class AnswerFormManager {
 
     /**
      * Fetches all questions from the API
-     * Calls: GET /proxy/question
+     * Calls: GET http://localhost:5000/question
      */
     async fetchQuestions(): Promise<QuestionDto[]> {
         try {
-            const response = await fetch('/proxy/question', {
+            const response = await fetch('http://localhost:5000/question', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -117,11 +117,11 @@ class AnswerFormManager {
 
     /**
      * Fetches all templates from the API
-     * Calls: GET /proxy/template
+     * Calls: GET http://localhost:5000/template
      */
     async fetchTemplates(): Promise<TemplateDto[]> {
         try {
-            const response = await fetch('/proxy/template', {
+            const response = await fetch('http://localhost:5000/template', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,11 +142,11 @@ class AnswerFormManager {
 
     /**
      * Fetches templates for a specific user
-     * Calls: GET /proxy/template/user/{userId}
+     * Calls: GET http://localhost:5000/template/user/{userId}
      */
     async fetchTemplatesByUserId(userId: string): Promise<TemplateDto[]> {
         try {
-            const response = await fetch(`/proxy/template/user/${userId}`, {
+            const response = await fetch(`http://localhost:5000/template/user/${userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -459,7 +459,7 @@ class AnswerFormManager {
 
         try {
             // Get the template to extract its questions
-            const response = await fetch(`/proxy/template/${templateId}`, {
+            const response = await fetch(`http://localhost:5000/template/${templateId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

@@ -12,10 +12,6 @@ builder.Services.AddControllersWithViews(options =>
     options.ModelBinderProviders.Insert(0, new QuestionDtoModelBinderProvider());
 });
 
-// Configure YARP
-builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
-
 // Services
 
 builder.Services.AddHttpClient<ITemplateService, TemplateService>();
@@ -47,8 +43,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-// Map YARP reverse proxy
-app.MapReverseProxy();
 
 app.Run();

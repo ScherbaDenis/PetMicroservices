@@ -38,11 +38,11 @@ class TemplateFormManager {
 
     /**
      * Fetches all users from the API
-     * Calls: GET /proxy/user
+     * Calls: GET http://localhost:5000/user
      */
     async fetchUsers(): Promise<UserDto[]> {
         try {
-            const response = await fetch('/proxy/user', {
+            const response = await fetch('http://localhost:5000/user', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,11 +63,11 @@ class TemplateFormManager {
 
     /**
      * Fetches all topics from the API
-     * Calls: GET /proxy/topic
+     * Calls: GET http://localhost:5000/topic
      */
     async fetchTopics(): Promise<TopicDto[]> {
         try {
-            const response = await fetch('/proxy/topic', {
+            const response = await fetch('http://localhost:5000/topic', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

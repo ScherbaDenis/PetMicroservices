@@ -43,16 +43,15 @@ class TemplateUserManager {
 
     /**
      * Fetches template details including users with access
-     * Calls: GET /proxy/template/{templateId}
+     * Calls: GET http://localhost:5000/template/{templateId}
      */
     async fetchTemplate(): Promise<TemplateDto> {
         try {
-            const response = await fetch(`/proxy/template/${this.templateId}`, {
+            const response = await fetch(`http://localhost:5000/template/${this.templateId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -69,16 +68,15 @@ class TemplateUserManager {
 
     /**
      * Fetches all available users from the Template API
-     * Calls: GET /proxy/user
+     * Calls: GET http://localhost:5000/user
      */
     async fetchAllUsers(): Promise<UserDto[]> {
         try {
-            const response = await fetch('/proxy/user', {
+            const response = await fetch('http://localhost:5000/user', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -95,16 +93,15 @@ class TemplateUserManager {
 
     /**
      * Assigns a user to the template
-     * Calls: POST /proxy/template/{templateId}/assign/{userId}
+     * Calls: POST http://localhost:5000/template/{templateId}/assign/{userId}
      */
     async assignUser(userId: string): Promise<void> {
         try {
-            const response = await fetch(`/proxy/template/${this.templateId}/assign/${userId}`, {
+            const response = await fetch(`http://localhost:5000/template/${this.templateId}/assign/${userId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -120,16 +117,15 @@ class TemplateUserManager {
 
     /**
      * Unassigns a user from the template
-     * Calls: DELETE /proxy/template/{templateId}/assign/{userId}
+     * Calls: DELETE http://localhost:5000/template/{templateId}/assign/{userId}
      */
     async unassignUser(userId: string): Promise<void> {
         try {
-            const response = await fetch(`/proxy/template/${this.templateId}/assign/${userId}`, {
+            const response = await fetch(`http://localhost:5000/template/${this.templateId}/assign/${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {

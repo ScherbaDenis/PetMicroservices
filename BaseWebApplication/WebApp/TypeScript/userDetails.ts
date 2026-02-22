@@ -31,17 +31,16 @@ class UserTemplateManager {
 
     /**
      * Fetches templates for the current user from the Template API
-     * Calls: GET /proxy/template/user/{userId}
-     * Direct call to Template microservice via YARP proxy
+     * Calls: GET http://localhost:5000/template/user/{userId}
+     * Direct call to API Gateway
      */
     async fetchUserTemplates(): Promise<TemplateDto[]> {
         try {
-            const response = await fetch(`/proxy/template/user/${this.userId}`, {
+            const response = await fetch(`http://localhost:5000/template/user/${this.userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {

@@ -163,8 +163,8 @@ class UserListManager {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    // Use relative URL to work in both development and production
-    const userListManager = new UserListManager('/proxy/template/user');
+    // Call API Gateway directly
+    const userListManager = new UserListManager('http://localhost:5000/template/user');
 
     // Attach download handlers
     const downloadJsonBtn = document.getElementById('downloadJsonBtn');
