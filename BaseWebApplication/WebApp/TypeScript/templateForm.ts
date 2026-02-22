@@ -1,3 +1,5 @@
+import { buildApiUrl } from './apiConfig';
+
 /**
  * User data transfer object interface
  */
@@ -38,11 +40,11 @@ class TemplateFormManager {
 
     /**
      * Fetches all users from the API
-     * Calls: GET http://localhost:5000/user
+     * Calls: GET {API_GATEWAY_URL}/user
      */
     async fetchUsers(): Promise<UserDto[]> {
         try {
-            const response = await fetch('http://localhost:5000/user', {
+            const response = await fetch(buildApiUrl('/user'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,11 +65,11 @@ class TemplateFormManager {
 
     /**
      * Fetches all topics from the API
-     * Calls: GET http://localhost:5000/topic
+     * Calls: GET {API_GATEWAY_URL}/topic
      */
     async fetchTopics(): Promise<TopicDto[]> {
         try {
-            const response = await fetch('http://localhost:5000/topic', {
+            const response = await fetch(buildApiUrl('/topic'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

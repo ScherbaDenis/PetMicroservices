@@ -1,3 +1,5 @@
+import { buildApiUrl } from './apiConfig';
+
 /**
  * User data transfer object interface
  */
@@ -67,11 +69,11 @@ class AnswerFormManager {
 
     /**
      * Fetches all users from the API
-     * Calls: GET http://localhost:5000/user
+     * Calls: GET {API_GATEWAY_URL}/user
      */
     async fetchUsers(): Promise<UserDto[]> {
         try {
-            const response = await fetch('http://localhost:5000/user', {
+            const response = await fetch(buildApiUrl('/user'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,11 +94,11 @@ class AnswerFormManager {
 
     /**
      * Fetches all questions from the API
-     * Calls: GET http://localhost:5000/question
+     * Calls: GET {API_GATEWAY_URL}/question
      */
     async fetchQuestions(): Promise<QuestionDto[]> {
         try {
-            const response = await fetch('http://localhost:5000/question', {
+            const response = await fetch(buildApiUrl('/question'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -117,11 +119,11 @@ class AnswerFormManager {
 
     /**
      * Fetches all templates from the API
-     * Calls: GET http://localhost:5000/template
+     * Calls: GET {API_GATEWAY_URL}/template
      */
     async fetchTemplates(): Promise<TemplateDto[]> {
         try {
-            const response = await fetch('http://localhost:5000/template', {
+            const response = await fetch(buildApiUrl('/template'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,11 +144,11 @@ class AnswerFormManager {
 
     /**
      * Fetches templates for a specific user
-     * Calls: GET http://localhost:5000/template/user/{userId}
+     * Calls: GET {API_GATEWAY_URL}/template/user/{userId}
      */
     async fetchTemplatesByUserId(userId: string): Promise<TemplateDto[]> {
         try {
-            const response = await fetch(`http://localhost:5000/template/user/${userId}`, {
+            const response = await fetch(buildApiUrl(`/template/user/${userId}`), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -459,7 +461,7 @@ class AnswerFormManager {
 
         try {
             // Get the template to extract its questions
-            const response = await fetch(`http://localhost:5000/template/${templateId}`, {
+            const response = await fetch(buildApiUrl(`/template/${templateId}`), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

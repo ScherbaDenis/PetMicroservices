@@ -1,3 +1,5 @@
+import { buildApiUrl } from './apiConfig';
+
 /**
  * User data transfer object interface
  */
@@ -164,7 +166,7 @@ class UserListManager {
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     // Call API Gateway directly
-    const userListManager = new UserListManager('http://localhost:5000/template/user');
+    const userListManager = new UserListManager(buildApiUrl('/template/user'));
 
     // Attach download handlers
     const downloadJsonBtn = document.getElementById('downloadJsonBtn');

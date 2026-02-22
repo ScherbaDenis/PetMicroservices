@@ -1,3 +1,5 @@
+import { buildApiUrl } from './apiConfig';
+
 /**
  * Template data transfer object interface
  */
@@ -31,12 +33,12 @@ class UserTemplateManager {
 
     /**
      * Fetches templates for the current user from the Template API
-     * Calls: GET http://localhost:5000/template/user/{userId}
+     * Calls: GET {API_GATEWAY_URL}/template/user/{userId}
      * Direct call to API Gateway
      */
     async fetchUserTemplates(): Promise<TemplateDto[]> {
         try {
-            const response = await fetch(`http://localhost:5000/template/user/${this.userId}`, {
+            const response = await fetch(buildApiUrl(`/template/user/${this.userId}`), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

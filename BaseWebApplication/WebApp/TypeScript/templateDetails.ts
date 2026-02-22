@@ -1,3 +1,5 @@
+import { buildApiUrl } from './apiConfig';
+
 /**
  * User data transfer object interface
  */
@@ -43,11 +45,11 @@ class TemplateUserManager {
 
     /**
      * Fetches template details including users with access
-     * Calls: GET http://localhost:5000/template/{templateId}
+     * Calls: GET {API_GATEWAY_URL}/template/{templateId}
      */
     async fetchTemplate(): Promise<TemplateDto> {
         try {
-            const response = await fetch(`http://localhost:5000/template/${this.templateId}`, {
+            const response = await fetch(buildApiUrl(`/template/${this.templateId}`), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -68,11 +70,11 @@ class TemplateUserManager {
 
     /**
      * Fetches all available users from the Template API
-     * Calls: GET http://localhost:5000/user
+     * Calls: GET {API_GATEWAY_URL}/user
      */
     async fetchAllUsers(): Promise<UserDto[]> {
         try {
-            const response = await fetch('http://localhost:5000/user', {
+            const response = await fetch(buildApiUrl('/user'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -93,11 +95,11 @@ class TemplateUserManager {
 
     /**
      * Assigns a user to the template
-     * Calls: POST http://localhost:5000/template/{templateId}/assign/{userId}
+     * Calls: POST {API_GATEWAY_URL}/template/{templateId}/assign/{userId}
      */
     async assignUser(userId: string): Promise<void> {
         try {
-            const response = await fetch(`http://localhost:5000/template/${this.templateId}/assign/${userId}`, {
+            const response = await fetch(buildApiUrl(`/template/${this.templateId}/assign/${userId}`), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -117,11 +119,11 @@ class TemplateUserManager {
 
     /**
      * Unassigns a user from the template
-     * Calls: DELETE http://localhost:5000/template/{templateId}/assign/{userId}
+     * Calls: DELETE {API_GATEWAY_URL}/template/{templateId}/assign/{userId}
      */
     async unassignUser(userId: string): Promise<void> {
         try {
-            const response = await fetch(`http://localhost:5000/template/${this.templateId}/assign/${userId}`, {
+            const response = await fetch(buildApiUrl(`/template/${this.templateId}/assign/${userId}`), {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-"use strict";
+import { buildApiUrl } from './apiConfig';
 /**
  * TemplateFormManager - Handles dynamic loading of dropdown data for Template Create/Edit forms
  */
@@ -18,11 +18,11 @@ class TemplateFormManager {
     }
     /**
      * Fetches all users from the API
-     * Calls: GET /proxy/user
+     * Calls: GET {API_GATEWAY_URL}/user
      */
     async fetchUsers() {
         try {
-            const response = await fetch('/proxy/user', {
+            const response = await fetch(buildApiUrl('/user'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,11 +41,11 @@ class TemplateFormManager {
     }
     /**
      * Fetches all topics from the API
-     * Calls: GET /proxy/topic
+     * Calls: GET {API_GATEWAY_URL}/topic
      */
     async fetchTopics() {
         try {
-            const response = await fetch('/proxy/topic', {
+            const response = await fetch(buildApiUrl('/topic'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
