@@ -18,27 +18,29 @@ namespace Comment.DataAccess.MsSql.Repositories
         }
 
         /// <summary>
-        /// Gets all comments including their related Template.
+        /// Gets all comments including their related Template, excluding soft-deleted items.
         /// </summary>
         public override async Task<IEnumerable<Domain.Models.Comment>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             return await _commentContext.Comments
                 .Include(c => c.Template)
+                .Where(c => !c.IsDeleted)
                 .ToListAsync(cancellationToken);
         }
 
         /// <summary>
-        /// Finds a comment by id including its related Template.
+        /// Finds a comment by id including its related Template, excluding soft-deleted items.
         /// </summary>
         public override async Task<Domain.Models.Comment?> FindAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await _commentContext.Comments
                 .Include(c => c.Template)
+                .Where(c => !c.IsDeleted)
                 .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
         }
 
         /// <summary>
-        /// Finds comments matching a predicate, including their related Template.
+        /// Finds comments matching a predicate, including their related Template, excluding soft-deleted items.
         /// </summary>
         public override async Task<IEnumerable<Domain.Models.Comment>> FindAsync(
             System.Linq.Expressions.Expression<Func<Domain.Models.Comment, bool>> predicate,
@@ -46,12 +48,13 @@ namespace Comment.DataAccess.MsSql.Repositories
         {
             return await _commentContext.Comments
                 .Include(c => c.Template)
+                .Where(c => !c.IsDeleted)
                 .Where(predicate)
                 .ToListAsync(cancellationToken);
         }
 
         /// <summary>
-        /// Gets a paged list of comments including their related Template.
+        /// Gets a paged list of comments including their related Template, excluding soft-deleted items.
         /// </summary>
         public override async Task<(IEnumerable<Domain.Models.Comment> Items, int TotalCount)> GetPagedAsync(
             int pageIndex,
@@ -59,7 +62,7 @@ namespace Comment.DataAccess.MsSql.Repositories
             System.Linq.Expressions.Expression<Func<Domain.Models.Comment, bool>>? predicate = null,
             CancellationToken cancellationToken = default)
         {
-            var query = _commentContext.Comments.Include(c => c.Template).AsQueryable();
+            var query = _commentContext.Comments.Include(c => c.Template).Where(c => !c.IsDeleted).AsQueryable();
             if (predicate != null)
             {
                 query = query.Where(predicate);

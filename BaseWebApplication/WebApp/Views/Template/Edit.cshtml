@@ -1,5 +1,4 @@
 ﻿@model TemplateDto
-@using Microsoft.AspNetCore.Mvc.Rendering
 @using WebApp.Services.DTOs
 
 <h1>Edit Template</h1>
@@ -21,12 +20,30 @@
 
     <div>
         <label>Owner</label>
-        <select asp-for="Owner.Id" asp-items="ViewBag.OwnerId" class="form-control"></select>
+        <select id="Owner_Id" name="Owner.Id" class="form-control">
+            @if (Model.Owner?.Id != null)
+            {
+                <option value="@Model.Owner.Id" selected>@Model.Owner.Name</option>
+            }
+            else
+            {
+                <option value="">Loading...</option>
+            }
+        </select>
     </div>
 
     <div>
         <label>Topic</label>
-        <select asp-for="Topic.Id" asp-items="ViewBag.TopicId" class="form-control"></select>
+        <select id="Topic_Id" name="Topic.Id" class="form-control">
+            @if (Model.Topic?.Id != null)
+            {
+                <option value="@Model.Topic.Id" selected>@Model.Topic.Name</option>
+            }
+            else
+            {
+                <option value="">Loading...</option>
+            }
+        </select>
     </div>
 
     <div>
@@ -42,3 +59,7 @@
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    <script src="~/js/templateForm.js" asp-append-version="true"></script>
+}

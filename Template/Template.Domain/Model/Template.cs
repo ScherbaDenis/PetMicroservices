@@ -6,7 +6,9 @@ namespace Template.Domain.Model
     {
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
+        public Guid? OwnerId { get; set; }
         public User? Owner { get; set; }
+        public int? TopicId { get; set; }
         public Topic? Topic { get; set; }
         public IEnumerable<Tag>? Tags { get; set; }
         public IEnumerable<User>? UsersAccess { get; set; }

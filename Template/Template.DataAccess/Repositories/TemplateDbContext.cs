@@ -28,6 +28,7 @@ namespace Template.DataAccess.MsSql.Repositories
             modelBuilder.ApplyConfiguration(new TopicEntityConfiguration());
             modelBuilder.ApplyConfiguration(new TemplateEntityConfiguration());
             modelBuilder.ApplyConfiguration(new QuestionEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new CheckboxQuestionEntityConfiguration());
         }
     }
 }

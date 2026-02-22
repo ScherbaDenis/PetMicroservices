@@ -44,9 +44,23 @@ namespace Template.DataAccess.MsSql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("QuestionType")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
 
                     b.Property<Guid?>("TemplateId")
                         .HasColumnType("uniqueidentifier");
@@ -64,6 +78,10 @@ namespace Template.DataAccess.MsSql.Migrations
                         .HasDatabaseName("IX_questions_title");
 
                     b.ToTable("questions", "template");
+
+                    b.HasDiscriminator<string>("QuestionType").HasValue("Question");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Template.Domain.Model.Tag", b =>
@@ -73,6 +91,15 @@ namespace Template.DataAccess.MsSql.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -93,9 +120,18 @@ namespace Template.DataAccess.MsSql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uniqueidentifier");
@@ -127,6 +163,15 @@ namespace Template.DataAccess.MsSql.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -145,6 +190,15 @@ namespace Template.DataAccess.MsSql.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -172,6 +226,45 @@ namespace Template.DataAccess.MsSql.Migrations
                     b.HasIndex("UsersAccessId");
 
                     b.ToTable("TemplateUser", "template");
+                });
+
+            modelBuilder.Entity("Template.Domain.Model.BooleanQuestion", b =>
+                {
+                    b.HasBaseType("Template.Domain.Model.Question");
+
+                    b.HasDiscriminator().HasValue("Boolean");
+                });
+
+            modelBuilder.Entity("Template.Domain.Model.CheckboxQuestion", b =>
+                {
+                    b.HasBaseType("Template.Domain.Model.Question");
+
+                    b.Property<string>("Options")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.HasDiscriminator().HasValue("Checkbox");
+                });
+
+            modelBuilder.Entity("Template.Domain.Model.MultiLineTextQuestion", b =>
+                {
+                    b.HasBaseType("Template.Domain.Model.Question");
+
+                    b.HasDiscriminator().HasValue("MultiLineText");
+                });
+
+            modelBuilder.Entity("Template.Domain.Model.PositiveIntegerQuestion", b =>
+                {
+                    b.HasBaseType("Template.Domain.Model.Question");
+
+                    b.HasDiscriminator().HasValue("PositiveInteger");
+                });
+
+            modelBuilder.Entity("Template.Domain.Model.SingleLineStringQuestion", b =>
+                {
+                    b.HasBaseType("Template.Domain.Model.Question");
+
+                    b.HasDiscriminator().HasValue("SingleLineString");
                 });
 
             modelBuilder.Entity("TagTemplate", b =>

@@ -1,0 +1,23 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "WebApp\\WebApp.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\Comment\\WebApiComment\\WebApiComment.csproj",
+        "Action": "StartWithoutDebugging"
+      },
+      {
+        "Path": "..\\Template\\WebApiTemplate\\WebApiTemplate.csproj",
+        "Action": "StartWithoutDebugging"
+      },
+      {
+        "Path": "..\\Answer\\src\\Answer.Api\\Answer.Api.csproj",
+        "Action": "StartWithoutDebugging"
+      }
+    ]
+  }
+]

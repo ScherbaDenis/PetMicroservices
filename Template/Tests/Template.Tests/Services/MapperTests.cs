@@ -55,7 +55,7 @@ namespace Template.Tests.Services
         [Fact]
         public void QuestionMapper_Roundtrip_PreservesFields()
         {
-            var entity = new Question { Id = Guid.NewGuid(), Title = "Question Title", Description = "Question Description" };
+            var entity = new SingleLineStringQuestion { Id = Guid.NewGuid(), Title = "Question Title", Description = "Question Description" };
             var dto = entity.ToDto();
 
             Assert.Equal(entity.Id, dto.Id);
@@ -69,6 +69,106 @@ namespace Template.Tests.Services
         }
 
         [Fact]
+        public void QuestionMapper_ShouldMapSingleLineStringQuestion()
+        {
+            var entity = new SingleLineStringQuestion { Id = Guid.NewGuid(), Title = "Name" };
+            var dto = entity.ToDto();
+
+            Assert.IsType<SingleLineStringQuestionDto>(dto);
+            Assert.Equal(entity.Id, dto.Id);
+            Assert.Equal(entity.Title, dto.Title);
+        }
+
+        [Fact]
+        public void QuestionMapper_ShouldMapMultiLineTextQuestion()
+        {
+            var entity = new MultiLineTextQuestion { Id = Guid.NewGuid(), Title = "Comments" };
+            var dto = entity.ToDto();
+
+            Assert.IsType<MultiLineTextQuestionDto>(dto);
+            Assert.Equal(entity.Id, dto.Id);
+        }
+
+        [Fact]
+        public void QuestionMapper_ShouldMapPositiveIntegerQuestion()
+        {
+            var entity = new PositiveIntegerQuestion { Id = Guid.NewGuid(), Title = "Age" };
+            var dto = entity.ToDto();
+
+            Assert.IsType<PositiveIntegerQuestionDto>(dto);
+            Assert.Equal(entity.Id, dto.Id);
+        }
+
+        [Fact]
+        public void QuestionMapper_ShouldMapCheckboxQuestion()
+        {
+            var entity = new CheckboxQuestion { Id = Guid.NewGuid(), Title = "Options" };
+            var dto = entity.ToDto();
+
+            Assert.IsType<CheckboxQuestionDto>(dto);
+            Assert.Equal(entity.Id, dto.Id);
+        }
+
+        [Fact]
+        public void QuestionMapper_ShouldMapBooleanQuestion()
+        {
+            var entity = new BooleanQuestion { Id = Guid.NewGuid(), Title = "Agree" };
+            var dto = entity.ToDto();
+
+            Assert.IsType<BooleanQuestionDto>(dto);
+            Assert.Equal(entity.Id, dto.Id);
+        }
+
+        [Fact]
+        public void QuestionMapper_ShouldMapCheckboxQuestionWithOptions()
+        {
+            var options = new List<string> { "Option A", "Option B", "Option C" };
+            var entity = new CheckboxQuestion 
+            { 
+                Id = Guid.NewGuid(), 
+                Title = "Choose Items",
+                Options = options
+            };
+            var dto = entity.ToDto();
+
+            Assert.IsType<CheckboxQuestionDto>(dto);
+            var checkboxDto = dto as CheckboxQuestionDto;
+            Assert.NotNull(checkboxDto);
+            Assert.Equal(entity.Id, checkboxDto.Id);
+            Assert.Equal(entity.Title, checkboxDto.Title);
+            Assert.NotNull(checkboxDto.Options);
+            Assert.Equal(3, checkboxDto.Options.Count());
+            Assert.Equal("Option A", checkboxDto.Options.First());
+        }
+
+        [Fact]
+        public void QuestionMapper_RoundtripCheckboxQuestionWithOptions()
+        {
+            var options = new List<string> { "Red", "Green", "Blue" };
+            var entity = new CheckboxQuestion 
+            { 
+                Id = Guid.NewGuid(), 
+                Title = "Select Colors",
+                Description = "Pick your favorite colors",
+                Options = options
+            };
+            
+            var dto = entity.ToDto() as CheckboxQuestionDto;
+            Assert.NotNull(dto);
+            
+            var backToEntity = dto.ToEntity() as CheckboxQuestion;
+            Assert.NotNull(backToEntity);
+            Assert.Equal(entity.Id, backToEntity.Id);
+            Assert.Equal(entity.Title, backToEntity.Title);
+            Assert.Equal(entity.Description, backToEntity.Description);
+            Assert.NotNull(backToEntity.Options);
+            Assert.Equal(3, backToEntity.Options.Count());
+            Assert.Contains("Red", backToEntity.Options);
+            Assert.Contains("Green", backToEntity.Options);
+            Assert.Contains("Blue", backToEntity.Options);
+        }
+
+        [Fact]
         public void TemplateMapper_Roundtrip_PreservesFields()
         {
             var owner = new User { Id = Guid.NewGuid(), Name = "Owner" };
@@ -76,8 +176,8 @@ namespace Template.Tests.Services
             var tags = new List<Tag> { new Tag { Id = 1, Name = "t1" }, new Tag { Id = 2, Name = "t2" } };
             var questions = new List<Question> 
             { 
-                new Question { Id = Guid.NewGuid(), Title = "Question 1", Description = "Desc 1" },
-                new Question { Id = Guid.NewGuid(), Title = "Question 2", Description = "Desc 2" }
+                new SingleLineStringQuestion { Id = Guid.NewGuid(), Title = "Question 1", Description = "Desc 1" },
+                new BooleanQuestion { Id = Guid.NewGuid(), Title = "Question 2", Description = "Desc 2" }
             };
 
             var entity = new Domain.Model.Template

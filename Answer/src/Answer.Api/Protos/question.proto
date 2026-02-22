@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+option csharp_namespace = "Answer.Api.Protos";
+
+package question;
+
+import "google/api/annotations.proto";
+
+service QuestionService {
+  rpc GetQuestion (GetQuestionRequest) returns (QuestionResponse) {
+    option (google.api.http) = {
+      get: "/api/questions/{id}"
+    };
+  }
+  
+  rpc ListQuestions (ListQuestionsRequest) returns (ListQuestionsResponse) {
+    option (google.api.http) = {
+      get: "/api/questions"
+    };
+  }
+  
+  rpc CreateQuestion (CreateQuestionRequest) returns (QuestionResponse) {
+    option (google.api.http) = {
+      post: "/api/questions"
+      body: "*"
+    };
+  }
+  
+  rpc UpdateQuestion (UpdateQuestionRequest) returns (QuestionResponse) {
+    option (google.api.http) = {
+      put: "/api/questions/{id}"
+      body: "*"
+    };
+  }
+  
+  rpc DeleteQuestion (DeleteQuestionRequest) returns (DeleteQuestionResponse) {
+    option (google.api.http) = {
+      delete: "/api/questions/{id}"
+    };
+  }
+}
+
+message GetQuestionRequest {
+  string id = 1;
+}
+
+message ListQuestionsRequest {
+}
+
+message ListQuestionsResponse {
+  repeated QuestionResponse questions = 1;
+}
+
+message CreateQuestionRequest {
+  string title = 1;
+}
+
+message UpdateQuestionRequest {
+  string id = 1;
+  string title = 2;
+}
+
+message DeleteQuestionRequest {
+  string id = 1;
+}
+
+message DeleteQuestionResponse {
+  bool success = 1;
+}
+
+message QuestionResponse {
+  string id = 1;
+  string title = 2;
+}

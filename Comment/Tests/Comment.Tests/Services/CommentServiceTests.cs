@@ -243,5 +243,94 @@ namespace Comment.Tests.Services
             Assert.Equal(2, result.TotalCount);
             _mockRepo.Verify(r => r.GetPagedAsync(0, 10, It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Models.Comment, bool>>>(), It.IsAny<CancellationToken>()), Times.Once);
         }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldCallHardDeleteAndSaveChanges()
+        {
+            // Arrange
+            var templateDto = new TemplateDto { Id = Guid.NewGuid(), Title = "Test Template" };
+            var commentDto = new CommentDto { Id = Guid.NewGuid(), Text = "Test comment", TemplateDto = templateDto };
+
+            // Add mock for _commentRepository.FindAsync
+            _mockRepo.Setup(r => r.FindAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(new Domain.Models.Comment { Id = commentDto.Id, Text = commentDto.Text });
+
+            // Act
+            await _service.HardDeleteAsync(commentDto);
+
+            // Assert
+            _mockRepo.Verify(r => r.HardDeleteAsync(It.IsAny<Domain.Models.Comment>(), It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWork.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldThrow_WhenCommentIsNull()
+        {
+            // Arrange & Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _service.HardDeleteAsync((CommentDto?)null!));
+        }
+
+        [Fact]
+        public async Task GetAllDeletedAsync_ShouldReturnAllDeletedComments()
+        {
+            // Arrange
+            var template = new Domain.Models.Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            var deletedComments = new List<Domain.Models.Comment>
+            {
+                new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Deleted 1", Template = template, IsDeleted = true },
+                new Domain.Models.Comment { Id = Guid.NewGuid(), Text = "Deleted 2", Template = template, IsDeleted = true }
+            };
+            _mockRepo.Setup(r => r.GetAllDeletedAsync(It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(deletedComments);
+
+            // Act
+            var result = await _service.GetAllDeletedAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+            _mockRepo.Verify(r => r.GetAllDeletedAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task FindDeletedAsync_ShouldReturnDeletedComment()
+        {
+            // Arrange
+            var commentId = Guid.NewGuid();
+            var template = new Domain.Models.Template { Id = Guid.NewGuid(), Title = "Test Template" };
+            var deletedComment = new Domain.Models.Comment
+            {
+                Id = commentId,
+                Text = "Deleted comment",
+                Template = template,
+                IsDeleted = true
+            };
+            _mockRepo.Setup(r => r.FindDeletedAsync(commentId, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(deletedComment);
+
+            // Act
+            var result = await _service.FindDeletedAsync(commentId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Deleted comment", result.Text);
+            _mockRepo.Verify(r => r.FindDeletedAsync(commentId, It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task FindDeletedAsync_ShouldReturnNull_WhenNotFound()
+        {
+            // Arrange
+            var commentId = Guid.NewGuid();
+            _mockRepo.Setup(r => r.FindDeletedAsync(commentId, It.IsAny<CancellationToken>()))
+                     .ReturnsAsync((Domain.Models.Comment?)null);
+
+            // Act
+            var result = await _service.FindDeletedAsync(commentId);
+
+            // Assert
+            Assert.Null(result);
+            _mockRepo.Verify(r => r.FindDeletedAsync(commentId, It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

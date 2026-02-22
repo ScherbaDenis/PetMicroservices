@@ -3,7 +3,7 @@ using Template.Domain.DTOs;
 using Template.Domain.Model;
 using Template.Service.Mappers;
 using Template.Domain.Repository;
-using Template.Domain.Services;
+using Template.Service.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Template.Service.Services
@@ -44,6 +44,21 @@ namespace Template.Service.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Topic deleted successfully: {Topic}", entity);
+        }
+
+        public async Task HardDeleteAsync(TopicDto item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+
+            _logger.LogInformation("Hard deleting topic (admin): {Topic}", item);
+
+            var entity = await _topicRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Topic with Id {item.Id} not found.");
+
+            await _topicRepository.HardDeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Topic permanently deleted: {Topic}", entity);
         }
 
         public async Task<IEnumerable<TopicDto>> FindAsync(Func<TopicDto, bool> predicate, CancellationToken cancellationToken = default)
@@ -88,12 +103,38 @@ namespace Template.Service.Services
 
             var entity = await _topicRepository.FindAsync(item.Id, cancellationToken);
             ArgumentNullException.ThrowIfNull(entity, $"Topic with Id {item.Id} not found.");
-            entity.Name = item.Name; // Todo: Use AutoMapper or similar for complex mappings
+            
+            entity.UpdateFromDto(item);
 
             await _topicRepository.UpdateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Topic updated successfully: {Topic}", item);
+        }
+
+        public async Task<IEnumerable<TopicDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving all deleted topics (admin)...");
+            var topics = await _topicRepository.GetAllDeletedAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} deleted topics", topics is ICollection<Topic> col ? col.Count : -1);
+
+            return topics.Select(t => t.ToDto());
+        }
+
+        public async Task<TopicDto?> FindDeletedAsync(int id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Finding deleted topic (admin): {Id}", id);
+            var topic = await _topicRepository.FindDeletedAsync(id, cancellationToken);
+
+            if (topic == null)
+            {
+                _logger.LogWarning("No deleted topic found with Id: {Id}", id);
+                return null;
+            }
+
+            _logger.LogInformation("Deleted topic found: {Topic}", topic);
+            return topic.ToDto();
         }
     }
 }

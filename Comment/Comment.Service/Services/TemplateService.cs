@@ -1,6 +1,6 @@
 ﻿using Comment.Domain.DTOs;
 using Comment.Domain.Mappers;
-using Comment.Domain.Services;
+
 using Microsoft.Extensions.Logging;
 using Comment.Domain.Repositories;
 using System.Linq.Expressions;
@@ -37,6 +37,20 @@ namespace Comment.Service.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Template deleted successfully: {Template}", entity);
+        }
+
+        public async Task HardDeleteAsync(TemplateDto item, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            _logger.LogInformation("Hard deleting template (admin): {Template}", item);
+
+            var entity = await _templateRepository.FindAsync(item.Id, cancellationToken);
+            ArgumentNullException.ThrowIfNull(entity, $"Template with Id {item.Id} not found.");
+
+            await _templateRepository.HardDeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Template permanently deleted: {Template}", entity);
         }
 
         public IEnumerable<TemplateDto> Find(Func<TemplateDto, bool> predicate)
@@ -110,6 +124,31 @@ namespace Comment.Service.Services
             );
 
             return (items.Select(t => t.ToDto()), totalCount);
+        }
+
+        public async Task<IEnumerable<TemplateDto>> GetAllDeletedAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Retrieving all deleted templates (admin)...");
+            var templates = await _templateRepository.GetAllDeletedAsync(cancellationToken);
+
+            _logger.LogInformation("Retrieved {Count} deleted templates", templates is ICollection<Domain.Models.Template> col ? col.Count : -1);
+
+            return templates.Select(t => t.ToDto());
+        }
+
+        public async Task<TemplateDto?> FindDeletedAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Finding deleted template (admin): {Id}", id);
+            var template = await _templateRepository.FindDeletedAsync(id, cancellationToken);
+
+            if (template == null)
+            {
+                _logger.LogWarning("No deleted template found with Id: {Id}", id);
+                return null;
+            }
+
+            _logger.LogInformation("Deleted template found: {Template}", template);
+            return template.ToDto();
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Template.Domain.DTOs;
 using Template.Domain.Model;
 
@@ -8,23 +9,110 @@ namespace Template.Service.Mappers
         public static QuestionDto ToDto(this Question q)
         {
             if (q == null) return null!;
-            return new QuestionDto
+            
+            return q switch
             {
-                Id = q.Id,
-                Title = q.Title,
-                Description = q.Description
+                SingleLineStringQuestion => new SingleLineStringQuestionDto
+                {
+                    Id = q.Id,
+                    Title = q.Title,
+                    Description = q.Description,
+                    TemplateId = q.TemplateId
+                },
+                MultiLineTextQuestion => new MultiLineTextQuestionDto
+                {
+                    Id = q.Id,
+                    Title = q.Title,
+                    Description = q.Description,
+                    TemplateId = q.TemplateId
+                },
+                PositiveIntegerQuestion => new PositiveIntegerQuestionDto
+                {
+                    Id = q.Id,
+                    Title = q.Title,
+                    Description = q.Description,
+                    TemplateId = q.TemplateId
+                },
+                CheckboxQuestion cbq => new CheckboxQuestionDto
+                {
+                    Id = cbq.Id,
+                    Title = cbq.Title,
+                    Description = cbq.Description,
+                    TemplateId = cbq.TemplateId,
+                    Options = cbq.Options
+                },
+                BooleanQuestion => new BooleanQuestionDto
+                {
+                    Id = q.Id,
+                    Title = q.Title,
+                    Description = q.Description,
+                    TemplateId = q.TemplateId
+                },
+                _ => throw new ArgumentException($"Unknown question type: {q.GetType().Name}")
             };
         }
 
         public static Question ToEntity(this QuestionDto d)
         {
             if (d == null) return null!;
-            return new Question
+            
+            return d switch
             {
-                Id = d.Id,
-                Title = d.Title,
-                Description = d.Description
+                SingleLineStringQuestionDto dto => new SingleLineStringQuestion
+                {
+                    Id = dto.Id,
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    TemplateId = dto.TemplateId
+                },
+                MultiLineTextQuestionDto dto => new MultiLineTextQuestion
+                {
+                    Id = dto.Id,
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    TemplateId = dto.TemplateId
+                },
+                PositiveIntegerQuestionDto dto => new PositiveIntegerQuestion
+                {
+                    Id = dto.Id,
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    TemplateId = dto.TemplateId
+                },
+                CheckboxQuestionDto dto => new CheckboxQuestion
+                {
+                    Id = dto.Id,
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    TemplateId = dto.TemplateId,
+                    Options = dto.Options
+                },
+                BooleanQuestionDto dto => new BooleanQuestion
+                {
+                    Id = dto.Id,
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    TemplateId = dto.TemplateId
+                },
+                _ => throw new ArgumentException($"Unknown question DTO type: {d.GetType().Name}")
             };
+        }
+
+        public static void UpdateFromDto(this Question entity, QuestionDto dto)
+        {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            
+            // Update common properties shared by all question types
+            entity.Title = dto.Title;
+            entity.Description = dto.Description;
+            
+            // Update type-specific properties
+            // Note: Only CheckboxQuestion has additional properties beyond the base Question class
+            if (entity is CheckboxQuestion checkboxEntity && dto is CheckboxQuestionDto checkboxDto)
+            {
+                checkboxEntity.Options = checkboxDto.Options;
+            }
         }
     }
 }

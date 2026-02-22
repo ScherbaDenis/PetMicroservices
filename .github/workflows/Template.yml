@@ -1,0 +1,26 @@
+name: Template
+
+on:
+  push:
+    branches: [ "*" ]
+    paths:
+      - 'Template/**'          # Only run if files in Template folder change
+jobs:
+  build:
+    permissions:
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+    - name: Restore dependencies
+      run: dotnet restore BaseWebApplication/BaseWebApplication.sln
+    - name: Build
+      run: dotnet build --no-restore BaseWebApplication/BaseWebApplication.sln
+    - name: Test
+      run: dotnet test --no-build --verbosity normal Template/Tests/Template.Tests/Template.Tests.csproj

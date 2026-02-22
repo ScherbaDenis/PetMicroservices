@@ -16,15 +16,14 @@ namespace Comment.DataAccess.MsSql.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(2000);
 
-            // Configure foreign key for Template relationship as nullable
-            builder.Property<Guid?>("TemplateId");
+            builder.Property(x => x.TemplateId);
             
-            builder.HasIndex("TemplateId")
+            builder.HasIndex(x => x.TemplateId)
                 .HasDatabaseName("IX_comments_TemplateId");
 
             builder.HasOne(x => x.Template)
                 .WithMany()
-                .HasForeignKey("TemplateId")
+                .HasForeignKey(x => x.TemplateId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
         }

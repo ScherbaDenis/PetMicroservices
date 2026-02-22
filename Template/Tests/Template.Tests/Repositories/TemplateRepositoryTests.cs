@@ -37,7 +37,7 @@ namespace Template.Tests.Repositories
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldRemoveTemplate()
+        public async Task DeleteAsync_ShouldSoftDeleteTemplate()
         {
             var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title  = "ToDelete" };
             _context.Templates.Add(template);
@@ -46,7 +46,25 @@ namespace Template.Tests.Repositories
             await _repository.DeleteAsync(template);
             await _context.SaveChangesAsync();
 
-            Assert.Empty(_context.Templates);
+            // Assert - Template should still exist in database but with IsDeleted = true
+            var deletedTemplate = await _context.Templates.FindAsync(template.Id);
+            Assert.NotNull(deletedTemplate);
+            Assert.True(deletedTemplate.IsDeleted);
+        }
+
+        [Fact]
+        public async Task HardDeleteAsync_ShouldPermanentlyRemoveTemplate()
+        {
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title  = "ToDelete" };
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            await _repository.HardDeleteAsync(template);
+            await _context.SaveChangesAsync();
+
+            // Assert - Template should be completely removed from database
+            var deletedTemplate = await _context.Templates.FindAsync(template.Id);
+            Assert.Null(deletedTemplate);
         }
 
         [Fact]
@@ -61,6 +79,96 @@ namespace Template.Tests.Repositories
 
             Assert.NotNull(result);
             Assert.Equal("FindMe", result!.Title);
+        }
+
+        [Fact]
+        public async Task FindAsync_ShouldIncludeRelatedEntities()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var topicId = 1;
+            var tagId = 1;
+            var questionId = Guid.NewGuid();
+            var templateId = Guid.NewGuid();
+
+            var user = new User { Id = userId, Name = "Test User" };
+            var topic = new Topic { Id = topicId, Name = "Test Topic" };
+            var tag = new Tag { Id = tagId, Name = "Test Tag" };
+            var question = new SingleLineStringQuestion { Id = questionId, Title = "Test Question" };
+
+            var template = new Domain.Model.Template 
+            { 
+                Id = templateId, 
+                Title = "Template with Relations",
+                Owner = user,
+                Topic = topic,
+                Tags = new List<Tag> { tag },
+                UsersAccess = new List<User> { user },
+                Questions = new List<Question> { question }
+            };
+
+            _context.Users.Add(user);
+            _context.Topics.Add(topic);
+            _context.Tags.Add(tag);
+            _context.Questions.Add(question);
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.FindAsync(templateId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result!.Owner);
+            Assert.Equal(userId, result.Owner.Id);
+            Assert.NotNull(result.Topic);
+            Assert.Equal(topicId, result.Topic.Id);
+            Assert.NotNull(result.Tags);
+            Assert.Single(result.Tags);
+            Assert.Equal(tagId, result.Tags.First().Id);
+            Assert.NotNull(result.UsersAccess);
+            Assert.Single(result.UsersAccess);
+            Assert.Equal(userId, result.UsersAccess.First().Id);
+            Assert.NotNull(result.Questions);
+            Assert.Single(result.Questions);
+            Assert.Equal(questionId, result.Questions.First().Id);
+        }
+
+        [Fact]
+        public async Task FindAsync_WithPredicate_ShouldIncludeRelatedEntities()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var topicId = 1;
+            var templateId = Guid.NewGuid();
+
+            var user = new User { Id = userId, Name = "Test User" };
+            var topic = new Topic { Id = topicId, Name = "Test Topic" };
+
+            var template = new Domain.Model.Template 
+            { 
+                Id = templateId, 
+                Title = "Template with Relations",
+                Owner = user,
+                Topic = topic
+            };
+
+            _context.Users.Add(user);
+            _context.Topics.Add(topic);
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.FindAsync(t => t.Title == "Template with Relations");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Single(result);
+            var foundTemplate = result.First();
+            Assert.NotNull(foundTemplate.Owner);
+            Assert.Equal(userId, foundTemplate.Owner.Id);
+            Assert.NotNull(foundTemplate.Topic);
+            Assert.Equal(topicId, foundTemplate.Topic.Id);
         }
 
         [Fact]
@@ -352,6 +460,65 @@ namespace Template.Tests.Repositories
             // Act & Assert
             await Assert.ThrowsAsync<InvalidOperationException>(() => 
                 _repository.UnassignTemplateFromUserAsync(templateId, userId));
+        }
+
+        [Fact]
+        public async Task GetAllDeletedAsync_ShouldReturnOnlyDeletedTemplates()
+        {
+            // Arrange
+            var template1 = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Active" };
+            var template2 = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Deleted" };
+            _context.Templates.Add(template1);
+            _context.Templates.Add(template2);
+            await _context.SaveChangesAsync();
+
+            // Soft delete template2
+            await _repository.DeleteAsync(template2);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetAllDeletedAsync();
+
+            // Assert
+            Assert.Single(result);
+            Assert.Equal("Deleted", result.First().Title);
+            Assert.True(result.First().IsDeleted);
+        }
+
+        [Fact]
+        public async Task FindDeletedAsync_ShouldReturnDeletedTemplate()
+        {
+            // Arrange
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Deleted" };
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Soft delete the template
+            await _repository.DeleteAsync(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.FindDeletedAsync(template.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Deleted", result.Title);
+            Assert.True(result.IsDeleted);
+        }
+
+        [Fact]
+        public async Task FindDeletedAsync_ShouldReturnNullForActiveTemplate()
+        {
+            // Arrange
+            var template = new Domain.Model.Template { Id = Guid.NewGuid(), Title = "Active" };
+            _context.Templates.Add(template);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.FindDeletedAsync(template.Id);
+
+            // Assert
+            Assert.Null(result);
         }
     }
 }
