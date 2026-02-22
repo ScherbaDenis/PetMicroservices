@@ -10,31 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Configure CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("DefaultCorsPolicy", policy =>
-    {
-        // In development, allow any origin. In production, should be restricted to specific domains
-        if (builder.Environment.IsDevelopment())
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
-        }
-        else
-        {
-            // In production, restrict to specific origins from configuration
-            var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
-                ?? new[] { "https://localhost:7200", "http://localhost:5000" };
-            
-            policy.WithOrigins(allowedOrigins)
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
-        }
-    });
-});
-
 builder.Services.AddCommentDataAccess(builder.Configuration, builder.Environment);
 builder.Services.AddCommentServices();
 
@@ -73,9 +48,6 @@ if (!builder.Environment.IsEnvironment("Testing"))
 {
     app.UseHttpsRedirection();
 }
-
-// Enable CORS
-app.UseCors("DefaultCorsPolicy");
 
 app.UseAuthorization();
 
