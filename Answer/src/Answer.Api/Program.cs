@@ -25,10 +25,8 @@ builder.Services.AddCors(options =>
         }
         else
         {
-            // In production, restrict to specific origins from configuration
-            // Only HTTPS origins should be used in production for security
             var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
-                ?? new[] { "https://localhost:7200" };
+                ?? new[] { "https://localhost:7200", "http://localhost:5000" };
             
             policy.WithOrigins(allowedOrigins)
                   .AllowAnyMethod()

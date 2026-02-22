@@ -58,8 +58,7 @@ builder.Services.AddCors(options =>
 - Allows all headers
 
 **Production:**
-- Default allowed origin: `https://localhost:7200` (WebApp HTTPS)
-- **Security Note**: Only HTTPS origins should be configured in production
+- Default allowed origins: `https://localhost:7200`, `http://localhost:5000`
 - Configure via `AllowedOrigins` in appsettings.json
 
 **Location:** `Comment/WebApiComment/Program.cs`
@@ -94,8 +93,7 @@ builder.Services.AddCors(options =>
 - Exposes gRPC headers
 
 **Production:**
-- Default allowed origin: `https://localhost:7200` (WebApp HTTPS)
-- **Security Note**: Only HTTPS origins should be configured in production
+- Default allowed origins: `https://localhost:7200`, `http://localhost:5000`
 - Configure via `AllowedOrigins` in appsettings.json
 
 **Location:** `Answer/src/Answer.Api/Program.cs`
@@ -154,11 +152,6 @@ To configure allowed origins in production, add the following to your `appsettin
   ]
 }
 ```
-
-**Important Security Notes:**
-- Always use HTTPS origins in production
-- Never include HTTP origins in production configuration
-- HTTP is only acceptable in development environments
 
 ## Testing CORS
 
