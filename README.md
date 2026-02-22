@@ -71,17 +71,6 @@ curl http://localhost:5000/user
 
 See the [API Gateway documentation](ApiGateway/README.md) for complete route information.
 
-## CORS Configuration
-
-All services are configured with CORS (Cross-Origin Resource Sharing) to allow cross-origin requests:
-
-- **API Gateway**: Configured with CORS for WebApp integration
-- **Comment Service**: Supports CORS for direct and gateway access
-- **Template Service**: Supports CORS with environment-based policies
-- **Answer Service**: Supports CORS with gRPC-Web headers for browser clients
-
-See [CORS_CONFIGURATION.md](CORS_CONFIGURATION.md) for detailed configuration and testing information.
-
 ## Testing
 
 ### Postman Tests
