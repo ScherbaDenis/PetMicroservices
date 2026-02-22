@@ -62,7 +62,7 @@ builder.Services.AddMassTransit(x =>
 
 var app = builder.Build();
 // Ensure database is created and migrations are applied
-if (!builder.Environment.IsEnvironment("Testing"))
+//if (!builder.Environment.IsEnvironment("Testing"))
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<TemplateDbContext>();

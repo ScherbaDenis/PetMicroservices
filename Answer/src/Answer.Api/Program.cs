@@ -12,7 +12,7 @@ builder.Services.AddGrpc().AddJsonTranscoding();
 builder.Services.AddGrpcReflection();
 
 // Add DbContext (skip in Testing environment - test factory provides its own)
-if (!builder.Environment.IsEnvironment("Testing"))
+//if (!builder.Environment.IsEnvironment("Testing"))
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     builder.Services.AddDbContext<AnswerDbContext>(options =>
@@ -64,7 +64,7 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/", () => "Answer API - gRPC with REST support");
 
 // Apply database migrations on startup (skip in Testing environment)
-if (!app.Environment.IsEnvironment("Testing"))
+//if (!app.Environment.IsEnvironment("Testing"))
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<AnswerDbContext>();

@@ -8,15 +8,19 @@
       },
       {
         "Path": "..\\Comment\\WebApiComment\\WebApiComment.csproj",
-        "Action": "StartWithoutDebugging"
+        "Action": "Start"
       },
       {
         "Path": "..\\Template\\WebApiTemplate\\WebApiTemplate.csproj",
-        "Action": "StartWithoutDebugging"
+        "Action": "Start"
       },
       {
         "Path": "..\\Answer\\src\\Answer.Api\\Answer.Api.csproj",
-        "Action": "StartWithoutDebugging"
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\ApiGateway\\ApiGateway\\ApiGateway.csproj",
+        "Action": "Start"
       }
     ]
   }
