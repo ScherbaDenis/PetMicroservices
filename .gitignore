@@ -283,3 +283,6 @@ src/**/inf.yaml
 
 /BaseWebApplication/WebApp/wwwroot/js/userDetails.js
 /BaseWebApplication/WebApp/wwwroot/js/userList.js
+
+# Docker environment file with secrets
+.env
