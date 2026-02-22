@@ -2,6 +2,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Template.DataAccess.MsSql;
+using Template.DataAccess.MsSql.Repositories;
 using Template.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -64,7 +65,7 @@ var app = builder.Build();
 if (!builder.Environment.IsEnvironment("Testing"))
 {
     using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<Template.DataAccess.MsSql.Repositories.TemplateDbContext>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<TemplateDbContext>();
 
     dbContext.Database.Migrate();
 }

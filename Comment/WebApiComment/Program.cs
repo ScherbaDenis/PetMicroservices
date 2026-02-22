@@ -1,4 +1,5 @@
 using Comment.DataAccess.MsSql;
+using Comment.DataAccess.MsSql.Repositories;
 using Comment.Service;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,7 @@ var app = builder.Build();
 if (!builder.Environment.IsEnvironment("Testing"))
 {
     using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<Comment.DataAccess.MsSql.Repositories.CommentDbContext>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<CommentDbContext>();
 
     dbContext.Database.Migrate();
 }
