@@ -1,6 +1,6 @@
 # WebApp and API Gateway Integration
 
-This document explains how the WebApp is configured to use the API Gateway and why CORS was removed.
+This document explains how the WebApp is configured to use the API Gateway directly without YARP.
 
 ## Architecture Overview
 
@@ -13,14 +13,14 @@ This document explains how the WebApp is configured to use the API Gateway and w
 │  │  C# Backend  │         │  TypeScript      │    │
 │  │  Services    │         │  Frontend        │    │
 │  │              │         │                  │    │
-│  │ Uses         │         │ Uses YARP        │    │
-│  │ ApiEndpoints │         │ /proxy/ routes   │    │
+│  │ Uses         │         │ Calls Gateway    │    │
+│  │ ApiEndpoints │         │ Directly         │    │
 │  └──────┬───────┘         └─────────┬────────┘    │
 │         │                           │              │
 └─────────┼───────────────────────────┼──────────────┘
           │                           │
-          │  HTTP Requests            │  Same-origin
-          │  to Gateway               │  requests
+          │  HTTP Requests            │  HTTP Requests
+          │  to Gateway               │  to Gateway
           ▼                           ▼
     ┌─────────────────────────────────────┐
     │        API Gateway                  │
@@ -56,8 +56,8 @@ This document explains how the WebApp is configured to use the API Gateway and w
 ### After (Without CORS)
 - WebApp uses API Gateway as single entry point
 - All requests flow through the gateway
-- C# backend: Same-origin (WebApp → Gateway)
-- TypeScript: Uses YARP proxy (same-origin within WebApp)
+- C# backend: Calls Gateway directly (http://localhost:5000)
+- TypeScript: Calls Gateway directly using centralized config
 - **No cross-origin requests = No CORS needed**
 
 ## Request Flow Details
@@ -104,45 +104,33 @@ public class TemplateService : ITemplateService
 
 ### 2. TypeScript Frontend
 
-**YARP Reverse Proxy Configuration:**
-```json
-{
-  "ReverseProxy": {
-    "Routes": {
-      "template-route": {
-        "ClusterId": "template-cluster",
-        "Match": {
-          "Path": "/proxy/template/{**catch-all}"
-        },
-        "Transforms": [
-          {
-            "PathPattern": "/api/template/{**catch-all}"
-          }
-        ]
-      }
-    },
-    "Clusters": {
-      "template-cluster": {
-        "Destinations": {
-          "template-service": {
-            "Address": "https://localhost:7263"
-          }
-        }
-      }
-    }
-  }
+**Centralized Configuration (apiConfig.ts):**
+```typescript
+/**
+ * API Configuration
+ * Centralized configuration for API endpoints
+ */
+export const API_GATEWAY_URL = 'http://localhost:5000';
+
+/**
+ * Helper function to build full API URLs
+ */
+export function buildApiUrl(path: string): string {
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    return `${API_GATEWAY_URL}${normalizedPath}`;
 }
 ```
 
 **TypeScript Usage (templateForm.ts):**
 ```typescript
+import { buildApiUrl } from './apiConfig';
+
 async fetchUsers(): Promise<UserDto[]> {
-    const response = await fetch('/proxy/user', {
+    const response = await fetch(buildApiUrl('/user'), {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         },
-        // NO mode: 'cors' needed - same-origin request
     });
 
     return await response.json();
@@ -150,10 +138,10 @@ async fetchUsers(): Promise<UserDto[]> {
 ```
 
 **Request Flow:**
-1. TypeScript calls: `fetch('/proxy/user')`
-2. YARP intercepts: `/proxy/user` → routes to Template Service
-3. YARP calls: `https://localhost:7263/api/user`
-4. Response flows back through YARP to TypeScript
+1. TypeScript calls: `buildApiUrl('/user')` → `'http://localhost:5000/user'`
+2. Fetch request goes directly to API Gateway
+3. API Gateway routes to Template Service
+4. Response flows back to TypeScript
 
 ## Benefits of This Architecture
 
@@ -169,7 +157,7 @@ async fetchUsers(): Promise<UserDto[]> {
 
 ### 3. **Two Integration Paths**
 - **C# Backend** → API Gateway (direct HTTP calls)
-- **TypeScript Frontend** → YARP → Services (proxied through WebApp)
+- **TypeScript Frontend** → API Gateway (direct HTTP calls via centralized config)
 
 ### 4. **Flexibility**
 - Can switch service endpoints by changing gateway config
@@ -187,11 +175,11 @@ async fetchUsers(): Promise<UserDto[]> {
 
 2. **appsettings.json**
    - Updated: All `ApiEndpoints` point to API Gateway (port 5000)
-   - Removed: `"CorsPolicy"` from all YARP routes
 
 3. **TypeScript Files**
-   - Removed: `mode: 'cors'` from all fetch calls
-   - Files: `templateForm.ts`, `answerForm.ts`, `userList.ts`
+   - Created: `apiConfig.ts` with centralized API Gateway URL
+   - Updated: All TypeScript files to import and use `buildApiUrl()` helper
+   - Files: `templateForm.ts`, `answerForm.ts`, `userList.ts`, `templateDetails.ts`, `userDetails.ts`
 
 ## Development Setup
 
@@ -240,10 +228,10 @@ async fetchUsers(): Promise<UserDto[]> {
 curl http://localhost:5177/Template
 ```
 
-**Test TypeScript Frontend (via YARP):**
+**Test TypeScript Frontend (via API Gateway):**
 ```bash
-# Through WebApp's YARP proxy
-curl http://localhost:5177/proxy/user
+# TypeScript calls Gateway directly
+curl http://localhost:5000/user
 ```
 
 **Test API Gateway Directly:**
@@ -259,13 +247,13 @@ curl http://localhost:5000/comment
 **Solution:** Verify API Gateway is running on port 5000
 
 ### Issue: TypeScript fetch fails
-**Solution:** Check YARP routes in appsettings.json, ensure backend services are running
+**Solution:** 
+- Verify API Gateway is running on port 5000
+- Check `apiConfig.ts` has correct `API_GATEWAY_URL`
+- Ensure backend services are running
 
 ### Issue: CORS errors
-**Solution:** Should not happen anymore! If you see CORS errors, verify:
-- No `mode: 'cors'` in TypeScript fetch calls
-- No CORS middleware in Program.cs
-- Using correct endpoints (through gateway or YARP)
+**Solution:** Should not happen! TypeScript now calls Gateway directly, not cross-origin.
 
 ## Future Enhancements
 
