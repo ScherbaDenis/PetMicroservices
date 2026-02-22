@@ -1,0 +1,68 @@
+@ApiGateway_HostAddress = http://localhost:5000
+
+# Get all comments
+GET {{ApiGateway_HostAddress}}/comment
+Accept: application/json
+
+###
+
+# Get all templates from Template service
+GET {{ApiGateway_HostAddress}}/template
+Accept: application/json
+
+###
+
+# Get all users
+GET {{ApiGateway_HostAddress}}/user
+Accept: application/json
+
+###
+
+# Get all topics
+GET {{ApiGateway_HostAddress}}/topic
+Accept: application/json
+
+###
+
+# Get all tags
+GET {{ApiGateway_HostAddress}}/tag
+Accept: application/json
+
+###
+
+# Get comment by ID (example)
+GET {{ApiGateway_HostAddress}}/comment/20000000-0000-0000-0000-000000000001
+Accept: application/json
+
+###
+
+# Get template by ID (example)
+GET {{ApiGateway_HostAddress}}/template/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
+Accept: application/json
+
+###
+
+# Get all answers from Answer service
+GET {{ApiGateway_HostAddress}}/answer
+Accept: application/json
+
+###
+
+# Get all questions
+GET {{ApiGateway_HostAddress}}/question
+Accept: application/json
+
+###
+
+# Get all users from Answer service
+GET {{ApiGateway_HostAddress}}/answer-user
+Accept: application/json
+
+###
+
+# Get all templates from Answer service
+GET {{ApiGateway_HostAddress}}/answer-template
+Accept: application/json
+
+###
+

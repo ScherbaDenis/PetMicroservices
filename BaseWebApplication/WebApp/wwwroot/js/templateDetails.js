@@ -1,4 +1,4 @@
-"use strict";
+import { buildApiUrl } from './apiConfig';
 /**
  * TemplateUserManager - Handles fetching and displaying users for a specific template
  */
@@ -8,16 +8,15 @@ class TemplateUserManager {
     }
     /**
      * Fetches template details including users with access
-     * Calls: GET /proxy/template/{templateId}
+     * Calls: GET {API_GATEWAY_URL}/template/{templateId}
      */
     async fetchTemplate() {
         try {
-            const response = await fetch(`/proxy/template/${this.templateId}`, {
+            const response = await fetch(buildApiUrl(`/template/${this.templateId}`), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -32,16 +31,15 @@ class TemplateUserManager {
     }
     /**
      * Fetches all available users from the Template API
-     * Calls: GET /proxy/user
+     * Calls: GET {API_GATEWAY_URL}/user
      */
     async fetchAllUsers() {
         try {
-            const response = await fetch('/proxy/user', {
+            const response = await fetch(buildApiUrl('/user'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -56,16 +54,15 @@ class TemplateUserManager {
     }
     /**
      * Assigns a user to the template
-     * Calls: POST /proxy/template/{templateId}/assign/{userId}
+     * Calls: POST {API_GATEWAY_URL}/template/{templateId}/assign/{userId}
      */
     async assignUser(userId) {
         try {
-            const response = await fetch(`/proxy/template/${this.templateId}/assign/${userId}`, {
+            const response = await fetch(buildApiUrl(`/template/${this.templateId}/assign/${userId}`), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -79,16 +76,15 @@ class TemplateUserManager {
     }
     /**
      * Unassigns a user from the template
-     * Calls: DELETE /proxy/template/{templateId}/assign/{userId}
+     * Calls: DELETE {API_GATEWAY_URL}/template/{templateId}/assign/{userId}
      */
     async unassignUser(userId) {
         try {
-            const response = await fetch(`/proxy/template/${this.templateId}/assign/${userId}`, {
+            const response = await fetch(buildApiUrl(`/template/${this.templateId}/assign/${userId}`), {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

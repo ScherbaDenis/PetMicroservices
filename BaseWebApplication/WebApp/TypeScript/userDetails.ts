@@ -1,3 +1,5 @@
+import { buildApiUrl } from './apiConfig';
+
 /**
  * Template data transfer object interface
  */
@@ -31,17 +33,16 @@ class UserTemplateManager {
 
     /**
      * Fetches templates for the current user from the Template API
-     * Calls: GET /proxy/template/user/{userId}
-     * Direct call to Template microservice via YARP proxy
+     * Calls: GET {API_GATEWAY_URL}/template/user/{userId}
+     * Direct call to API Gateway
      */
     async fetchUserTemplates(): Promise<TemplateDto[]> {
         try {
-            const response = await fetch(`/proxy/template/user/${this.userId}`, {
+            const response = await fetch(buildApiUrl(`/template/user/${this.userId}`), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {

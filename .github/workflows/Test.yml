@@ -1,0 +1,25 @@
+name: BaseWebApplication Test
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore BaseWebApplication/BaseWebApplication.sln
+    - name: Build
+      run: dotnet build --no-restore BaseWebApplication/BaseWebApplication.sln
+    - name: Test Template Project
+      run: dotnet test --no-build --verbosity normal Template/Tests/Template.Tests/Template.Tests.csproj
+    - name: Test Comment Project
+      run: dotnet test --no-build --verbosity normal Comment/Tests/Comment.Tests/Comment.Tests.csproj

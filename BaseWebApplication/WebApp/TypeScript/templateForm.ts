@@ -1,3 +1,5 @@
+import { buildApiUrl } from './apiConfig';
+
 /**
  * User data transfer object interface
  */
@@ -38,16 +40,15 @@ class TemplateFormManager {
 
     /**
      * Fetches all users from the API
-     * Calls: GET /proxy/user
+     * Calls: GET {API_GATEWAY_URL}/user
      */
     async fetchUsers(): Promise<UserDto[]> {
         try {
-            const response = await fetch('/proxy/user', {
+            const response = await fetch(buildApiUrl('/user'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -64,16 +65,15 @@ class TemplateFormManager {
 
     /**
      * Fetches all topics from the API
-     * Calls: GET /proxy/topic
+     * Calls: GET {API_GATEWAY_URL}/topic
      */
     async fetchTopics(): Promise<TopicDto[]> {
         try {
-            const response = await fetch('/proxy/topic', {
+            const response = await fetch(buildApiUrl('/topic'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {

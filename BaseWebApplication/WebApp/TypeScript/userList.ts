@@ -1,3 +1,5 @@
+import { buildApiUrl } from './apiConfig';
+
 /**
  * User data transfer object interface
  */
@@ -26,7 +28,6 @@ class UserListManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors', // Enable CORS
             });
 
             if (!response.ok) {
@@ -164,8 +165,8 @@ class UserListManager {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    // Use relative URL to work in both development and production
-    const userListManager = new UserListManager('/proxy/template/user');
+    // Call API Gateway directly
+    const userListManager = new UserListManager(buildApiUrl('/template/user'));
 
     // Attach download handlers
     const downloadJsonBtn = document.getElementById('downloadJsonBtn');

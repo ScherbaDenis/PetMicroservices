@@ -1,3 +1,5 @@
+import { buildApiUrl } from './apiConfig';
+
 /**
  * User data transfer object interface
  */
@@ -67,16 +69,15 @@ class AnswerFormManager {
 
     /**
      * Fetches all users from the API
-     * Calls: GET /proxy/user
+     * Calls: GET {API_GATEWAY_URL}/user
      */
     async fetchUsers(): Promise<UserDto[]> {
         try {
-            const response = await fetch('/proxy/user', {
+            const response = await fetch(buildApiUrl('/user'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -93,16 +94,15 @@ class AnswerFormManager {
 
     /**
      * Fetches all questions from the API
-     * Calls: GET /proxy/question
+     * Calls: GET {API_GATEWAY_URL}/question
      */
     async fetchQuestions(): Promise<QuestionDto[]> {
         try {
-            const response = await fetch('/proxy/question', {
+            const response = await fetch(buildApiUrl('/question'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -119,16 +119,15 @@ class AnswerFormManager {
 
     /**
      * Fetches all templates from the API
-     * Calls: GET /proxy/template
+     * Calls: GET {API_GATEWAY_URL}/template
      */
     async fetchTemplates(): Promise<TemplateDto[]> {
         try {
-            const response = await fetch('/proxy/template', {
+            const response = await fetch(buildApiUrl('/template'), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -145,16 +144,15 @@ class AnswerFormManager {
 
     /**
      * Fetches templates for a specific user
-     * Calls: GET /proxy/template/user/{userId}
+     * Calls: GET {API_GATEWAY_URL}/template/user/{userId}
      */
     async fetchTemplatesByUserId(userId: string): Promise<TemplateDto[]> {
         try {
-            const response = await fetch(`/proxy/template/user/${userId}`, {
+            const response = await fetch(buildApiUrl(`/template/user/${userId}`), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -463,12 +461,11 @@ class AnswerFormManager {
 
         try {
             // Get the template to extract its questions
-            const response = await fetch(`/proxy/template/${templateId}`, {
+            const response = await fetch(buildApiUrl(`/template/${templateId}`), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
