@@ -1,6 +1,6 @@
 using Template.Domain.DTOs;
 
-namespace Template.Domain.Services
+namespace Template.Service.Services
 {
     public interface IQuestionService : IService<QuestionDto, Guid>
     {

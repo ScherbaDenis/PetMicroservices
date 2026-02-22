@@ -1,9 +1,8 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Template.Domain.Services
+namespace Template.Service.Services
 {
     /// <summary>
     /// Service contract using DTOs between service and controller layers.
