@@ -3,7 +3,7 @@ using Template.Domain.DTOs;
 using Template.Domain.Model;
 using Template.Service.Mappers;
 using Template.Domain.Repository;
-using Template.Domain.Services;
+using Template.Service.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Template.Service.Services

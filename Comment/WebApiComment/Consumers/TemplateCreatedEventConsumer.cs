@@ -1,5 +1,5 @@
 using Comment.Domain.DTOs;
-using Comment.Domain.Services;
+using Comment.Service.Services;
 using MassTransit;
 using Shared.Messaging.Events;
 

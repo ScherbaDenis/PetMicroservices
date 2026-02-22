@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Template.Domain.DTOs;
 using Template.Domain.Model;
 using Template.Domain.Repository;
-using Template.Domain.Services;
+using Template.Service.Services;
 using Template.Service.Mappers;
 using MassTransit;
 using Shared.Messaging.Events;

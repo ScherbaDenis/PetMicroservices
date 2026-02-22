@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Comment.Domain.DTOs;
-using Comment.Domain.Services;
+using Comment.Service.Services;
 using WebApiComment.Controllers;
 
 namespace Comment.Tests.Controllers
