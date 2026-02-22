@@ -79,6 +79,36 @@ The gateway will start on **http://localhost:5000**
 - `PUT /tag/{id}` - Update tag → `http://localhost:5100/api/tag/{id}`
 - `DELETE /tag/{id}` - Delete tag → `http://localhost:5100/api/tag/{id}`
 
+### Answer Service Routes
+
+#### Answers
+- `GET /answer` - Get all answers → `http://localhost:5136/api/answers`
+- `POST /answer` - Create answer → `http://localhost:5136/api/answers`
+- `GET /answer/{id}` - Get answer by ID → `http://localhost:5136/api/answers/{id}`
+- `PUT /answer/{id}` - Update answer → `http://localhost:5136/api/answers/{id}`
+- `DELETE /answer/{id}` - Delete answer → `http://localhost:5136/api/answers/{id}`
+
+#### Answer Users
+- `GET /answer-user` - Get all users from Answer service → `http://localhost:5136/api/users`
+- `POST /answer-user` - Create user → `http://localhost:5136/api/users`
+- `GET /answer-user/{id}` - Get user by ID → `http://localhost:5136/api/users/{id}`
+- `PUT /answer-user/{id}` - Update user → `http://localhost:5136/api/users/{id}`
+- `DELETE /answer-user/{id}` - Delete user → `http://localhost:5136/api/users/{id}`
+
+#### Questions
+- `GET /question` - Get all questions → `http://localhost:5136/api/questions`
+- `POST /question` - Create question → `http://localhost:5136/api/questions`
+- `GET /question/{id}` - Get question by ID → `http://localhost:5136/api/questions/{id}`
+- `PUT /question/{id}` - Update question → `http://localhost:5136/api/questions/{id}`
+- `DELETE /question/{id}` - Delete question → `http://localhost:5136/api/questions/{id}`
+
+#### Answer Templates
+- `GET /answer-template` - Get all templates from Answer service → `http://localhost:5136/api/templates`
+- `POST /answer-template` - Create template → `http://localhost:5136/api/templates`
+- `GET /answer-template/{id}` - Get template by ID → `http://localhost:5136/api/templates/{id}`
+- `PUT /answer-template/{id}` - Update template → `http://localhost:5136/api/templates/{id}`
+- `DELETE /answer-template/{id}` - Delete template → `http://localhost:5136/api/templates/{id}`
+
 ## Example Usage
 
 ### Using curl

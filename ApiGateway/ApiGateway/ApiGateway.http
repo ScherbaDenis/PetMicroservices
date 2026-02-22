@@ -42,3 +42,27 @@ Accept: application/json
 
 ###
 
+# Get all answers from Answer service
+GET {{ApiGateway_HostAddress}}/answer
+Accept: application/json
+
+###
+
+# Get all questions
+GET {{ApiGateway_HostAddress}}/question
+Accept: application/json
+
+###
+
+# Get all users from Answer service
+GET {{ApiGateway_HostAddress}}/answer-user
+Accept: application/json
+
+###
+
+# Get all templates from Answer service
+GET {{ApiGateway_HostAddress}}/answer-template
+Accept: application/json
+
+###
+
