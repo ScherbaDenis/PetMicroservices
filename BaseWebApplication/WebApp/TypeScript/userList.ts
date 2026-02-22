@@ -26,7 +26,6 @@ class UserListManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors', // Enable CORS
             });
 
             if (!response.ok) {

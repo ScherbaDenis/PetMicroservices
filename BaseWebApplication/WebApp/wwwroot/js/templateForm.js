@@ -27,7 +27,6 @@ class TemplateFormManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -51,7 +50,6 @@ class TemplateFormManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

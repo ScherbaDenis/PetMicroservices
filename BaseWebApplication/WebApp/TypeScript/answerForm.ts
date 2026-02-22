@@ -76,7 +76,6 @@ class AnswerFormManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -102,7 +101,6 @@ class AnswerFormManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -128,7 +126,6 @@ class AnswerFormManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -154,7 +151,6 @@ class AnswerFormManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -468,7 +464,6 @@ class AnswerFormManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {

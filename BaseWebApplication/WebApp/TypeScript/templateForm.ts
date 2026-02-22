@@ -47,7 +47,6 @@ class TemplateFormManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
@@ -73,7 +72,6 @@ class TemplateFormManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                mode: 'cors',
             });
 
             if (!response.ok) {
