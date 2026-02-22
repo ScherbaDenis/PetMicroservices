@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Template.Domain.DTOs;
-using Template.Domain.Services;
+using Template.Service.Services;
 
 namespace WebApiTemplate.Controllers
 {

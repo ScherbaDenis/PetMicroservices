@@ -1,6 +1,6 @@
-﻿using Template.Domain.DTOs;
+using Template.Domain.DTOs;
 
-namespace Template.Domain.Services
+namespace Template.Service.Services
 {
     public interface ITopicService : IService<TopicDto, int>
     {

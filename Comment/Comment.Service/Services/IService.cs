@@ -1,6 +1,6 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 
-namespace Comment.Domain.Services
+namespace Comment.Service.Services
 {
     /// <summary>
     /// Service contract using DTOs between service and controller layers.
@@ -53,7 +53,7 @@ namespace Comment.Domain.Services
         /// <param name="item">The DTO to permanently delete.</param>
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         Task HardDeleteAsync(TDto item, CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Asynchronously finds DTOs matching the specified predicate.
         /// </summary>

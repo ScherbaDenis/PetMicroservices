@@ -1,6 +1,6 @@
-﻿using Comment.Domain.DTOs;
+using Comment.Domain.DTOs;
 
-namespace Comment.Domain.Services
+namespace Comment.Service.Services
 {
     /// <summary>
     /// Service contract for comment operations using DTOs.

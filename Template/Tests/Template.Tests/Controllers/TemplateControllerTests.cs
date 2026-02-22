@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Template.Domain.DTOs;
-using Template.Domain.Services;
+using Template.Service.Services;
 using WebApiTemplate.Controllers;
 
 namespace Template.Tests.Controllers
