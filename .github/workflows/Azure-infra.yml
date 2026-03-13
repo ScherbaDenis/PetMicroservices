@@ -2,7 +2,7 @@ name: Azure Infrastructure – Bicep Lint & Validate
 
 on:
   push:
-    branches: [ "Azure" ]
+    branches: [ "Azure-main" ]
     paths:
       - 'infra/**'
       - '.github/workflows/Azure-infra.yml'
