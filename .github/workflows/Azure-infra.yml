@@ -7,7 +7,7 @@ on:
       - 'infra/**'
       - '.github/workflows/Azure-infra.yml'
   pull_request:
-    branches: [ "Azure" ]
+    branches: [ "Azure-main" ]
     paths:
       - 'infra/**'
       - '.github/workflows/Azure-infra.yml'
