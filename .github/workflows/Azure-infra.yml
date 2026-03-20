@@ -1,0 +1,44 @@
+name: CI Build & Test Coverage
+
+on:
+  push:
+    branches:
+      - Azure-main
+  pull_request:
+    branches:
+      - Azure-main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore BaseWebApplication/BaseWebApplication.sln
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore BaseWebApplication/BaseWebApplication.sln
+
+      - name: Run Tests & Coverage
+        run: |
+          dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./testresults Template/Tests/Template.Tests/Template.Tests.csproj
+          dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./testresults Comment/Tests/Comment.Tests/Comment.Tests.csproj
+          dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./testresults Answer/tests/Answer.Domain.Tests/Answer.Domain.Tests.csproj
+          dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./testresults Answer/tests/Answer.Infrastructure.Tests/Answer.Infrastructure.Tests.csproj
+          dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./testresults Answer/tests/Answer.Api.IntegrationTests/Answer.Api.IntegrationTests.csproj
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ./testresults
