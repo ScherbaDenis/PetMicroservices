@@ -1,44 +1,68 @@
-name: CI Build & Test Coverage
+name: Azure Infrastructure – Bicep Lint & Validate
 
 on:
   push:
-    branches:
-      - Azure-main
+    branches: [ "Azure-main" ]
+    paths:
+      - 'infra/**'
+      - '.github/workflows/Azure-infra.yml'
   pull_request:
-    branches:
-      - Azure-main
+    branches: [ "Azure-main" ]
+    paths:
+      - 'infra/**'
+      - '.github/workflows/Azure-infra.yml'
 
 jobs:
-  build-and-test:
+  lint-and-validate:
+    name: Bicep Lint & What-If
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write  # Required for OIDC login to Azure
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '9.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore BaseWebApplication/BaseWebApplication.sln
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore BaseWebApplication/BaseWebApplication.sln
-
-      - name: Run Tests & Coverage
+      - name: Install Bicep CLI
         run: |
-          dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./testresults Template/Tests/Template.Tests/Template.Tests.csproj
-          dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./testresults Comment/Tests/Comment.Tests/Comment.Tests.csproj
-          dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./testresults Answer/tests/Answer.Domain.Tests/Answer.Domain.Tests.csproj
-          dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./testresults Answer/tests/Answer.Infrastructure.Tests/Answer.Infrastructure.Tests.csproj
-          dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./testresults Answer/tests/Answer.Api.IntegrationTests/Answer.Api.IntegrationTests.csproj
+          az bicep install
+          az bicep version
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+      - name: Lint main.bicep
+        run: az bicep lint --file infra/main.bicep
+
+      - name: Lint all modules
+        run: |
+          for f in infra/modules/*.bicep; do
+            echo "Linting $f"
+            az bicep lint --file "$f"
+          done
+
+      # The what-if / validate steps require Azure credentials.
+      # They are skipped unless AZURE_CLIENT_ID and AZURE_SUBSCRIPTION_ID are set.
+      - name: Azure Login (OIDC)
+        if: >
+          vars.AZURE_CLIENT_ID != '' &&
+          vars.AZURE_SUBSCRIPTION_ID != '' &&
+          vars.AZURE_TENANT_ID != ''
+        uses: azure/login@v2
         with:
-          name: coverage-report
-          path: ./testresults
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Validate deployment (what-if)
+        if: >
+          vars.AZURE_CLIENT_ID != '' &&
+          vars.AZURE_SUBSCRIPTION_ID != '' &&
+          vars.AZURE_TENANT_ID != '' &&
+          vars.AZURE_RESOURCE_GROUP != ''
+        run: |
+          az deployment group what-if \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --template-file infra/main.bicep \
+            --parameters infra/parameters/dev.bicepparam \
+            --parameters saPassword="${{ secrets.SA_PASSWORD }}" \
+                         rabbitMqPass="${{ secrets.RABBITMQ_PASS }}" \
+            --no-pretty-print
