@@ -1,0 +1,118 @@
+# ---------------------------------------------------------------------------
+# Deploy to Azure Container Apps
+#
+# Builds Docker images for all microservices, pushes them to Azure Container
+# Registry (ACR), and deploys the full stack via Bicep.
+#
+# Required GitHub repository variables (Settings → Secrets and variables → Variables):
+#   AZURE_CLIENT_ID       – Service principal / managed identity client ID (OIDC)
+#   AZURE_TENANT_ID       – Azure AD tenant ID
+#   AZURE_SUBSCRIPTION_ID – Azure subscription ID
+#   AZURE_RESOURCE_GROUP  – Resource group that contains the Container Apps
+#   ACR_NAME              – ACR registry name without domain
+#                           (e.g. "petmsdevacr" → petmsdevacr.azurecr.io)
+#
+# Required GitHub repository secrets (Settings → Secrets and variables → Secrets):
+#   SA_PASSWORD    – SQL Server SA password
+#   RABBITMQ_PASS  – RabbitMQ default user password
+# ---------------------------------------------------------------------------
+
+name: Deploy to Azure Container Apps
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+# Workflow-level permissions required for OIDC token request
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  # Tag every image with the commit SHA so deployments are fully traceable
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  # -------------------------------------------------------------------------
+  # Job 1 – Build all Docker images and push to ACR (parallel matrix)
+  # -------------------------------------------------------------------------
+  build-and-push:
+    name: Build and Push – ${{ matrix.service }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: comment-service
+            dockerfile: Comment/WebApiComment/Dockerfile
+          - service: template-service
+            dockerfile: Template/WebApiTemplate/Dockerfile
+          - service: answer-service
+            dockerfile: Answer/src/Answer.Api/Dockerfile
+          - service: api-gateway
+            dockerfile: ApiGateway/ApiGateway/Dockerfile
+          - service: webapp
+            dockerfile: BaseWebApplication/WebApp/Dockerfile
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in to Azure Container Registry
+        run: az acr login --name ${{ vars.ACR_NAME }}
+
+      # Build context is the repository root for all services (Dockerfiles use
+      # relative paths from the repo root to copy shared source files).
+      - name: Build and push ${{ matrix.service }}
+        run: |
+          docker build \
+            -f ${{ matrix.dockerfile }} \
+            -t ${{ vars.ACR_NAME }}.azurecr.io/${{ matrix.service }}:${{ env.IMAGE_TAG }} \
+            -t ${{ vars.ACR_NAME }}.azurecr.io/${{ matrix.service }}:latest \
+            .
+          docker push ${{ vars.ACR_NAME }}.azurecr.io/${{ matrix.service }}:${{ env.IMAGE_TAG }}
+          docker push ${{ vars.ACR_NAME }}.azurecr.io/${{ matrix.service }}:latest
+
+  # -------------------------------------------------------------------------
+  # Job 2 – Deploy / update Azure Container Apps via Bicep
+  # -------------------------------------------------------------------------
+  deploy:
+    name: Deploy to Azure Container Apps
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install Bicep CLI
+        run: |
+          az bicep install
+          az bicep version
+
+      - name: Deploy infrastructure and services
+        run: |
+          az deployment group create \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --template-file infra/main.bicep \
+            --parameters infra/parameters/dev.bicepparam \
+            --parameters saPassword="${{ secrets.SA_PASSWORD }}" \
+                         rabbitMqPass="${{ secrets.RABBITMQ_PASS }}" \
+                         imageTag="${{ env.IMAGE_TAG }}" \
+            --mode Incremental
