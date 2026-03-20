@@ -34,7 +34,9 @@ namespace Template.Service.Mappers
                 Title = d.Title,
                 Description = d.Description,
                 OwnerId = d.OwnerId != null ? d.OwnerId : d.Owner == null ? null : d.Owner.Id,
+                Owner = d.Owner?.ToEntity(),
                 TopicId = d.TopicId != null ? d.TopicId : d.Topic == null ? null : d.Topic.Id,
+                Topic = d.Topic?.ToEntity(),
                 Tags = d.Tags?.Select(t => t.ToEntity()).ToList() ?? new System.Collections.Generic.List<Tag>(),
                 Questions = d.Questions?.Select(q => q.ToEntity()).ToList() ?? new System.Collections.Generic.List<Question>(),
                 UsersAccess = d.UsersAccess?.Select(u => u.ToEntity()).ToList() ?? new System.Collections.Generic.List<User>()
